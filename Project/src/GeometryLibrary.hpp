@@ -25,6 +25,11 @@ struct Fracture{
     vector<Vector3d> CoordinatesVertices ;  //Uso i vettori di Eigen perchè voglio fare operazioni matematiche
     vector<Trace > TraceNoPass;
     vector<Trace> TracePass;
+    Fracture(unsigned int Id,unsigned int NumV,vector<Vector3d> CoordinatesV){
+        IdFracture=Id;
+        NumVertices=NumV;
+        CoordinatesVertices=CoordinatesV;
+    }
 
     //map<unsigned int,list<unsigned int>> VerticesMarker;
 
