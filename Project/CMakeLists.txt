@@ -44,12 +44,12 @@ list(APPEND ${CMAKE_PROJECT_NAME}_LINKED_LIBRARIES PRIVATE GTest::gmock_main)
 
 # Insert Sources
 ################################################################################
-add_subdirectory(src) #funzione come chiamata a funzione
+add_subdirectory(src)
 list (APPEND ${CMAKE_PROJECT_NAME}_sources ${src_sources})
 list (APPEND ${CMAKE_PROJECT_NAME}_headers ${src_headers})
 list (APPEND ${CMAKE_PROJECT_NAME}_includes ${src_includes})
 
-add_subdirectory(src_test) #funzione come chiamata a funzione
+add_subdirectory(src_test)
 list (APPEND ${CMAKE_PROJECT_NAME}_TEST_sources ${src_test_sources})
 list (APPEND ${CMAKE_PROJECT_NAME}_TEST_headers ${src_test_headers})
 list (APPEND ${CMAKE_PROJECT_NAME}_TEST_includes ${src_test_includes})
