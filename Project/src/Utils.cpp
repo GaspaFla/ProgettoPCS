@@ -9,7 +9,7 @@
 using namespace std;
 
 namespace DFN{
-bool importFracture(const string& fileName, vector<Fracture> Fractures){
+bool importFracture(const string& fileName, vector<Fracture>& Fractures){
     // Passo un vettore vuoto che vado a riempire con le fratture se la lettura del file va a buon fine
     ifstream file(fileName);
     if(file.fail()){
@@ -32,13 +32,14 @@ bool importFracture(const string& fileName, vector<Fracture> Fractures){
         unsigned int NumVertices;
         getline(file,line);//Una riga va saltata
         getline(file,line);
-        convert << line;
+        stringstream convert(line);
         convert>> FractureId >> c >>NumVertices;
+        getline(file,line);
         vector<Vector3d> CoordinatesVertices ;
-        CoordinatesVertices.reserve(NumVertices);   //?
+        CoordinatesVertices.resize(NumVertices);   //se metti reserve esplode
         for(unsigned int j = 0; j<3; j++){
             getline(file,line);
-            convert<<line;
+            stringstream convert(line);
             convert >>CoordinatesVertices[0][j];
             for(unsigned int k = 1; k<NumVertices; k++){
                 convert>>c>>CoordinatesVertices[k][j];
@@ -46,11 +47,14 @@ bool importFracture(const string& fileName, vector<Fracture> Fractures){
         }
         Fracture F(FractureId,NumVertices,CoordinatesVertices);
         Fractures.push_back(F);
+
+
     }
 
     file.close();
     return true;
 }
+
 
 
 
