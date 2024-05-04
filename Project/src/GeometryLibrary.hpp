@@ -33,6 +33,7 @@ struct Fracture{
     vector<Vector3d> CoordinatesVertices ;  //Uso i vettori di Eigen perchè voglio fare operazioni matematiche
     vector<unsigned int> TraceNoPass; //Creo un vettore degli id delle tracce così posso accedere al vettore di tutte le tracce che saranno ordinate pe id
     vector<unsigned int> TracePass;
+    double d;
     Vector3d vecNormal;
     Fracture(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinatesV ){//Costruttore
         IdFracture = IdF;
