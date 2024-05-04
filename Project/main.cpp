@@ -11,7 +11,8 @@ int main()
     vector<Fracture> Fractures;
     string fileName = "./DFN/FR3_data.txt";
 
-    importFracture(fileName,Fractures);
+    double tol1D = setTol1D();
+    importFracture(fileName,Fractures,tol1D);
     for(auto f : Fractures){
         cout<<"Id "<< f.IdFracture << " NumVertici " << f.NumVertices<< endl;
         for (unsigned int i = 0; i< f.NumVertices; i++){

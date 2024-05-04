@@ -34,12 +34,15 @@ struct Fracture{
     vector<unsigned int> TraceNoPass; //Creo un vettore degli id delle tracce così posso accedere al vettore di tutte le tracce che saranno ordinate pe id
     vector<unsigned int> TracePass;
     Vector3d vecNormal;
+    double termineNotoPiano;
     Fracture(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinatesV ){//Costruttore
         IdFracture = IdF;
         NumVertices = NumV;
         CoordinatesVertices = CoordinatesV;
         vecNormal = (CoordinatesVertices[0]-CoordinatesVertices[1]).cross(CoordinatesVertices[1]-CoordinatesVertices[2]);
-        //Salvo direttamente la normale che mi servirà per dei conti in seguito
+        termineNotoPiano = vecNormal.dot(CoordinatesV[0]);
+        //Salvo direttamente la normale e il termine noto per poter risalire all'equazione del piano
+        //in questo modo devo calcolarli una volta sola
     }
 
 };
