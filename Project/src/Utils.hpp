@@ -22,6 +22,9 @@ void CalcoloRetta(Frattura &F1, Frattura &F2);
 void IncontroTraRette(Vector3d t1, Vector3d v1,Vector3d t2 , Vector3d v2 );
 array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta);
 
+//Funzioni stampa
+bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce);
+bool stampaTracce( vector<Traccia> Tracce);
 
 }
 

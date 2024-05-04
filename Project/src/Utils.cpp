@@ -136,11 +136,20 @@ void IncontroTraRette(Vector3d &t1, Vector3d &v1,Vector3d t2 , Vector3d &v2 ){
 //FINE CODICE FLAVIO
 
 
-array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta){//controlla che il punto sulla retta non coincide con gli altri
+array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol){//controlla che il punto sulla retta non coincide con gli altri
     //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
     //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
     array<unsigned int,2> PuntiInterni;
     unsigned int cont = 0;
+
+    //CONTROLLO se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
+    if((PuntiIntersezione[0]-PuntiIntersezione[2]).norm() <tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).norm()<tol){
+        PuntiInterni = {0,1};
+        return PuntiInterni;
+    }
+    //FINE CONTROLLO
+
+
     for(unsigned int i = 0;i<3; i++){//aggiusta indici
         Vector3d u = PuntoRetta-PuntiIntersezione[i];
         unsigned int numPositivi = 0;
