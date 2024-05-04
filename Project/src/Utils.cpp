@@ -56,7 +56,7 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double t
     return true;
 }
 
-}
+
 
 bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol){ //AGGIUSTA
 
@@ -120,7 +120,7 @@ void CalcoloRetta(Frattura &F1, Frattura &F2){
     M.row(0)=F1.vecNormale;
     M.row(1)=F2.vecNormale;
     M.row(2)=t;
-    Vector3d d ={F1.vecNormale, F2.vecNormale, 0};
+    Vector3d d ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
     Vector3d v=M.partialPivLu().solve(d);
 }
 void IncontroTraRette(Vector3d &t1, Vector3d &v1,Vector3d t2 , Vector3d &v2 ){

@@ -9,13 +9,13 @@ TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
     Vector3d y(-1,0,0);
     Vector3d z(1,0,0);
     vector<Vector3d>Coord={x,y,z};
-    Fracture F1=Fracture(0,3,Coord);
+    Frattura F1=Frattura(0,3,Coord);
     int control=1;
     Vector3d x1(3,1,0);
     Vector3d y1(2,0,0);
     Vector3d z1(4,0,0);
     vector<Vector3d> Coord1={x1,y1,z1};
-    Fracture F2=Fracture(0,3,Coord1);
+    Frattura F2=Frattura(0,3,Coord1);
     double tol=0.000000001;
     bool flag =ControlloCentromero(F1,F2, tol);
     if(flag){
@@ -28,5 +28,29 @@ TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
 
 }
 
+TEST(ControlloCentromero, Quadratimoltovicini)
+{
+//TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
+Vector3d x(0,0,-1);
+Vector3d y(0,1,0);
+Vector3d z(0,-1,0);
+Vector3d k(0,0,1);
+//QUADRATO CENTRO ZERO RAGGIO 1
+vector<Vector3d>Coord={x,y,z,k};
+Frattura F1=Frattura(0,4,Coord);
 
-
+Vector3d x1(0,1.9,-1);
+Vector3d y1(0,2.9,0);
+Vector3d z1(0,0.9,0);
+Vector3d k1(0,1.9,1);
+vector<Vector3d> Coord1={x1,y1,z1,k1};
+Frattura F2=Frattura(0,4,Coord1);
+double tol=0.000000001;
+bool flag=ControlloCentromero(F1,F2, 0.000000000001);
+if(flag){
+    cout<<"ehhi";
+}
+else{
+    cout<<"a";
+}
+}
