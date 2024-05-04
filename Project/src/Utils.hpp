@@ -24,6 +24,8 @@ void IncontroTraRette(Vector3d t1, Vector3d v1,Vector3d t2 , Vector3d v2 );
 
 }
 
+
 double setTol1D();
 double setTol2D(const double tol1D);
 bool testLengthEdges(vector<Vector3d>& CoordinatesVertices, double tol);
+

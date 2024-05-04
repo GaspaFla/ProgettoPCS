@@ -1,11 +1,11 @@
-#include <iostream>
-#include "GeometryLibrary.hpp"
+
 #include "Utils.hpp"
+#include "GeometryLibrary.hpp"
+#include "Eigen/Eigen"
+#include <iostream>
 #include <sstream> // controlla se servono tutte
 #include <fstream>
-#include <Eigen/Eigen>
-
-
+#include <string>
 using namespace std;
 
 namespace DFN{
@@ -56,16 +56,6 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double t
     return true;
 }
 
-
-
-
-bool ControlloNonParallelo(Vector3d  &n1, Vector3d &n2, double tol){
-    if ((n1.cross(n2)).norm()<tol){//DECIDI SE USARE NORMA AL QUADRATO  E CAMBIARE TOLLERANZA
-        cout<<n1(2)<<endl;
-        //controllo se i due vettori sono perpendivolati tra le componenti del vettore direttore
-        return false;
-    }
-    return true;
 }
 
 bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol){ //AGGIUSTA
@@ -101,6 +91,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol){ //AGGIUSTA
 
     return false;
 }
+
 
 //INIZIO CODICE FLAVIO
 
@@ -166,6 +157,7 @@ double setTol2D(const double tol1D){
     return max(tol,tolInput);
 }
 
+
 bool testLengthEdges(vector<Vector3d>& CoordinateVertici, double tol){
     for(unsigned int i = 0;i<(CoordinateVertici.size()-1);i++){
         for(unsigned int j = i+1;j<CoordinateVertici.size();j++){
@@ -177,3 +169,4 @@ bool testLengthEdges(vector<Vector3d>& CoordinateVertici, double tol){
     }
     return true;
 }
+
