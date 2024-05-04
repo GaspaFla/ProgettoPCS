@@ -48,18 +48,17 @@ int main()
 
 
     //anche il mergesort funziona, evviva
-*/
-    vector<Fracture> Fractures;
+ 
+ vector<Fracture> Fractures;
     string fileName = "./DFN/FR3_data.txt";
+
     importFracture(fileName,Fractures);
-    for(int i=0; i<Fractures.size(); i++){
-        cout<< Fractures[i].IdFracture << " " << Fractures[i].NumVertices<< endl;
-        for (unsigned int j = 0; j< Fractures[i].NumVertices; j++){
-            cout<<"il vettore della frattura"<<Fractures[i].IdFracture<<"numero"<<j<<endl;
-            cout << Fractures[i].CoordinatesVertices[j]<< endl;
-             }
-    }
-/*
+    for(auto f : Fractures){
+        cout<<"Id "<< f.IdFracture << " NumVertici " << f.NumVertices<< endl;
+        for (unsigned int i = 0; i< f.NumVertices; i++){
+            cout << "Vertice " <<i << " :" <<endl;
+            cout  << f.CoordinatesVertices[i] << endl;
+        }
 
     //PRIMO TEST, SONO DISTANTI STESSO TRIANGOLO DI RAGGIO MINORE DI 1
     Vector3d x(0,1,0);
@@ -137,5 +136,5 @@ int main()
 
 
 
-  return 0;
+ return 0;
 }
