@@ -135,6 +135,78 @@ void IncontroTraRette(Vector3d &t1, Vector3d &v1,Vector3d t2 , Vector3d &v2 ){
 
 //FINE CODICE FLAVIO
 
+
+array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta){//controlla che il punto sulla retta non coincide con gli altri
+    //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
+    //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
+    array<unsigned int,2> PuntiInterni;
+    unsigned int cont = 0;
+    for(unsigned int i = 0;i<3; i++){//aggiusta indici
+        Vector3d u = PuntoRetta-PuntiIntersezione[i];
+        unsigned int numPositivi = 0;
+        unsigned int numNegativi = 0;
+        for(unsigned int j = 0;j<4; j++){//aggiusta indici
+            if(j!=i){
+                Vector3d v = PuntiIntersezione[j]-PuntiIntersezione[i];
+                if(u.dot(v)>0)
+                    numPositivi++;
+                else numNegativi++;
+            }
+        }
+        if(numNegativi == 2 || numPositivi == 2){
+            PuntiInterni[cont] = i;
+            cont++;
+        }
+    }
+    if(cont == 1){//Risparmio di fare un ciclo del for
+        PuntiInterni[1] = 3;
+    }
+    return PuntiInterni;
+}
+
+bool stampaTracce( vector<Traccia> Tracce){
+    ofstream file("stampaTracce.txt");
+    if(file.fail()){
+        cout << "Errore";
+        return false;
+    }
+    file<<"Number of Traces" <<endl;
+    file<<Tracce.size()<<endl;
+    file<<"TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
+    for(auto t : Tracce){
+        file<<t.IdTraccia<<"; "<<t.FrattureTraccia[0]<<"; "<<t.FrattureTraccia[1]<<"; "<<
+            t.VerticiTraccia[0][0]<<"; "<<t.VerticiTraccia[0][1]<<"; "<<t.VerticiTraccia[0][2]<<"; "<<
+            t.VerticiTraccia[1][0]<<"; "<<t.VerticiTraccia[1][1]<<"; "<<t.VerticiTraccia[1][2]<<endl;
+    }
+
+    file.close();
+    return true;
+}
+
+//Completare quando è pronto MergeSort
+bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce){
+    ofstream file("stampaTracceFatture.txt");
+    if(file.fail()){
+        cout << "Errore";
+        return false;
+    }
+
+    for(auto f : Fratture){
+        file<<"FractureId; NumTraces "<<endl;
+        file<<"TraceId; Tips; Length" <<endl;
+        // Chiamare MergeSort
+        for(unsigned int i = 0; i<f.TraccePass.size();i++){
+            //Stampa
+        }
+        for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
+            //Stampa
+        }
+
+    }
+
+    file.close();
+    return true;
+}
 }
 
 //Introduco delle tolleranze per poter fare i controlli e i confronti
