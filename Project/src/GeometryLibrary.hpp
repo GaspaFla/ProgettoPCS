@@ -39,7 +39,7 @@ struct Frattura{
         NumVertici = NumV;
         CoordinateVertici = CoordinateV;
         vecNormale = (CoordinateVertici[0]-CoordinateVertici[1]).cross(CoordinateVertici[1]-CoordinateVertici[2]);
-        termineNotoPiano = vecNormale.dot(CoordinateV[0]);
+        termineNotoPiano = -vecNormale.dot(CoordinateV[0]);
         //Salvo direttamente la normale e il termine noto per poter risalire all'equazione del piano
         //in questo modo devo calcolarli una volta sola
     }

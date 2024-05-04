@@ -95,43 +95,95 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol){ //AGGIUSTA
 
 //INIZIO CODICE FLAVIO
 
-bool SiIntersecano(Vector3d &normale, vector<Vector3d>&punto, Vector3d &puntodelpiano){
-    double d = normale.dot(puntodelpiano);//calcolo la mia costante nella formula ax+by+cz+d=0
-    bool rs=false;//non si intersecano se non funziona
-    int cont=0; //quante volte ho avuto intersezione retta poligono
-    int soprasottoprec=0;//sgn del vertice predente
-    int i=0;//contatore
-    while (i<punto.size() || cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
-        double soprasotto=d+normale.dot(punto[i]);//sostituisco il punto nel piano e trovo il segno del vertice
-        if(soprasotto*soprasottoprec<0){
-            cont++;
-            rs=true;
+bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura){
 
-            //*qua dentro posso salvare quali lati devo mettere
+    bool risultato=false;//non si intersecano se non funziona
+    int cont=0; //quante volte ho avuto intersezione retta poligono
+    double segnoVerticeprec=0;//sgn del vertice predente
+    int i=0;//contatore
+    while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
+        double segnoVertice=F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
+
+        if(segnoVertice*segnoVerticeprec<0){
+
+            risultato=true;//ho intersezione
+            puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
+            cout<<F1.CoordinateVertici[i]<<"questo è la coordinata del vertice numero"<<i<<endl;
+            puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
+            cout<<F1.CoordinateVertici[i-1]<<"questo è la coordinata del vertice numero"<<i-1<<endl;
+            cont=cont+1;
         }
-        soprasottoprec=soprasotto;
+        segnoVerticeprec=segnoVertice;
         i++;
     }
-    return rs;
+    if (cont==1){
+        puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
+        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[0];
+        }
+    return risultato;
 }
-void CalcoloRetta(Frattura &F1, Frattura &F2){
+vector<Traccia> CalcoloTracce(Frattura &F1, Frattura &F2){
+    vector<Vector3d> puntiFrattura1;
+    vector<Vector3d> puntiFrattura2;
+    puntiFrattura1.resize(4);
+     puntiFrattura2.resize(4);
+    if(SiIntersecano(F1,F2,puntiFrattura1) && SiIntersecano(F2,F1,puntiFrattura2)){
+        //ora calcolo la retta di intersezione tra i piani
+        cout<<"1"<<endl;
+        Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
+        Matrix3d VettoriDelPiano;
+        for (int i=0; i<4; i++){
+            cout<<puntiFrattura1[i]<<endl;
+            cout<<puntiFrattura2[i]<<endl;
+        }
+
+        //riempo le righe della matrice
+        VettoriDelPiano.row(0)=F1.vecNormale;
+        VettoriDelPiano.row(1)=F2.vecNormale;
+        VettoriDelPiano.row(2)=DirettriceDellaRettaDiIntersezione;
+        Vector3d TerminiNoti ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
+
+        //calcolo il punto della Retta di Intersezione
+        Vector3d PuntodellaRettadiIntersezione=VettoriDelPiano.partialPivLu().solve(TerminiNoti);
+
+        //calcolo il punto di intersezione per le rette del primo poligono
+        array<Vector3d,4> PuntiIntersezione;
+        for(unsigned int i=0; i<2; i++){
+        PuntiIntersezione[i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
+        PuntiIntersezione[2*i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
+        cout<<PuntiIntersezione[i]<<"I punti in cui si intersecano la prima Frattura"<<endl;
+        cout<<PuntiIntersezione[2*i]<<"I punti in cui si intersecano la seconda Frattura"<<endl;
+        }
+        vector <Traccia> t;
+        return t;
+    }
+
+
+
+}
+Vector3d IncontroTraRette(Vector3d t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 ){
+    Vector3d P=v2-v1;
+    MatrixXd M(3, 2);
+    M.col(0)=t1;
+    M.col(1)=-t2;
+    Vector2d v=M.householderQr().solve(P);
+    Vector3d x=v[0]*t1+v1;
+    return(x);
+}
+
+Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
     Vector3d t= F1.vecNormale.cross(F2.vecNormale);
+    cout<<t<<endl;
     Matrix3d M;
     M.row(0)=F1.vecNormale;
     M.row(1)=F2.vecNormale;
     M.row(2)=t;
     Vector3d d ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
     Vector3d v=M.partialPivLu().solve(d);
-}
-void IncontroTraRette(Vector3d &t1, Vector3d &v1,Vector3d t2 , Vector3d &v2 ){
-    Vector3d P=v2-v1;
-    MatrixXd M(3, 2);
-    M.col(0)=t1;
-    M.col(1)=-t2;
-    Vector2d v=M.partialPivLu().solve(P);
 
-    Vector3d x=v[0]*t1+v1;
+    return v;
 }
+
 
 //FINE CODICE FLAVIO
 

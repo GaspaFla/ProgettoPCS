@@ -16,12 +16,11 @@ bool ControlloNonParallelo(Vector3d  &n1, Vector3d &n2, double tol);
 bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol);
 
 
-bool SiIntersecano(Vector4d &piano, vector<Vector3d>&punto);
+bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura);
 
-void CalcoloRetta(Frattura &F1, Frattura &F2);
-void IncontroTraRette(Vector3d t1, Vector3d v1,Vector3d t2 , Vector3d v2 );
-
-
+Vector3d CalcoloRetta(Frattura &F1, Frattura &F2);
+Vector3d IncontroTraRette(Vector3d t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 );
+vector<Traccia> CalcoloTracce(Frattura &F1, Frattura &F2);
 }
 
 
