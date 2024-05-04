@@ -27,7 +27,6 @@ struct Traccia{
     }
 };
 struct Frattura{
-
     unsigned int IdFrattura;
     unsigned int NumVertici; // num vertici per ogni frattura
     vector<Vector3d> CoordinateVertici ;  //Uso i vettori di Eigen perchè voglio fare operazioni matematiche
