@@ -80,10 +80,10 @@ bool SiIntersecano(Vector3d &normale, vector<Vector3d>&punto, Vector3d &puntodel
     return rs;
      }
 void CalcoloRetta(Fracture &F1, Fracture &F2){
-    Vector3d t= F1.normale.cross(F2.normale);
+    Vector3d t= F1.vecNormal.cross(F2.vecNormal);
     Matrix3d M;
-    M.row(0)=F1.normale;
-    M.row(1)=F2.normale;
+    M.row(0)=F1.vecNormal;
+    M.row(1)=F2.vecNormal;
     M.row(2)=t;
     Vector3d d={F1.d, F2.d, 0};
     Vector3d v=M.partialPivLu().solve(d);
@@ -170,5 +170,5 @@ double setTol2D(const double tol1D){
 
 
 
-}
+
 

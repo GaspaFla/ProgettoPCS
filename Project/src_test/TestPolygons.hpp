@@ -3,7 +3,7 @@
 #include"../src/GeometryLibrary.hpp"
 #include <gtest/gtest.h>
 using namespace DFN;
-TEST(ControlloDelPuntoMedio, A)
+TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
 {
     Vector3d x(0,1,0);
     Vector3d y(-1,0,0);
@@ -22,7 +22,7 @@ TEST(ControlloDelPuntoMedio, A)
         control=0;
     }
 
-     EXPECT_EQ(1, control);
+    EXPECT_EQ(1, control);
 
 
 
