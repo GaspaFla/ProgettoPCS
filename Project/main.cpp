@@ -4,7 +4,7 @@
 using namespace std;
 using namespace DFN;
 int main()
-{  /* vector<Vector3d> Coord;
+{ vector<Vector3d> Coord;
     Vector3d x(0,0,1);
     Vector3d y(0,0,5);
     Vector3d z(1,0,0);
@@ -50,14 +50,18 @@ int main()
     //anche il mergesort funziona, evviva
  
  vector<Fracture> Fractures;
+
+    vector<Frattura> Fratture;
+
     string fileName = "./DFN/FR3_data.txt";
 
-    importFracture(fileName,Fractures);
-    for(auto f : Fractures){
-        cout<<"Id "<< f.IdFracture << " NumVertici " << f.NumVertices<< endl;
-        for (unsigned int i = 0; i< f.NumVertices; i++){
+    double tol1D = setTol1D();
+    importoFratture(fileName,Fratture,tol1D);
+    for(auto f : Fratture){
+        cout<<"Id "<< f.IdFrattura << " NumVertici " << f.NumVertici<< endl;
+        for (unsigned int i = 0; i< f.NumVertici; i++){
             cout << "Vertice " <<i << " :" <<endl;
-            cout  << f.CoordinatesVertices[i] << endl;
+            cout  << f.CoordinateVertici[i] << endl;
         }
 
     //PRIMO TEST, SONO DISTANTI STESSO TRIANGOLO DI RAGGIO MINORE DI 1

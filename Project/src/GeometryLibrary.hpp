@@ -12,35 +12,36 @@ using namespace std;
 using namespace Eigen;
 
 namespace DFN{ //Scelgo come namespace DFN perchè così ho tutto quello che riguarda fratture/tracce sotto lo stesso namespace
-struct Trace{
-    unsigned int IdTrace;
-    array<Vector3d,2> VerticesTrace;
-    array<unsigned int,2> FractureTrace; //memorizzo id delle due fratture che fanno parte della traccia
+struct Traccia{
+    unsigned int IdTraccia;
+    array<Vector3d,2> VerticiTraccia;
+    array<unsigned int,2> FrattureTraccia; //memorizzo id delle due fratture che fanno parte della traccia
     array<bool,2> Tips; // memorizzo True se è passante e False se non è passante
-    double length;
-    Trace(unsigned int IdT, array<Vector3d,2> VerticesT, array<unsigned int,2> FractureT,array<bool,2> T){//Costruttore
-        IdTrace = IdT;
-        VerticesTrace = VerticesT;
-        FractureTrace = FractureT;
+    double lunghezza;
+    Traccia(unsigned int IdT, array<Vector3d,2> VerticiT, array<unsigned int,2> FrattureT,array<bool,2> T){//Costruttore
+        IdTraccia = IdT;
+        VerticiTraccia = VerticiT;
+        FrattureTraccia = FrattureT;
         Tips = T;
-        length = (VerticesT[0]-VerticesT[1]).squaredNorm();//Salvo la lunghezza al quadrato per evitare di fare radici
+        lunghezza = (VerticiT[0]-VerticiT[1]).squaredNorm();//Salvo la lunghezza al quadrato per evitare di fare radici
     }
 };
-struct Fracture{
-
-    unsigned int IdFracture;
-    unsigned int NumVertices; // num vertici per ogni frattura
-    vector<Vector3d> CoordinatesVertices ;  //Uso i vettori di Eigen perchè voglio fare operazioni matematiche
-    vector<unsigned int> TraceNoPass; //Creo un vettore degli id delle tracce così posso accedere al vettore di tutte le tracce che saranno ordinate pe id
-    vector<unsigned int> TracePass;
-    double d;
-    Vector3d vecNormal;
-    Fracture(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinatesV ){//Costruttore
-        IdFracture = IdF;
-        NumVertices = NumV;
-        CoordinatesVertices = CoordinatesV;
-        vecNormal = (CoordinatesVertices[0]-CoordinatesVertices[1]).cross(CoordinatesVertices[1]-CoordinatesVertices[2]);
-        //Salvo direttamente la normale che mi servirà per dei conti in seguito
+struct Frattura{
+    unsigned int IdFrattura;
+    unsigned int NumVertici; // num vertici per ogni frattura
+    vector<Vector3d> CoordinateVertici ;  //Uso i vettori di Eigen perchè voglio fare operazioni matematiche
+    vector<unsigned int> TracceNoPass; //Creo un vettore degli id delle tracce così posso accedere al vettore di tutte le tracce che saranno ordinate pe id
+    vector<unsigned int> TraccePass;
+    Vector3d vecNormale;
+    double termineNotoPiano;
+    Frattura(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinateV ){//Costruttore
+        IdFrattura = IdF;
+        NumVertici = NumV;
+        CoordinateVertici = CoordinateV;
+        vecNormale = (CoordinateVertici[0]-CoordinateVertici[1]).cross(CoordinateVertici[1]-CoordinateVertici[2]);
+        termineNotoPiano = vecNormale.dot(CoordinateV[0]);
+        //Salvo direttamente la normale e il termine noto per poter risalire all'equazione del piano
+        //in questo modo devo calcolarli una volta sola
     }
 
 };

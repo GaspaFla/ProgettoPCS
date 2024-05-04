@@ -8,20 +8,20 @@ using namespace std;
 
 namespace DFN{
 
-void Merge(vector<Trace>& v,
+void Merge(vector<Traccia>& v,
            const unsigned int& sx,
            const unsigned int& cx,
            const unsigned int& dx){
 
     unsigned int i = sx;
     unsigned int j = cx + 1;
-
-    vector<Trace> b;
+    
+    vector<Traccia> b;
     b.reserve(dx - sx + 1);
 
     while( i <= cx && j <= dx)
     {
-        if (v[i].length <= v[j].length)
+        if (v[i].lunghezza <= v[j].lunghezza)
             b.push_back(v[i++]);
         else
             b.push_back(v[j++]);
@@ -36,7 +36,7 @@ void Merge(vector<Trace>& v,
 
 }
 
-void MergeSort(vector<Trace>& v,
+void MergeSort(vector<Traccia>& v,
                const unsigned int& sx,
                const unsigned int& dx){
 
@@ -50,7 +50,7 @@ void MergeSort(vector<Trace>& v,
     }
 
 }
-void MergeSort(vector<Trace>& v){
+void MergeSort(vector<Traccia>& v){
     MergeSort(v, 0, v.size()-1);
 }
 }
