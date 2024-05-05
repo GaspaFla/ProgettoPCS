@@ -102,16 +102,15 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura){
     double segnoVerticeprec=0;//sgn del vertice predente
     int i=0;//contatore
     while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
-        double segnoVertice=F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
+        double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
 
         if(segnoVertice*segnoVerticeprec<0){
 
             risultato=true;//ho intersezione
             puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-            cout<<F1.CoordinateVertici[i]<<"questo è la coordinata del vertice numero"<<i<<endl;
             puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
-            cout<<F1.CoordinateVertici[i-1]<<"questo è la coordinata del vertice numero"<<i-1<<endl;
             cont=cont+1;
+            //sto salvando per due
         }
         segnoVerticeprec=segnoVertice;
         i++;
@@ -126,10 +125,10 @@ vector<Traccia> CalcoloTracce(Frattura &F1, Frattura &F2){
     vector<Vector3d> puntiFrattura1;
     vector<Vector3d> puntiFrattura2;
     puntiFrattura1.resize(4);
-     puntiFrattura2.resize(4);
+    puntiFrattura2.resize(4);
+    vector <Traccia> t;
     if(SiIntersecano(F1,F2,puntiFrattura1) && SiIntersecano(F2,F1,puntiFrattura2)){
         //ora calcolo la retta di intersezione tra i piani
-        cout<<"1"<<endl;
         Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
         Matrix3d VettoriDelPiano;
         for (int i=0; i<4; i++){
@@ -150,30 +149,32 @@ vector<Traccia> CalcoloTracce(Frattura &F1, Frattura &F2){
         array<Vector3d,4> PuntiIntersezione;
         for(unsigned int i=0; i<2; i++){
         PuntiIntersezione[i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
-        PuntiIntersezione[2*i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
-        cout<<PuntiIntersezione[i]<<"I punti in cui si intersecano la prima Frattura"<<endl;
-        cout<<PuntiIntersezione[2*i]<<"I punti in cui si intersecano la seconda Frattura"<<endl;
+        PuntiIntersezione[i+2]=IncontroTraRette(puntiFrattura2[2*i]-puntiFrattura2[2*i+1],puntiFrattura2[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
+        //salvo il punto della prima frattura nel posto 0, il punto della seconda frattura nel posto 2 e così via...
+        cout<<PuntiIntersezione[i]<<endl<<"I punti in cui si intersecano la prima Frattura"<<endl;
+        cout<<PuntiIntersezione[i+2]<<endl<<"I punti in cui si intersecano la seconda Frattura"<<endl;
         }
-        vector <Traccia> t;
-        return t;
+
+
     }
+    return t;
+
 
 
 
 }
-Vector3d IncontroTraRette(Vector3d t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 ){
-    Vector3d P=v2-v1;
+Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
+    Vector3d P=puntointersezione-VerticePoligono;
     MatrixXd M(3, 2);
-    M.col(0)=t1;
-    M.col(1)=-t2;
-    Vector2d v=M.householderQr().solve(P);
-    Vector3d x=v[0]*t1+v1;
-    return(x);
+    M.col(0)=direzionedeiLati;
+    M.col(1)=direzioneretta;
+    Vector2d alfa=M.householderQr().solve(P);
+    Vector3d PuntoDiFrattura=alfa[0]*direzionedeiLati+VerticePoligono;
+    return(PuntoDiFrattura);
 }
 
 Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
     Vector3d t= F1.vecNormale.cross(F2.vecNormale);
-    cout<<t<<endl;
     Matrix3d M;
     M.row(0)=F1.vecNormale;
     M.row(1)=F2.vecNormale;
