@@ -17,7 +17,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2);
 
 
 
-bool SiIntersecano(Vector4d &piano, vector<Vector3d>&punto);
+bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura);
 
 bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce);
 bool stampaTracce( vector<Traccia> Tracce);

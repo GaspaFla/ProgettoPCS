@@ -214,7 +214,6 @@ Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
     return v;
 }
 
-
 array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol, array<bool,2>& Tips){//controlla che il punto sulla retta non coincide con gli altri
     //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
     //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
@@ -226,11 +225,11 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 1;
-            Tips = {true,false};
+            Tips = {false,true};
         }
         else {
             PuntiInterni[1] = 3;
-            Tips = {false,true};
+            Tips = {true,false};
 
         }
     }
@@ -238,11 +237,11 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 1;
-            Tips = {true,false};
+            Tips = {false,true};
         }
         else{
             PuntiInterni[1] = 2;
-            Tips = {false,true};
+            Tips = {true,false};
         }
 
     }
@@ -250,22 +249,22 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
         PuntiInterni[0] = 1;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 0;
-            Tips = {true,false};
+            Tips = {false,true};
         }
         else{
             PuntiInterni[1] = 3;
-            Tips = {false,true};
+            Tips = {true,false};
         }
     }
     else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
         PuntiInterni[0] = 1;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 0;
-            Tips = {true,false};
+            Tips = {false,true};
         }
         else {
             PuntiInterni[1] = 2;
-            Tips = {false,true};
+            Tips = {true,false};
         }
 
     }
@@ -292,170 +291,14 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
             PuntiInterni[1] = 3;
         }
         if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1){
-            Tips = {true,false};
+            Tips = {false,true};
         }
         else if(PuntiInterni[0] == 2 && PuntiInterni[1] == 3){
-            Tips = {false,true};
+            Tips = {true,false};
         }
         else {
-            Tips = {false,false};
+            Tips = {true,true};
         }
-
-    }
-    return PuntiInterni;
-}
-
-
-bool stampaTracce( vector<Traccia> Tracce){
-    ofstream file("stampaTracce.txt");
-    if(file.fail()){
-        cout << "Errore";
-        return false;
-    }
-    file<<"Number of Traces" <<endl;
-    file<<Tracce.size()<<endl;
-    file<<"TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
-    for(auto t : Tracce){
-        file<<t.IdTraccia<<"; "<<t.FrattureTraccia[0]<<"; "<<t.FrattureTraccia[1]<<"; "<<
-            t.VerticiTraccia[0][0]<<"; "<<t.VerticiTraccia[0][1]<<"; "<<t.VerticiTraccia[0][2]<<"; "<<
-            t.VerticiTraccia[1][0]<<"; "<<t.VerticiTraccia[1][1]<<"; "<<t.VerticiTraccia[1][2]<<endl;
-    }
-
-    file.close();
-    return true;
-}
-
-//Completare quando è pronto MergeSort
-bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce){
-    ofstream file("stampaTracceFatture.txt");
-    if(file.fail()){
-        cout << "Errore";
-        return false;
-    }
-}
-
-
-void Progetto1(const string& fileName, double tol){
-    vector<Frattura> Fratture;
-    vector<Traccia> Tracce;
-    unsigned int IdTraccia=0;
-    if (importoFratture(fileName, Fratture, tol)){
-        for (int i = 0; i < Fratture.size()-1; i++) {
-            for (int j = i+1; j < Fratture.size(); j++) {
-                //mettere l'if che siano paralleli
-                if(ControlloCentromero(Fratture[i], Fratture[j])){
-                    vector<Vector3d> puntiFrattura1;
-                    vector<Vector3d> puntiFrattura2;
-                    puntiFrattura1.resize(4);
-                    puntiFrattura2.resize(4);
-                    //array di 4 cambia
-                    if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
-                    Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
-                    IdTraccia ++;
-                    Tracce.push_back(TracceAggiuntive);
-                    }
-                }
-
-            }
-
-
-        }
-
-        stampaTracce(Tracce);
-
-    }
-
-
-}
-
-
-
-
-array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol, array<bool,2>& Tips){//controlla che il punto sulla retta non coincide con gli altri
-    //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
-    //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
-    array<unsigned int,2> PuntiInterni;
-    unsigned int cont = 0;
-
-    //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
-    if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol ){
-        PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
-            PuntiInterni[1]= 1;
-            Tips = {false,true};
-        }
-        else {
-            PuntiInterni[1] = 3;
-            Tips = {true,false};
-
-        }
-    }
-    else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
-        PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
-            PuntiInterni[1]= 1;
-            Tips = {false,true};
-        }
-        else{
-            PuntiInterni[1] = 2;
-            Tips = {true,false};
-        }
-
-    }
-    else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol){
-        PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
-            PuntiInterni[1]= 0;
-            Tips = {false,true};
-        }
-        else{
-            PuntiInterni[1] = 3;
-            Tips = {true,false};
-        }
-    }
-    else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
-        PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
-            PuntiInterni[1]= 0;
-            Tips = {false,true};
-        }
-        else {
-            PuntiInterni[1] = 2;
-            Tips = {true,false};
-        }
-
-    }
-    else{
-
-    for(unsigned int i = 0;i<3; i++){//aggiusta indici
-        Vector3d u = PuntoRetta-PuntiIntersezione[i];
-        unsigned int numPositivi = 0;
-        unsigned int numNegativi = 0;
-        for(unsigned int j = 0;j<4; j++){//aggiusta indici
-            if(j!=i){
-                Vector3d v = PuntiIntersezione[j]-PuntiIntersezione[i];
-                if(u.dot(v)>0)
-                    numPositivi++;
-                else numNegativi++;
-            }
-        }
-        if(numNegativi == 2 || numPositivi == 2){
-            PuntiInterni[cont] = i;
-            cont++;
-        }
-    }
-    if(cont == 1){//Risparmio di fare un ciclo del for
-        PuntiInterni[1] = 3;
-    }
-    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1){
-        Tips = {false,true};
-    }
-    else if(PuntiInterni[0] == 2 && PuntiInterni[1] == 3){
-        Tips = {true,false};
-    }
-    else {
-        Tips = {true,true};
-    }
 
     }
     return PuntiInterni;
@@ -498,7 +341,7 @@ bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce){
             file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
         }
         for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
-             file<<f.TracceNoPass[i]<<"; false; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
+            file<<f.TracceNoPass[i]<<"; false; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
         }
 
     }
@@ -506,7 +349,48 @@ bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce){
     file.close();
     return true;
 }
+
+
+void Progetto1(const string& fileName, double tol){
+    vector<Frattura> Fratture;
+    vector<Traccia> Tracce;
+    unsigned int IdTraccia=0;
+
+    if (importoFratture(fileName, Fratture, tol)){
+        //Tracce.reserve(Fratture.size());
+        for (int i = 0; i < Fratture.size()-1; i++) {
+            for (int j = i+1; j < Fratture.size(); j++) {
+                //mettere l'if che siano paralleli
+                if(ControlloCentromero(Fratture[i], Fratture[j])){
+                    vector<Vector3d> puntiFrattura1;
+                    vector<Vector3d> puntiFrattura2;
+                    puntiFrattura1.resize(4);
+                    puntiFrattura2.resize(4);
+                    //array di 4 cambia
+                    if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
+                    Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
+                    IdTraccia ++;
+                    Tracce.push_back(TracceAggiuntive);
+                    }
+                }
+
+            }
+
+
+        }
+
+        stampaTracce(Tracce);
+        //stampaTracceFatture(Fratture,Tracce);
+
+    }
+
+
 }
+
+
+
+}
+
 
 //Introduco delle tolleranze per poter fare i controlli e i confronti
 //Uso una funzione perchè viene chiamata una sola volta all'inizio del progremma ==> una volta settata resta quella per coerenza
