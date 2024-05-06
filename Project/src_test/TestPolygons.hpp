@@ -59,15 +59,16 @@ else{
 TEST(EstremiTraccia, PuntiAllineati)
 {
     Vector3d PuntoRetta(5,0,0) ;
-    Vector3d P0(1,0,0);
-    Vector3d P1(10,0,0);
-    Vector3d P2(2,0,0);
-    Vector3d P3(7,0,0);
+    Vector3d P0(4,0,0);
+    Vector3d P1(3,0,0);
+    Vector3d P2(1,0,0);
+    Vector3d P3(4,0,0);
     array<Vector3d,4> Punti ={P0,P1,P2,P3};
-    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,PuntoRetta);
+    double tol = 0.000000000000001;
+    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol);
     bool flag = false;
     cout<<PuntiInterni[0] << " " <<PuntiInterni[1]<<endl;
-    if(PuntiInterni[0] == 2 && PuntiInterni[1] == 3){
+    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1){
         flag = true;
     }
     EXPECT_TRUE(flag);

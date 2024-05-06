@@ -143,12 +143,46 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
     unsigned int cont = 0;
 
     //CONTROLLO se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
-    if((PuntiIntersezione[0]-PuntiIntersezione[2]).norm() <tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).norm()<tol){
+    if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol)){
         PuntiInterni = {0,1};
         return PuntiInterni;
     }
     //FINE CONTROLLO
 
+    //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
+    else if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol ){
+        PuntiInterni[0] = 0;
+        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
+            PuntiInterni[1]= 1;
+        }
+        else PuntiInterni[1] = 3;
+    }
+    else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
+        PuntiInterni[0] = 0;
+        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
+            PuntiInterni[1]= 1;
+        }
+        else PuntiInterni[1] = 2;
+
+    }
+    else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol){
+        PuntiInterni[0] = 1;
+        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
+            PuntiInterni[1]= 0;
+        }
+        else PuntiInterni[1] = 3;
+    }
+    else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
+        PuntiInterni[0] = 1;
+        cout<< "Il primo è 1"<<endl;
+        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
+            PuntiInterni[1]= 0;
+            cout<<"entra if"<<endl;
+        }
+        else PuntiInterni[1] = 2;
+
+    }
+    else{
 
     for(unsigned int i = 0;i<3; i++){//aggiusta indici
         Vector3d u = PuntoRetta-PuntiIntersezione[i];
@@ -169,6 +203,7 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
     }
     if(cont == 1){//Risparmio di fare un ciclo del for
         PuntiInterni[1] = 3;
+    }
     }
     return PuntiInterni;
 }
