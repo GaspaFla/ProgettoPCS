@@ -140,7 +140,7 @@ int main()
 
     vector<Traccia> w=CalcoloTracce(F1,F2);
 */
-    string fileName = "./DFN/FR3_data.txt";
+    string fileName = "./DFN/FR10_data.txt";
 
     double tol1D = setTol1D();
     Progetto1(fileName, tol1D);

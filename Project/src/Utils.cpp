@@ -13,7 +13,7 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double t
     // Passo un vettore vuoto che vado a riempire con le fratture se la lettura del file va a buon fine
     ifstream file(fileName);
     if(file.fail()){
-        cout << "Errore : file non trovato";
+        cerr << "Errore : file non trovato";
         return false;
     }
     // Sto assumendo che il formato del file è corretto ==> VALUTA SE AGGIUNGERE CONTROLLI
@@ -118,6 +118,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura){
     if (cont==1){
         puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
         puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[0];
+        //cout<<"ho usato il comando"<<endl;
         }
     return risultato;
 }
@@ -127,8 +128,11 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
         Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
         Matrix3d VettoriDelPiano;
         for (int i=0; i<4; i++){
+           /* cout<<"La prima Frattura ha come vertici passanti"<<endl;
             cout<<puntiFrattura1[i]<<endl;
+            cout<<"La seconda Frattura ha come vertici passanti"<<endl;
             cout<<puntiFrattura2[i]<<endl;
+*/
         }
 
         //riempo le righe della matrice
@@ -146,11 +150,11 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
         PuntiIntersezione[i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
         PuntiIntersezione[i+2]=IncontroTraRette(puntiFrattura2[2*i]-puntiFrattura2[2*i+1],puntiFrattura2[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
         //salvo il punto della prima frattura nel posto 0, il punto della seconda frattura nel posto 2 e così via...
-        cout<<PuntiIntersezione[i]<<endl<<"I punti in cui si intersecano la prima Frattura"<<endl;
-        cout<<PuntiIntersezione[i+2]<<endl<<"I punti in cui si intersecano la seconda Frattura"<<endl;
+        //cout<<PuntiIntersezione[i]<<endl<<"I punti in cui si intersecano la prima Frattura"<<endl;
+        //cout<<PuntiIntersezione[i+2]<<endl<<"I punti in cui si intersecano la seconda Frattura"<<endl;
         }
         array<unsigned int,2> PuntiInterni;
-        array<bool,2> Tips;
+        array<bool,2> Tips={true,true};
         //CONTROLLO se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
 
         if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol)){
@@ -160,7 +164,6 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
         //FINE CONTROLLO
         else{
         PuntiInterni=EstremiTraccia(PuntiIntersezione, PuntodellaRettadiIntersezione,tol,Tips);
-            Tips={true, true};
         }
         array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
         if(Tips[0]){
@@ -211,45 +214,58 @@ Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
 }
 
 
-array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol, array<bool,2> Tips){//controlla che il punto sulla retta non coincide con gli altri
+array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol, array<bool,2>& Tips){//controlla che il punto sulla retta non coincide con gli altri
     //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
     //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
     array<unsigned int,2> PuntiInterni;
     unsigned int cont = 0;
-
-
 
     //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
     if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol ){
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 1;
+            Tips = {true,false};
         }
-        else PuntiInterni[1] = 3;
+        else {
+            PuntiInterni[1] = 3;
+            Tips = {false,true};
+
+        }
     }
     else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 1;
+            Tips = {true,false};
         }
-        else PuntiInterni[1] = 2;
+        else{
+            PuntiInterni[1] = 2;
+            Tips = {false,true};
+        }
 
     }
     else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol){
         PuntiInterni[0] = 1;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 0;
+            Tips = {true,false};
         }
-        else PuntiInterni[1] = 3;
+        else{
+            PuntiInterni[1] = 3;
+            Tips = {false,true};
+        }
     }
     else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
         PuntiInterni[0] = 1;
-        cout<< "Il primo è 1"<<endl;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 0;
-            cout<<"entra if"<<endl;
+            Tips = {true,false};
         }
-        else PuntiInterni[1] = 2;
+        else {
+            PuntiInterni[1] = 2;
+            Tips = {false,true};
+        }
 
     }
     else{
@@ -274,9 +290,20 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
         if(cont == 1){//Risparmio di fare un ciclo del for
             PuntiInterni[1] = 3;
         }
+        if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1){
+            Tips = {true,false};
+        }
+        else if(PuntiInterni[0] == 2 && PuntiInterni[1] == 3){
+            Tips = {false,true};
+        }
+        else {
+            Tips = {false,false};
+        }
+
     }
     return PuntiInterni;
 }
+
 
 bool stampaTracce( vector<Traccia> Tracce){
     ofstream file("stampaTracce.txt");
@@ -321,7 +348,7 @@ void Progetto1(const string& fileName, double tol){
                     puntiFrattura1.resize(4);
                     puntiFrattura2.resize(4);
                     //array di 4 cambia
-                    if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[i],Fratture[j],puntiFrattura2)){
+                    if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
                     Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
                     IdTraccia ++;
                     Tracce.push_back(TracceAggiuntive);
