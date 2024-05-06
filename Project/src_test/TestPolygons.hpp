@@ -73,10 +73,8 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     Vector3d k1(-1,0,-1);
     vector<Vector3d> Coord1={x1,y1,z1,k1};
     Frattura F2=Frattura(0,4,Coord1);
-    vector<Vector3d> PuntiIntersecatiF1;
-    vector<Vector3d> PuntiIntersecatiF2;
-    PuntiIntersecatiF1.resize(4);
-    PuntiIntersecatiF2.resize(4);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
@@ -116,10 +114,8 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     Vector3d k1(-1,5,-1);
     vector<Vector3d> Coord1={x1,y1,z1,k1};
     Frattura F2=Frattura(0,4,Coord1);
-    vector<Vector3d> PuntiIntersecatiF1;
-    vector<Vector3d> PuntiIntersecatiF2;
-    PuntiIntersecatiF1.resize(4);
-    PuntiIntersecatiF2.resize(4);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
@@ -160,10 +156,8 @@ TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
     Vector3d k1(0.1,-1,-1);
     vector<Vector3d> Coord1={x1,y1,z1,k1};
     Frattura F2=Frattura(0,4,Coord1);
-    vector<Vector3d> PuntiIntersecatiF1;
-    vector<Vector3d> PuntiIntersecatiF2;
-    PuntiIntersecatiF1.resize(4);
-    PuntiIntersecatiF2.resize(4);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
 
@@ -194,10 +188,8 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     Vector3d k1(-2,0,-3);
     vector<Vector3d> Coord1={x1,y1,z1,k1};
     Frattura F2=Frattura(0,4,Coord1);
-    vector<Vector3d> PuntiIntersecatiF1;
-    vector<Vector3d> PuntiIntersecatiF2;
-    PuntiIntersecatiF1.resize(4);
-    PuntiIntersecatiF2.resize(4);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
