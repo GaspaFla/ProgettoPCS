@@ -96,7 +96,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
 
 //INIZIO CODICE FLAVIO
 
-bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura){
+bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura){
 
     bool risultato=false;//non si intersecano se non funziona
     int cont=0; //quante volte ho avuto intersezione retta poligono
@@ -123,7 +123,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura){
         }
     return risultato;
 }
-Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, vector<Vector3d>&puntiFrattura1, vector<Vector3d>&puntiFrattura2){
+Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2){
 
         //ora calcolo la retta di intersezione tra i piani
         Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
@@ -301,7 +301,7 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vecto
     return PuntiInterni;
 }
 
-bool stampaTracce( vector<Traccia> Tracce){
+bool stampaTracce( vector<Traccia>& Tracce){
     ofstream file("stampaTracce.txt");
     if(file.fail()){
         cout << "Errore";
@@ -321,24 +321,26 @@ bool stampaTracce( vector<Traccia> Tracce){
 }
 
 //Completare quando è pronto MergeSort
-bool stampaTracceFatture( vector<Frattura> Fratture, vector<Traccia> Tracce){
+bool stampaTracceFatture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
     ofstream file("stampaTracceFatture.txt");
     if(file.fail()){
         cout << "Errore";
         return false;
     }
-
     for(auto f : Fratture){
         file<<"FractureId; NumTraces "<<endl;
         file<<"TraceId; Tips; Length" <<endl;
-        MergeSort(Tracce,f.TraccePass);
-        MergeSort(Tracce,f.TracceNoPass);
-
-        for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
-            file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
+        if(!f.TraccePass.empty()){
+            MergeSort(Tracce,f.TraccePass);
+            for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
+                file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
+            }
         }
-        for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
-            file<<f.TracceNoPass[i]<<"; false; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
+        if(!f.TracceNoPass.empty()){
+            MergeSort(Tracce,f.TracceNoPass);
+            for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
+                file<<f.TracceNoPass[i]<<"; vero; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
+            }
         }
 
     }
@@ -354,7 +356,7 @@ void Progetto1(const string& fileName, double tol){
     unsigned int IdTraccia=0;
 
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
-        //Tracce.reserve(Fratture.size());
+        Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
             for (int j = i+1; j < Fratture.size(); j++) {
                 //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
@@ -362,15 +364,13 @@ void Progetto1(const string& fileName, double tol){
                     //Controllo se le loro sfere approssimanti si intersecano
                     if(ControlloCentromero(Fratture[i], Fratture[j])){
                         // a questo punto potrebbero intersecarsi
-                        vector<Vector3d> puntiFrattura1;
-                        vector<Vector3d> puntiFrattura2;
-                        puntiFrattura1.resize(4);
-                        puntiFrattura2.resize(4);
-                        //array di 4 cambia
+                        array<Vector3d,4> puntiFrattura1;
+                        array<Vector3d,4> puntiFrattura2;
                         if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
-                        Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
-                        IdTraccia ++;
-                        Tracce.push_back(TracceAggiuntive);
+                            Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
+                            IdTraccia ++;
+                            Tracce.push_back(TracceAggiuntive);
+
                         }
                     }
                 }
@@ -380,7 +380,7 @@ void Progetto1(const string& fileName, double tol){
         }
 
         stampaTracce(Tracce);
-        //stampaTracceFatture(Fratture,Tracce);
+        stampaTracceFatture(Fratture,Tracce);
 
     }
 
