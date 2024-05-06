@@ -45,6 +45,8 @@ Vector3d z1(0,0.9,0);
 Vector3d k1(0,1.9,1);
 vector<Vector3d> Coord1={x1,y1,z1,k1};
 Frattura F2=Frattura(0,4,Coord1);
+
+double tol = 0.000000001;
 bool flag=ControlloCentromero(F1,F2);
 int control=1;
 if(flag){
@@ -220,3 +222,52 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     }
 
 }
+
+//TEST EstremiTraccia
+TEST(EstremiTraccia, PuntiAllineati)
+{
+    Vector3d PuntoRetta(5,0,0) ;
+    double tol = 0.000000000000001;
+    array<bool,2> Tips;
+
+    //Caso solo due punti coincidenti
+    Vector3d P0(4,0,0);
+    Vector3d P1(1,0,0);
+    Vector3d P2(4,0,0);
+    Vector3d P3(2,0,0);
+    array<Vector3d,4> Punti ={P0,P1,P2,P3};
+    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    bool flag1 = false;
+    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 3 && Tips[0] == true && Tips[1] == false){
+        flag1 = true;
+    }
+    EXPECT_TRUE(flag1);
+
+    //Caso tutti punti distinti
+    //Sottocaso non passante per entrambi
+    P0 = {1,0,0};
+    P1 = {2,0,0};
+    P2 = {4,0,0};
+    P3 = {5,0,0};
+    Punti ={P0,P1,P2,P3};
+    PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    bool flag2 = false;
+    if(PuntiInterni[0] == 1 && PuntiInterni[1] == 2 && Tips[0] == true && Tips[1] == true){
+        flag2 = true;
+    }
+    EXPECT_TRUE(flag2);
+
+    //Sottocaso passante per uno e non passante per l' altro
+    P0 = {2,0,0};
+    P1 = {3,0,0};
+    P2 = {1,0,0};
+    P3 = {5,0,0};
+    Punti ={P0,P1,P2,P3};
+    PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    bool flag3 = false;
+    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1 && Tips[0] == false && Tips[1] == true){
+        flag3 = true;
+    }
+    EXPECT_TRUE(flag3);
+}
+
