@@ -189,9 +189,6 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
 
 
 
-
-
-
 Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
     Vector3d P=puntointersezione-VerticePoligono;
     MatrixXd M(3, 2);
@@ -356,24 +353,27 @@ void Progetto1(const string& fileName, double tol){
     vector<Traccia> Tracce;
     unsigned int IdTraccia=0;
 
-    if (importoFratture(fileName, Fratture, tol)){
+    if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
         //Tracce.reserve(Fratture.size());
         for (int i = 0; i < Fratture.size()-1; i++) {
             for (int j = i+1; j < Fratture.size(); j++) {
-                //mettere l'if che siano paralleli
-                if(ControlloCentromero(Fratture[i], Fratture[j])){
-                    vector<Vector3d> puntiFrattura1;
-                    vector<Vector3d> puntiFrattura2;
-                    puntiFrattura1.resize(4);
-                    puntiFrattura2.resize(4);
-                    //array di 4 cambia
-                    if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
-                    Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
-                    IdTraccia ++;
-                    Tracce.push_back(TracceAggiuntive);
+                //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
+                if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol*tol){//Voglio che sia maggiore della tolleranza per non essere paralleli
+                    //Controllo se le loro sfere approssimanti si intersecano
+                    if(ControlloCentromero(Fratture[i], Fratture[j])){
+                        // a questo punto potrebbero intersecarsi
+                        vector<Vector3d> puntiFrattura1;
+                        vector<Vector3d> puntiFrattura2;
+                        puntiFrattura1.resize(4);
+                        puntiFrattura2.resize(4);
+                        //array di 4 cambia
+                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
+                        Traccia TracceAggiuntive=CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2);
+                        IdTraccia ++;
+                        Tracce.push_back(TracceAggiuntive);
+                        }
                     }
                 }
-
             }
 
 
