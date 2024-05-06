@@ -67,7 +67,6 @@ int main()
         }
     }
     //PRIMO TEST, SONO DISTANTI STESSO TRIANGOLO DI RAGGIO MINORE DI 1
-/*
     //SECONDO TEST, DUE QUADRATI CON DISTANZA MINIMA 0.1 CON RAGGI
     Vector3d x(-1,0,0);
     Vector3d y(0,1,0);
@@ -91,7 +90,7 @@ int main()
     else{
         cout<<"a";
     }
-    */
+
 
     Vector3d x(0,1,-1);
     Vector3d y(0,1,1);
@@ -136,13 +135,15 @@ int main()
     dir2<<1,0,0;
     Vector3d c=IncontroTraRette(dir1, x,dir2 , x1 );
     cout<<c<<endl;
-*/
+
 
 
     vector<Traccia> w=CalcoloTracce(F1,F2);
+*/
+    string fileName = "./DFN/FR3_data.txt";
 
-
-
+    double tol1D = setTol1D();
+    Progetto1(fileName, tol1D);
 
 
 

@@ -16,7 +16,7 @@ TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
     vector<Vector3d> Coord1={x1,y1,z1};
     Frattura F2=Frattura(0,3,Coord1);
     double tol=0.000000001;
-    bool flag =ControlloCentromero(F1,F2, tol);
+    bool flag =ControlloCentromero(F1,F2);
     int control=1;
     if(flag){
         control=0;
@@ -45,7 +45,7 @@ Vector3d z1(0,0.9,0);
 Vector3d k1(0,1.9,1);
 vector<Vector3d> Coord1={x1,y1,z1,k1};
 Frattura F2=Frattura(0,4,Coord1);
-bool flag=ControlloCentromero(F1,F2, 0.000000000001);
+bool flag=ControlloCentromero(F1,F2);
 int control=1;
 if(flag){
     control=0;
@@ -78,8 +78,6 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
-    vector<Traccia> w=CalcoloTracce(F1,F2);
-
 
     int control=1;
     if(flag){
@@ -123,7 +121,7 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
-    vector<Traccia> w=CalcoloTracce(F1,F2);
+
 
 
     int control=1;
@@ -201,7 +199,7 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
     Vector3d b=CalcoloRetta(F1,F2);
-    vector<Traccia> w=CalcoloTracce(F1,F2);
+
 
 
     int control=1;
