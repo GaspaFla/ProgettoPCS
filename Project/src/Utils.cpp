@@ -168,16 +168,16 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
         }
         array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
         if(Tips[0]){
-            F1.TraccePass.push_back(IdTraccia);
-        }
-        else{
             F1.TracceNoPass.push_back(IdTraccia);
         }
+        else{
+            F1.TraccePass.push_back(IdTraccia);
+        }
         if(Tips[1]){
-            F2.TraccePass.push_back(IdTraccia);
+            F2.TracceNoPass.push_back(IdTraccia);
         }
         else{
-            F2.TracceNoPass.push_back(IdTraccia);
+            F2.TraccePass.push_back(IdTraccia);
         }
 
         Traccia t=Traccia(IdTraccia,{PuntiIntersezione[PuntiInterni[0]],PuntiIntersezione[PuntiInterni[1]]},IdFratture,Tips);
