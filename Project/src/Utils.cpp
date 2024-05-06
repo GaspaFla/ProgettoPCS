@@ -154,12 +154,12 @@ Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double
         //cout<<PuntiIntersezione[i+2]<<endl<<"I punti in cui si intersecano la seconda Frattura"<<endl;
         }
         array<unsigned int,2> PuntiInterni;
-        array<bool,2> Tips={true,true};
+        array<bool,2> Tips;
         //CONTROLLO se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
 
         if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol)){
             PuntiInterni = {0,1};
-            Tips={true, true};
+            Tips={false, false};
         }
         //FINE CONTROLLO
         else{
