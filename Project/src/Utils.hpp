@@ -13,15 +13,16 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture, double 
 bool ControlloNonParallelo(Vector3d  &n1, Vector3d &n2, double tol);
 
 // controllo che i due poligoni non siano vicini
-bool ControlloCentromero(Frattura &F1, Frattura &F2, double tol);
+bool ControlloCentromero(Frattura &F1, Frattura &F2);
 
 
-bool SiIntersecano(Vector4d &piano, vector<Vector3d>&punto);
+bool SiIntersecano(Frattura &F1, Frattura &F2, vector<Vector3d>&puntiFrattura);
 
-void CalcoloRetta(Frattura &F1, Frattura &F2);
-void IncontroTraRette(Vector3d t1, Vector3d v1,Vector3d t2 , Vector3d v2 );
-
-
+Vector3d CalcoloRetta(Frattura &F1, Frattura &F2);
+Vector3d IncontroTraRette(Vector3d t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 );
+Traccia CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, vector<Vector3d>&puntiFrattura1, vector<Vector3d>&puntiFrattura2);
+array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, Vector3d PuntoRetta, double tol, array<bool,2>& Tips);
+void Progetto1(const string& fileName, double tol);
 }
 
 
