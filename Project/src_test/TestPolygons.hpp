@@ -3,7 +3,30 @@
 #include"../src/GeometryLibrary.hpp"
 #include <gtest/gtest.h>
 using namespace DFN;
-TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
+
+TEST(LunghezzaLati,LunghezzaNonZero){
+    Vector3d p1(4,0,-1);
+    Vector3d p2(4,0,1);
+    Vector3d p3(2,0,5);
+    vector<Vector3d> CoordinateVertici = {p1,p2,p3};
+    double tol = 0.00000000000000001;
+    bool flag =  testLunghezzaLati( CoordinateVertici,  tol);
+    EXPECT_TRUE(flag);
+}
+TEST(LunghezzaLati,LunghezzaZero){
+    Vector3d p1(4,0,1);
+    Vector3d p2(4,0,1);
+    Vector3d p3(2,0,5);
+    vector<Vector3d> CoordinateVertici = {p1,p2,p3};
+    double tol = 0.00000000000000001;
+    bool flag =  testLunghezzaLati( CoordinateVertici,  tol);
+    EXPECT_FALSE(flag);
+}
+
+
+//TEST Centromero
+
+TEST(ControlloCentromero, DueTriangoliDistanti)
 {
     Vector3d x(0,1,0);
     Vector3d y(-1,0,0);
@@ -23,9 +46,6 @@ TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
     }
 
     EXPECT_EQ(1, control);
-
-
-
 }
 
 TEST(ControlloCentromero, Quadratimoltovicini)
@@ -57,6 +77,8 @@ EXPECT_EQ(0, control);
 }
 
 
+//TEST SiIntersecano
+
 TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
@@ -77,7 +99,6 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
-    Vector3d b=CalcoloRetta(F1,F2);
 
     int control=1;
     if(flag){
@@ -118,7 +139,7 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
-    Vector3d b=CalcoloRetta(F1,F2);
+
 
 
 
@@ -192,9 +213,6 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     array<Vector3d,4> PuntiIntersecatiF2;
     bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
     bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
-    Vector3d b=CalcoloRetta(F1,F2);
-
-
 
     int control=1;
     if(flag){
@@ -215,6 +233,24 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
 
 }
 
+
+
+
+//TEST IncontroTraRette
+TEST(IncontroTraRette,TracciaPoligono)
+{
+    Vector3d direzionedeiLati(2,-1,0);
+    Vector3d VerticePoligono(1,2,3);
+    Vector3d direzioneRetta(1,1,-1);
+    Vector3d puntoRetta(0,1,2);
+    Vector3d puntoIntersezione = IncontroTraRette( direzionedeiLati, VerticePoligono,direzioneRetta , puntoRetta );
+    EXPECT_DOUBLE_EQ(puntoIntersezione[0],0.714285714285714);
+    EXPECT_DOUBLE_EQ(puntoIntersezione[1],2.142857142857143);
+    EXPECT_DOUBLE_EQ(puntoIntersezione[2], 3.000000000000000);
+}
+
+
+
 //TEST EstremiTraccia
 TEST(EstremiTraccia, PuntiAllineati)
 {
@@ -222,13 +258,14 @@ TEST(EstremiTraccia, PuntiAllineati)
     double tol = 0.000000000000001;
     array<bool,2> Tips;
 
-    //Caso solo due punti coincidenti
+    //Caso solo due punti coincidenti ==> tre punti distinti
     Vector3d P0(4,0,0);
     Vector3d P1(1,0,0);
     Vector3d P2(4,0,0);
     Vector3d P3(2,0,0);
     array<Vector3d,4> Punti ={P0,P1,P2,P3};
-    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    bool fintaIntersezione = false;
+    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
     bool flag1 = false;
     if(PuntiInterni[0] == 0 && PuntiInterni[1] == 3 && Tips[0] == true && Tips[1] == false){
         flag1 = true;
@@ -238,28 +275,131 @@ TEST(EstremiTraccia, PuntiAllineati)
     //Caso tutti punti distinti
     //Sottocaso non passante per entrambi
     P0 = {1,0,0};
-    P1 = {2,0,0};
-    P2 = {4,0,0};
+    P1 = {4,0,0};
+    P2 = {2,0,0};
     P3 = {5,0,0};
     Punti ={P0,P1,P2,P3};
-    PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
     bool flag2 = false;
-    if(PuntiInterni[0] == 1 && PuntiInterni[1] == 2 && Tips[0] == true && Tips[1] == true){
+    if(PuntiInterni[0] == 1 && PuntiInterni[1] == 2 && Tips[0] == true && Tips[1] == true && fintaIntersezione == false){
         flag2 = true;
     }
     EXPECT_TRUE(flag2);
 
-    //Sottocaso passante per uno e non passante per l' altro
+    //Sottocaso passante per uno e non passante per l'altro
     P0 = {2,0,0};
     P1 = {3,0,0};
     P2 = {1,0,0};
     P3 = {5,0,0};
     Punti ={P0,P1,P2,P3};
-    PuntiInterni = EstremiTraccia(Punti,PuntoRetta,tol,Tips);
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
     bool flag3 = false;
-    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1 && Tips[0] == false && Tips[1] == true){
+    if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1 && Tips[0] == false && Tips[1] == true && fintaIntersezione == false){
         flag3 = true;
     }
     EXPECT_TRUE(flag3);
+
+
+    //Caso finta intersezione
+    P0 = {2,0,0};
+    P1 = {3,0,0};
+    P2 = {4,0,0};
+    P3 = {5,0,0};
+    Punti ={P0,P1,P2,P3};
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
+    bool flag4 = false;
+    if(fintaIntersezione){
+        flag4 = true;
+    }
+    EXPECT_TRUE(flag4);
+
+
+}
+
+
+//TEST CalcoloTracce
+TEST(CalcoloTracce,TracciaEsistente)
+{   Vector3d p1(1,1,0);
+    Vector3d p2(-1,1,0);
+    Vector3d p3(-1,-1,0);
+    Vector3d p4(1,-1,0);
+    Vector3d p5(0,0,-1);
+    Vector3d p6(4,0,-1);
+    Vector3d p7(4,0,1);
+    Vector3d p8(0,0,1);
+
+    vector<Vector3d> CoordinateV1 = {p1,p2,p3,p4};
+    vector<Vector3d> CoordinateV2 = {p5,p6,p7,p8};
+    unsigned int NumVertici = 4;
+    Frattura F1(0,NumVertici,CoordinateV1);
+    Frattura F2(1,NumVertici,CoordinateV2);
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    SiIntersecano(F1,F2,puntiFrattura1);
+    SiIntersecano(F2,F1,puntiFrattura2);
+    double tol = 0.0000000000001;
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+
+    EXPECT_TRUE(flag1);
+}
+
+TEST(CalcoloTracce,FintaTraccia)
+{   Vector3d p1(1,1,0);
+    Vector3d p2(-1,1,0);
+    Vector3d p3(-1,-1,0);
+    Vector3d p4(1,-1,0);
+    Vector3d p5(2,0,-1);
+    Vector3d p6(4,0,-1);
+    Vector3d p7(4,0,1);
+    Vector3d p8(2,0,1);
+
+    vector<Vector3d> CoordinateV1 = {p1,p2,p3,p4};
+    vector<Vector3d> CoordinateV2 = {p5,p6,p7,p8};
+    unsigned int NumVertici = 4;
+    Frattura F1(0,NumVertici,CoordinateV1);
+    Frattura F2(1,NumVertici,CoordinateV2);
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    SiIntersecano(F1,F2,puntiFrattura1);
+    SiIntersecano(F2,F1,puntiFrattura2);
+    double tol = 0.0000000000001;
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+
+    EXPECT_FALSE(flag1);
+}
+
+TEST(CalcoloTracce,PassantePerEntrambe){
+    Vector3d p1(1,1,0);
+    Vector3d p2(-1,1,0);
+    Vector3d p3(-1,-1,0);
+    Vector3d p4(1,-1,0);
+
+    Vector3d p5(0,1,2);
+    Vector3d p6(0,1,-2);
+    Vector3d p7(0,-1,-2);
+    Vector3d p8(0,-1,2);
+
+    vector<Vector3d> CoordinateV1 = {p1,p2,p3,p4};
+    vector<Vector3d> CoordinateV2 = {p5,p6,p7,p8};
+    unsigned int NumVertici = 4;
+    Frattura F1(0,NumVertici,CoordinateV1);
+    Frattura F2(1,NumVertici,CoordinateV2);
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    SiIntersecano(F1,F2,puntiFrattura1);
+    SiIntersecano(F2,F1,puntiFrattura2);
+    double tol = 0.0000000000001;
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+
+    EXPECT_TRUE(flag1);
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_FALSE(T.Tips[1]);
+
 }
 
