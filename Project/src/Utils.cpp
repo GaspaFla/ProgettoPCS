@@ -96,31 +96,136 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
 
 //INIZIO CODICE FLAVIO
 
-bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura){
+bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol){
 
     bool risultato=false;//non si intersecano se non funziona
     int cont=0; //quante volte ho avuto intersezione retta poligono
-    double segnoVerticeprec=0;//sgn del vertice predente
+    bool primo=true;//sgn del vertice predente
     int i=0;//contatore
+    double segnoVerticeprec;
     while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
         double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
+        //cout<<"Entra nel while "<<cont<<" " <<i<<endl;
+        if(primo){//primo punto
+            cout<<"Entra primo"<<endl;
+            segnoVerticeprec = segnoVertice;
+            primo=false;
+            if(abs(segnoVertice)<tol){//il primo punto sta sul piano
+                double segnoVerticePrec=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[F1.NumVertici-1]);
+                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i+1]);
+                risultato = true; //non so se va qua?
+                if(abs(segnoVerticePrec)<tol){//sta sul piano anche l'ultimo
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[i];
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];
+                    cont++;
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[F1.NumVertici-2];
+                    cont++;
 
-        if(segnoVertice*segnoVerticeprec<0){
-
-            risultato=true;//ho intersezione
-            puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-            puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
-            cont=cont+1;
-            //sto salvando per due
+                }
+                else if(abs(segnoVerticeSucc)<tol){//sta sul piano anche il secondo
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
+                    cont++;
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+2];
+                    cont++;
+                }
+                else if(segnoVerticeSucc*segnoVerticePrec>0){//tocca un solo punto
+                    return false;
+                }
+                else{//Se sono discordi vuol dire che passa attraverso
+                     //Salvo il punto 0 ed 1, ma al prossimo giro non vado a controllare 1 perchè so già che è diverso da 0 e come si comporta con il precedente
+                     //incremento i di 2, una volta nell'else e una volta nell'if del primo
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1]; //Salvo 0 ed 1 come lato che interseca
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
+                    segnoVerticeprec=segnoVerticeSucc; //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
+                    cont++;
+                    i++;
+                }
+            }
+            i++;
         }
-        segnoVerticeprec=segnoVertice;
-        i++;
+        else if(i!=(F1.NumVertici-1)){//Se non è il primo nè l'ultimo
+            cout<<"Entra in diverso da ultimo"<<endl;
+            if(abs(segnoVertice)<tol){//un punto diverso dal primo è sul piano ==> controllo il successivo perchè il precedente già l'ho controllato
+                // per non avere problemi basta iterare su tutti i vertici escluso l'ultimo in modo da poter fare i+1
+
+
+                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i+1]);
+                //sto salvando la retta con il precedente due
+                if(abs(segnoVerticeSucc)<tol){//guardo se anche il successivo sta sul piano
+                    risultato = true;
+                    if(i==F1.NumVertici-2){//se ci sta ma è l'ultimo (i ferma a quello prima) combino l'ultimo con il primo
+                        puntiFrattura[2*cont]=F1.CoordinateVertici[0];
+                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];
+                        cont++;
+                        puntiFrattura[2*cont]=F1.CoordinateVertici[i];
+                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
+                        cont++;
+                    }
+                    else{//altrimenti combino il prossimo con quello dopo
+                        puntiFrattura[2*cont]=F1.CoordinateVertici[i+2];//vertice poligono che serve, uso cont che vale 0 e poi 1
+                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];//vertice poligono che serve
+                        cont++;
+                        puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
+                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
+                        //MANCA UN CONT++?
+                    }
+
+                }
+                else if(segnoVerticeSucc*segnoVerticeprec>0) {//se il secondo non è nullo allora guardo come è la situazione tra quello prima e quello dopo
+                    //caso in cui abbiamo che l'intersezione è solo un punto
+                    return false;
+
+                }
+                else{
+                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
+                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
+                    segnoVerticeprec=segnoVerticeSucc; //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
+                    cont++;
+                    i++;
+                }
+            }
+            else if(segnoVertice*segnoVerticeprec<0){//se non è nullo controllo con il segno del precedente==> se sono discordi ho intersezione
+                risultato=true;//ho intersezione
+                puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
+                puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
+                cont++;
+
+            }
+            segnoVerticeprec=segnoVertice;
+            i++;//mando avanti il ciclo
+        }
+        else{//ultimo vertice
+            cout<<"Entra ultimo"<<endl;
+            if(abs(segnoVertice)<tol){//Se è sul piano non devo controllare se precedente e successivo sono sul piano
+                 double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[0]);
+                if(segnoVertice*segnoVerticeprec<0){
+                     risultato=true;//ho intersezione
+                     puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
+                     puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
+                     cont++;
+                 }
+                else{
+                    return false;
+                }
+            }
+            else if(segnoVertice*segnoVerticeprec<0){
+                risultato=true;//ho intersezione
+                puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
+                puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
+                cont++;
+            }
+            i++;
+        }
+
     }
     if (cont==1){
         puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
         puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[0];
-        //cout<<"ho usato il comando"<<endl;
-        }
+
+    }
     return risultato;
 }
 bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T){
@@ -151,9 +256,11 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
         bool fintaIntersezione = false;
 
         //Controllo se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
+
         if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol)){
             PuntiInterni = {0,1};
             Tips={false, false};
+
         }
         else{
         PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
@@ -358,8 +465,10 @@ void Progetto1(const string& fileName, double tol){
     vector<Frattura> Fratture;
     vector<Traccia> Tracce;
     unsigned int IdTraccia=0;
+    cout<<"Entra"<<endl;
 
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
+        cout<<"ha importato fratture"<<endl;
         //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
             for (int j = i+1; j < Fratture.size(); j++) {
@@ -367,12 +476,15 @@ void Progetto1(const string& fileName, double tol){
                 if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol*tol){//Voglio che sia maggiore della tolleranza per non essere paralleli
                     //Controllo se le loro sfere approssimanti si intersecano
                     if(ControlloCentromero(Fratture[i], Fratture[j])){
+                        cout<<"passato controllo centromero"<<endl;
                         // a questo punto potrebbero intersecarsi
                         array<Vector3d,4> puntiFrattura1;
                         array<Vector3d,4> puntiFrattura2;
-                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2)){
+                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol)){
+                            cout<<"Passato si intersecano"<<endl;
                             Traccia TracciaAggiuntiva;
                             bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva);
+                            cout<<"Traccia trovata"<<endl;
                             //CalcoloTracce
                             if(tracciaTrovata){
                                 IdTraccia ++;

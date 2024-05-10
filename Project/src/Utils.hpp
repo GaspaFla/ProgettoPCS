@@ -13,7 +13,7 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture, double 
 // controllo che i due poligoni non siano vicini
 bool ControlloCentromero(Frattura &F1, Frattura &F2);
 
-bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura);
+bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura,double tol);
 
 Vector3d CalcoloRetta(Frattura &F1, Frattura &F2);
 

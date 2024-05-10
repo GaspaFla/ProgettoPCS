@@ -97,8 +97,9 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    double tol = 0.0000000000000001;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
 
     int control=1;
     if(flag){
@@ -137,8 +138,9 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    double tol = 0.0000000000000001;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
 
 
 
@@ -179,8 +181,9 @@ TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    double tol = 0.0000000000000001;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
 
     int control=1;
     if(flag && flag1){
@@ -211,8 +214,9 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    double tol = 0.0000000000000001;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
 
     int control=1;
     if(flag){
@@ -233,7 +237,162 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
 
 }
 
+TEST(ControlloIntersezionePiano5,TriangoloSuPiano )
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(1,0,0);
+    Vector3d y1(0,0,3);
+    Vector3d z1(-1,0,0);
+    vector<Vector3d> Coord1={x1,y1,z1};
+    Frattura F2=Frattura(0,3,Coord1);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
+    double tol = 0.0000000000000001;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_TRUE(flag1);
 
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[0][i],x1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[1][i],y1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[2][i],z1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[3][i],y1[i]);
+    }
+
+}
+
+
+TEST(ControlloIntersezionePiano6,ToccantePerEntrambi )
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(2,2,0);
+    Vector3d y1(-2,2,0);
+    Vector3d z1(-2,2,3);
+    Vector3d k1(2,2,3);
+    vector<Vector3d> Coord1={x1,y1,z1,k1};
+    Frattura F2=Frattura(0,4,Coord1);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
+    double tol = 0.0000000000000001;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_TRUE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[0][i],k1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[1][i],x1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[2][i],y1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[3][i],z1[i]);
+    }
+
+}
+
+TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(0,0,0);
+    Vector3d y1(0,1,1);
+    Vector3d z1(0,-1,1);
+    vector<Vector3d> Coord1={x1,y1,z1};
+    Frattura F2=Frattura(0,3,Coord1);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
+    double tol = 0.0000000000000001;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_FALSE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[0][i],y[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[1][i],x[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[2][i],k[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[3][i],z[i]);
+    }
+
+}
+
+TEST(ControlloIntersezionePiano6,TriangoloAttraverso)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(0,1,-1);
+    Vector3d y1(0,1,1);
+    Vector3d z1(0,-2,0);
+    vector<Vector3d> Coord1={x1,y1,z1};
+    Frattura F2=Frattura(0,3,Coord1);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
+    double tol = 0.0000000000000001;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_TRUE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[0][i],y1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[1][i],x1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[2][i],z1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[3][i],y1[i]);
+    }
+
+}
+TEST(ControlloIntersezionePiano6,RomboAttraverso)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(0,0,-4);
+    Vector3d y1(0,-4,0);
+    Vector3d z1(0,0,-4);
+    Vector3d k1(0,4,0);
+    vector<Vector3d> Coord1={x1,y1,z1,k1};
+    Frattura F2=Frattura(0,4,Coord1);
+    array<Vector3d,4> PuntiIntersecatiF1;
+    array<Vector3d,4> PuntiIntersecatiF2;
+    double tol = 0.0000000000000001;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_TRUE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[0][i],z1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[1][i],y1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[2][i],k1[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF2[3][i],z1[i]);
+    }
+
+}
 
 
 //TEST IncontroTraRette
@@ -336,9 +495,9 @@ TEST(CalcoloTracce,TracciaEsistente)
     unsigned int IdTraccia = 0;
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
-    SiIntersecano(F1,F2,puntiFrattura1);
-    SiIntersecano(F2,F1,puntiFrattura2);
-    double tol = 0.0000000000001;
+    double tol = 0.0000000000000001;
+    SiIntersecano(F1,F2,puntiFrattura1,tol);
+    SiIntersecano(F2,F1,puntiFrattura2,tol);
     Traccia T;
     bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
 
@@ -363,9 +522,10 @@ TEST(CalcoloTracce,FintaTraccia)
     unsigned int IdTraccia = 0;
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
-    SiIntersecano(F1,F2,puntiFrattura1);
-    SiIntersecano(F2,F1,puntiFrattura2);
     double tol = 0.0000000000001;
+    SiIntersecano(F1,F2,puntiFrattura1,tol);
+    SiIntersecano(F2,F1,puntiFrattura2,tol);
+
     Traccia T;
     bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
 
@@ -391,9 +551,10 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     unsigned int IdTraccia = 0;
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
-    SiIntersecano(F1,F2,puntiFrattura1);
-    SiIntersecano(F2,F1,puntiFrattura2);
     double tol = 0.0000000000001;
+    SiIntersecano(F1,F2,puntiFrattura1,tol);
+    SiIntersecano(F2,F1,puntiFrattura2,tol);
+
     Traccia T;
     bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
 
