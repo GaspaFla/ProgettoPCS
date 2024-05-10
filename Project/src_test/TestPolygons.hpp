@@ -3,6 +3,7 @@
 #include"../src/GeometryLibrary.hpp"
 #include <gtest/gtest.h>
 using namespace DFN;
+double tol=0.00001;
 TEST(ControlloDelPuntoMedio, DueTriangoliDistanti)
 {
     Vector3d x(0,1,0);
@@ -75,8 +76,8 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
     Vector3d b=CalcoloRetta(F1,F2);
 
     int control=1;
@@ -116,8 +117,8 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
     Vector3d b=CalcoloRetta(F1,F2);
 
 
@@ -158,8 +159,8 @@ TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
 
     int control=1;
     if(flag && flag1){
@@ -190,8 +191,8 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     Frattura F2=Frattura(0,4,Coord1);
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2);
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
     Vector3d b=CalcoloRetta(F1,F2);
 
 

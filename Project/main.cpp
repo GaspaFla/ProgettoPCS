@@ -1,6 +1,7 @@
 #include <iostream>
 #include "./src/GeometryLibrary.hpp"
 #include "./src/Utils.hpp"
+#include <chrono>
 using namespace std;
 using namespace DFN;
 int main()
@@ -140,10 +141,15 @@ int main()
 
     vector<Traccia> w=CalcoloTracce(F1,F2);
 */
-    string fileName = "./DFN/FR10_data.txt";
+
+    chrono::steady_clock::time_point t_begin = std::chrono::steady_clock::now();
+    string fileName = "./DFN/FR200_data.txt";
 
     double tol1D = setTol1D();
     Progetto1(fileName, tol1D);
+    chrono::steady_clock::time_point t_end = std::chrono::steady_clock::now();
+    double duration=std::chrono::duration_cast<std::chrono::milliseconds>(t_end-t_begin).count();
+    cout<<"Tempo impiegato: "<<duration<<endl;
 
 
 
