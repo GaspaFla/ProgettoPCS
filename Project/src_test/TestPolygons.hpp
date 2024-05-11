@@ -329,6 +329,40 @@ TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
         EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[2][i],k[i]);
         EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[3][i],z[i]);
     }
+//permuto tutto
+    Coord1={z1,x1,y1};
+    F2=Frattura(0,3,Coord1);
+     flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_FALSE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[0][i],y[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[1][i],x[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[2][i],k[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[3][i],z[i]);
+    }
+ // permuto di nuovo
+
+    Coord1={y1,z1,x1};
+    F2=Frattura(0,3,Coord1);
+    flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
+    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    EXPECT_TRUE(flag);
+    EXPECT_FALSE(flag1);
+
+    for(int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[0][i],y[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[1][i],x[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[2][i],k[i]);
+        EXPECT_DOUBLE_EQ(PuntiIntersecatiF1[3][i],z[i]);
+    }
+
+
+
+
+
 
 }
 
@@ -373,7 +407,7 @@ TEST(ControlloIntersezionePiano6,RomboAttraverso)
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(0,0,-4);
     Vector3d y1(0,-4,0);
-    Vector3d z1(0,0,-4);
+    Vector3d z1(0,0,4);
     Vector3d k1(0,4,0);
     vector<Vector3d> Coord1={x1,y1,z1,k1};
     Frattura F2=Frattura(0,4,Coord1);

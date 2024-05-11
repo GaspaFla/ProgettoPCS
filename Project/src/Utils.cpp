@@ -84,7 +84,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
         raggioquadro2=max(raggioquadro2,(F2.CoordinateVertici[i]-vecmediaF2).squaredNorm());
     }
     //confronto le distanze dal centro e scelgo quella maggiore, in modo tale da definire una palla in cui sia contenuto il poligono
-    if ((vecmediaF1-vecmediaF2).squaredNorm()<(raggioquadro1+raggioquadro2 + 2*raggioquadro1*raggioquadro2)){ //uso il quadrato della somma dei lati perchè costa meno il doppio prodotto che fare la radice
+    if ((vecmediaF1-vecmediaF2).squaredNorm()<(raggioquadro1+raggioquadro2 + 2*sqrt(raggioquadro1)*sqrt(raggioquadro2))){ //uso il quadrato della somma dei lati perchè costa meno il doppio prodotto che fare la radice
         return true;
     }
     //confronto la distanza tra i centroidi con la somma dei raggi delle palle
@@ -107,7 +107,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
         double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
         //cout<<"Entra nel while "<<cont<<" " <<i<<endl;
         if(primo){//primo punto
-            cout<<"Entra primo"<<endl;
+            //cout<<"Entra primo"<<endl;
             segnoVerticeprec = segnoVertice;
             primo=false;
             if(abs(segnoVertice)<tol){//il primo punto sta sul piano
@@ -147,7 +147,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
             i++;
         }
         else if(i!=(F1.NumVertici-1)){//Se non è il primo nè l'ultimo
-            cout<<"Entra in diverso da ultimo"<<endl;
+            //cout<<"Entra in diverso da ultimo"<<endl;
             if(abs(segnoVertice)<tol){//un punto diverso dal primo è sul piano ==> controllo il successivo perchè il precedente già l'ho controllato
                 // per non avere problemi basta iterare su tutti i vertici escluso l'ultimo in modo da poter fare i+1
 
@@ -170,7 +170,8 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                         cont++;
                         puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
                         puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
-                        //MANCA UN CONT++?
+                        cont++;
+                        //MANCA UN CONT++?//secondo me si, te lo aggiungo
                     }
 
                 }
@@ -182,7 +183,9 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                 else{
                     puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
                     puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
-                    segnoVerticeprec=segnoVerticeSucc; //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
+                    segnoVertice=segnoVerticeSucc;
+                    //ho cambiato questo perchè cambia il mio valore poi dopo
+                    //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
                     cont++;
                     i++;
                 }
@@ -198,10 +201,10 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
             i++;//mando avanti il ciclo
         }
         else{//ultimo vertice
-            cout<<"Entra ultimo"<<endl;
+            //cout<<"Entra ultimo"<<endl;
             if(abs(segnoVertice)<tol){//Se è sul piano non devo controllare se precedente e successivo sono sul piano
-                 double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[0]);
-                if(segnoVertice*segnoVerticeprec<0){
+                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[0]);
+                if(segnoVerticeSucc*segnoVerticeprec<0){
                      risultato=true;//ho intersezione
                      puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
                      puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
@@ -468,10 +471,9 @@ void Progetto1(const string& fileName, double tol){
     cout<<"Entra"<<endl;
 
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
-        cout<<"ha importato fratture"<<endl;
         //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
-            for (int j = i+1; j < Fratture.size(); j++) {
+                for (int j = i+1; j < Fratture.size(); j++) {
                 //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
                 if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol*tol){//Voglio che sia maggiore della tolleranza per non essere paralleli
                     //Controllo se le loro sfere approssimanti si intersecano
