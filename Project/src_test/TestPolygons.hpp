@@ -2,6 +2,7 @@
 #include "../src/Utils.hpp"
 #include"../src/GeometryLibrary.hpp"
 #include <gtest/gtest.h>
+#include"../src/Sort.hpp"
 using namespace DFN;
 
 TEST(LunghezzaLati,LunghezzaNonZero){
@@ -597,4 +598,69 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     EXPECT_FALSE(T.Tips[1]);
 
 }
+TEST(MergeSort,VettoriDiversi){
+    Vector3d x(0,0,1);
+    Vector3d y(0,0,5);
+    Vector3d x1(3,0,0);
+    Vector3d y1(3.5,0,0);
+    Vector3d x2(2,0,0);
+    Vector3d y2(3,0,0);
+    cout<<"fin qui";
+    array<unsigned int,2> F={1,1};
+    array<bool,2> T={true, true};
+    array<Vector3d,2>z={x,y};
+    array<Vector3d,2>z1={x1,y1};
+    array<Vector3d,2>z2={x2,y2};
+
+    vector<Traccia>t;
+    t.resize(3);
+    t[0]=Traccia(0,z, F,T);
+    t[1]=Traccia(1,z1,F,T);
+    t[2]=Traccia(2,z2,F,T);
+       cout<<"fin quo";
+    vector<unsigned int> vId={1,2,0};
+    cout<<"fin qua";
+    MergeSort(t,vId);
+    EXPECT_EQ(vId[0],0);
+    EXPECT_EQ(vId[1],2);
+    EXPECT_EQ(vId[2],1);
+}
+
+    //anche il mergesort funziona, evviva
+
+TEST(MergeSort,VettoriConUgualLunghezza){
+    Vector3d x(0,0,1);
+    Vector3d y(0,0,5);
+    Vector3d x1(3,0,0);
+    Vector3d y1(4,0,0);
+    Vector3d x2(2,0,0);
+    Vector3d y2(3,0,0);
+    cout<<"fin qui";
+    array<unsigned int,2> F={1,1};
+    array<bool,2> T={true, true};
+    array<Vector3d,2>z={x,y};
+    array<Vector3d,2>z1={x1,y1};
+    array<Vector3d,2>z2={x2,y2};
+
+    vector<Traccia>t;
+    t.resize(3);
+    t[0]=Traccia(0,z, F,T);
+    t[1]=Traccia(1,z1,F,T);
+    t[2]=Traccia(2,z2,F,T);
+    cout<<"fin quo";
+    vector<unsigned int> vId={1,2,0};
+    cout<<"fin qua";
+    MergeSort(t,vId);
+    EXPECT_EQ(vId[0],0);
+    EXPECT_EQ(vId[1],1);
+    EXPECT_EQ(vId[2],2);
+}
+
+
+
+
+
+
+
+
 
