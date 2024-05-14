@@ -99,8 +99,10 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
 
     int control=1;
     if(flag){
@@ -140,8 +142,10 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
 
 
 
@@ -183,8 +187,10 @@ TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
 
     int control=1;
     if(flag && flag1){
@@ -216,8 +222,10 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag=SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
 
     int control=1;
     if(flag){
@@ -255,8 +263,10 @@ TEST(ControlloIntersezionePiano5,TriangoloSuPiano )
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_TRUE(flag1);
 
@@ -288,8 +298,10 @@ TEST(ControlloIntersezionePiano6,ToccantePerEntrambi )
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol, b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_TRUE(flag1);
 
@@ -319,8 +331,10 @@ TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol, b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol, b2);
     EXPECT_TRUE(flag);
     EXPECT_FALSE(flag1);
 
@@ -333,8 +347,10 @@ TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
 //permuto tutto
     Coord1={z1,x1,y1};
     F2=Frattura(0,3,Coord1);
-     flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    b1=false;
+    b2=false;
+    flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_FALSE(flag1);
 
@@ -348,8 +364,10 @@ TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
 
     Coord1={y1,z1,x1};
     F2=Frattura(0,3,Coord1);
-    flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    b1=false;
+    b2=false;
+    flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_FALSE(flag1);
 
@@ -384,8 +402,10 @@ TEST(ControlloIntersezionePiano6,TriangoloAttraverso)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_TRUE(flag1);
 
@@ -415,8 +435,10 @@ TEST(ControlloIntersezionePiano6,RomboAttraverso)
     array<Vector3d,4> PuntiIntersecatiF1;
     array<Vector3d,4> PuntiIntersecatiF2;
     double tol = 0.0000000000000001;
-    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol);
-    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol);
+    bool b1=false;
+    bool b2=false;
+    bool flag = SiIntersecano(F1,F2, PuntiIntersecatiF1,tol,b1);
+    bool flag1=SiIntersecano(F2,F1, PuntiIntersecatiF2,tol,b2);
     EXPECT_TRUE(flag);
     EXPECT_TRUE(flag1);
 
@@ -531,10 +553,12 @@ TEST(CalcoloTracce,TracciaEsistente)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000000001;
-    SiIntersecano(F1,F2,puntiFrattura1,tol);
-    SiIntersecano(F2,F1,puntiFrattura2,tol);
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
 
     EXPECT_TRUE(flag1);
 }
@@ -558,11 +582,13 @@ TEST(CalcoloTracce,FintaTraccia)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000001;
-    SiIntersecano(F1,F2,puntiFrattura1,tol);
-    SiIntersecano(F2,F1,puntiFrattura2,tol);
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
 
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
 
     EXPECT_FALSE(flag1);
 }
@@ -587,11 +613,13 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000001;
-    SiIntersecano(F1,F2,puntiFrattura1,tol);
-    SiIntersecano(F2,F1,puntiFrattura2,tol);
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
 
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
 
     EXPECT_TRUE(flag1);
     EXPECT_FALSE(T.Tips[0]);
@@ -605,7 +633,6 @@ TEST(MergeSort,VettoriDiversi){
     Vector3d y1(3.5,0,0);
     Vector3d x2(2,0,0);
     Vector3d y2(3,0,0);
-    cout<<"fin qui";
     array<unsigned int,2> F={1,1};
     array<bool,2> T={true, true};
     array<Vector3d,2>z={x,y};
@@ -617,9 +644,7 @@ TEST(MergeSort,VettoriDiversi){
     t[0]=Traccia(0,z, F,T);
     t[1]=Traccia(1,z1,F,T);
     t[2]=Traccia(2,z2,F,T);
-       cout<<"fin quo";
     vector<unsigned int> vId={1,2,0};
-    cout<<"fin qua";
     MergeSort(t,vId);
     EXPECT_EQ(vId[0],0);
     EXPECT_EQ(vId[1],2);
@@ -635,7 +660,7 @@ TEST(MergeSort,VettoriConUgualLunghezza){
     Vector3d y1(4,0,0);
     Vector3d x2(2,0,0);
     Vector3d y2(3,0,0);
-    cout<<"fin qui";
+
     array<unsigned int,2> F={1,1};
     array<bool,2> T={true, true};
     array<Vector3d,2>z={x,y};
@@ -647,9 +672,9 @@ TEST(MergeSort,VettoriConUgualLunghezza){
     t[0]=Traccia(0,z, F,T);
     t[1]=Traccia(1,z1,F,T);
     t[2]=Traccia(2,z2,F,T);
-    cout<<"fin quo";
+
     vector<unsigned int> vId={1,2,0};
-    cout<<"fin qua";
+
     MergeSort(t,vId);
     EXPECT_EQ(vId[0],0);
     EXPECT_EQ(vId[1],1);

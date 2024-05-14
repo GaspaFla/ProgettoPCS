@@ -96,8 +96,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
 
 //INIZIO CODICE FLAVIO
 
-bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol){
-
+bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol, bool& LatoAppartiene){
     bool risultato=false;//non si intersecano se non funziona
     int cont=0; //quante volte ho avuto intersezione retta poligono
     bool primo=true;//sgn del vertice predente
@@ -121,6 +120,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                     puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
                     puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[F1.NumVertici-2];
                     cont++;
+                   LatoAppartiene=true;
 
                 }
                 else if(abs(segnoVerticeSucc)<tol){//sta sul piano anche il secondo
@@ -130,6 +130,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                     puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
                     puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+2];
                     cont++;
+                    LatoAppartiene=true;
                 }
                 else if(segnoVerticeSucc*segnoVerticePrec>0){//tocca un solo punto
                     return false;
@@ -163,6 +164,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                         puntiFrattura[2*cont]=F1.CoordinateVertici[i];
                         puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
                         cont++;
+                        LatoAppartiene=true;
                     }
                     else{//altrimenti combino il prossimo con quello dopo
                         puntiFrattura[2*cont]=F1.CoordinateVertici[i+2];//vertice poligono che serve, uso cont che vale 0 e poi 1
@@ -171,7 +173,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                         puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
                         puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
                         cont++;
-                        //MANCA UN CONT++?//secondo me si, te lo aggiungo
+                        LatoAppartiene=true;
                     }
 
                 }
@@ -231,7 +233,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
     }
     return risultato;
 }
-bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T){
+bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool LatoAppartiene1, bool LatoAppartiene2){
 
         //ora calcolo la retta di intersezione tra i piani
         Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
@@ -267,6 +269,12 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
         }
         else{
         PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
+        }
+        if(LatoAppartiene1){
+            Tips[0]=true;
+        }
+        if(LatoAppartiene2){
+            Tips[1]=true;
         }
         if(!fintaIntersezione){
             array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
@@ -482,10 +490,12 @@ void Progetto1(const string& fileName, double tol){
                         // a questo punto potrebbero intersecarsi
                         array<Vector3d,4> puntiFrattura1;
                         array<Vector3d,4> puntiFrattura2;
-                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol)){
+                        bool LatoAppartiene1=false;
+                        bool LatoAppartiene2=false;
+                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
                             cout<<"Passato si intersecano"<<endl;
                             Traccia TracciaAggiuntiva;
-                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva);
+                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2);
                             cout<<"Traccia trovata"<<endl;
                             //CalcoloTracce
                             if(tracciaTrovata){
