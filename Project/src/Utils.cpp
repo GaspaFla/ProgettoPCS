@@ -271,10 +271,10 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
         PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
         }
         if(LatoAppartiene1){
-            Tips[0]=true;
+            Tips[0]=false;
         }
         if(LatoAppartiene2){
-            Tips[1]=true;
+            Tips[1]=false;
         }
         if(!fintaIntersezione){
             array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
