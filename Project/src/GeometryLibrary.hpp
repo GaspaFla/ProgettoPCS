@@ -18,13 +18,15 @@ struct Traccia{
     array<unsigned int,2> FrattureTraccia; //memorizzo id delle due fratture che fanno parte della traccia
     array<bool,2> Tips; // memorizzo True se è passante e False se non è passante
     double lunghezza;
+    Traccia() = default;
     Traccia(unsigned int IdT, array<Vector3d,2> VerticiT, array<unsigned int,2> FrattureT,array<bool,2> T){//Costruttore
         IdTraccia = IdT;
         VerticiTraccia = VerticiT;
         FrattureTraccia = FrattureT;
         Tips = T;
-        lunghezza = (VerticiT[0]-VerticiT[1]).squaredNorm();//Salvo la lunghezza al quadrato per evitare di fare radici
+        lunghezza = (VerticiT[0]-VerticiT[1]).norm();//Salvo la lunghezza al quadrato per evitare di fare radici
     }
+
 };
 struct Frattura{
     unsigned int IdFrattura;
