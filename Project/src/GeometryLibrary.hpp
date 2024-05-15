@@ -24,7 +24,7 @@ struct Traccia{
         VerticiTraccia = VerticiT;
         FrattureTraccia = FrattureT;
         Tips = T;
-        lunghezza = (VerticiT[0]-VerticiT[1]).squaredNorm();//Salvo la lunghezza al quadrato per evitare di fare radici
+        lunghezza = (VerticiT[0]-VerticiT[1]).norm();//Salvo la lunghezza al quadrato per evitare di fare radici
     }
 
 };

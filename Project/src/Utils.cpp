@@ -104,9 +104,9 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
     double segnoVerticeprec;
     while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
         double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
-        //cout<<"Entra nel while "<<cont<<" " <<i<<endl;
+
         if(primo){//primo punto
-            //cout<<"Entra primo"<<endl;
+
             segnoVerticeprec = segnoVertice;
             primo=false;
             if(abs(segnoVertice)<tol){//il primo punto sta sul piano
@@ -148,7 +148,6 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
             i++;
         }
         else if(i!=(F1.NumVertici-1)){//Se non è il primo nè l'ultimo
-            //cout<<"Entra in diverso da ultimo"<<endl;
             if(abs(segnoVertice)<tol){//un punto diverso dal primo è sul piano ==> controllo il successivo perchè il precedente già l'ho controllato
                 // per non avere problemi basta iterare su tutti i vertici escluso l'ultimo in modo da poter fare i+1
 
@@ -203,7 +202,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
             i++;//mando avanti il ciclo
         }
         else{//ultimo vertice
-            //cout<<"Entra ultimo"<<endl;
+
             if(abs(segnoVertice)<tol){//Se è sul piano non devo controllare se precedente e successivo sono sul piano
                 double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[0]);
                 if(segnoVerticeSucc*segnoVerticeprec<0){
@@ -238,6 +237,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
         //ora calcolo la retta di intersezione tra i piani
         Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
         Matrix3d VettoriDelPiano;
+        double tol2=SetTolProdotto(tol);
 
         //riempo le righe della matrice
         VettoriDelPiano.row(0)=F1.vecNormale;
@@ -262,7 +262,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
 
         //Controllo se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
 
-        if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol)){
+        if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol2) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol2 || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol2)){
             PuntiInterni = {0,1};
             Tips={false, false};
 
@@ -270,11 +270,11 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
         else{
         PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
         }
-        if(LatoAppartiene1){
-            Tips[0]=true;
+        if(LatoAppartiene1){//Allora  è passante
+            Tips[0]=false;
         }
         if(LatoAppartiene2){
-            Tips[1]=true;
+            Tips[1]=false;
         }
         if(!fintaIntersezione){
             array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
@@ -330,9 +330,10 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
     //Passo fintaIntersezione = false e se vedo che non si intersecano metto true
     array<unsigned int,2> PuntiInterni;
     unsigned int cont = 0;
+    double tol2=SetTolProdotto(tol);
 
     //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
-    if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol*tol ){
+    if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 ){
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 1;
@@ -344,7 +345,7 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
 
         }
     }
-    else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
+    else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol2){
         PuntiInterni[0] = 0;
         if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 1;
@@ -356,7 +357,7 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
         }
 
     }
-    else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol*tol){
+    else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol2){
         PuntiInterni[0] = 1;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 0;
@@ -367,7 +368,7 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
             Tips = {true,false};
         }
     }
-    else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol*tol){
+    else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol2){
         PuntiInterni[0] = 1;
         if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 0;
@@ -429,10 +430,10 @@ bool stampaTracce( vector<Traccia>& Tracce){
         cout << "Errore";
         return false;
     }
-    file<<"Number of Traces" <<endl;
+    file<<"# Number of Traces" <<endl;
     file<<Tracce.size()<<endl;
-    file<<"TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
     for(auto t : Tracce){
+        file<<"# TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
         file<<t.IdTraccia<<"; "<<t.FrattureTraccia[0]<<"; "<<t.FrattureTraccia[1]<<"; "<<
             t.VerticiTraccia[0][0]<<"; "<<t.VerticiTraccia[0][1]<<"; "<<t.VerticiTraccia[0][2]<<"; "<<
             t.VerticiTraccia[1][0]<<"; "<<t.VerticiTraccia[1][1]<<"; "<<t.VerticiTraccia[1][2]<<endl;
@@ -450,18 +451,29 @@ bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
         return false;
     }
     for(auto f : Fratture){
-        file<<"FractureId; NumTraces "<<endl;
-        file<<"TraceId; Tips; Length" <<endl;
+        file<<"# FractureId; NumTraces "<<endl;
+        bool flag = true;
+        file<<f.IdFrattura<<"; "<<(f.TracceNoPass.size() + f.TraccePass.size())<<endl;
+
         if(!f.TraccePass.empty()){
             MergeSort(Tracce,f.TraccePass);
+            if(flag){
+                file<<"# TraceId; Tips; Length" <<endl;
+                flag = false;
+            }
             for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
                 file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
             }
         }
         if(!f.TracceNoPass.empty()){
+
             MergeSort(Tracce,f.TracceNoPass);
+            if(flag){
+                file<<"# TraceId; Tips; Length" <<endl;
+                flag = false;
+            }
             for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
-                file<<f.TracceNoPass[i]<<"; vero; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
+                file<<f.TracceNoPass[i]<<"; true; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
             }
         }
 
@@ -476,27 +488,25 @@ void Progetto1(const string& fileName, double tol){
     vector<Frattura> Fratture;
     vector<Traccia> Tracce;
     unsigned int IdTraccia=0;
-    cout<<"Entra"<<endl;
+    double tol2=SetTolProdotto(tol);
+
 
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
         //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
                 for (int j = i+1; j < Fratture.size(); j++) {
                 //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
-                if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol*tol){//Voglio che sia maggiore della tolleranza per non essere paralleli
+                if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol2){//Voglio che sia maggiore della tolleranza per non essere paralleli
                     //Controllo se le loro sfere approssimanti si intersecano
                     if(ControlloCentromero(Fratture[i], Fratture[j])){
-                        cout<<"passato controllo centromero"<<endl;
                         // a questo punto potrebbero intersecarsi
                         array<Vector3d,4> puntiFrattura1;
                         array<Vector3d,4> puntiFrattura2;
                         bool LatoAppartiene1=false;
                         bool LatoAppartiene2=false;
                         if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
-                            cout<<"Passato si intersecano"<<endl;
                             Traccia TracciaAggiuntiva;
                             bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2);
-                            cout<<"Traccia trovata"<<endl;
                             //CalcoloTracce
                             if(tracciaTrovata){
                                 IdTraccia ++;
@@ -544,7 +554,12 @@ double setTol2D(const double tol1D){
     return max(tol,tolInput);
 }
 
-
+double SetTolProdotto(const double tol1D){
+    double tolDefault = 10 *  numeric_limits<double>::epsilon();
+    double tolProd = tol1D*tol1D;
+    double tol = max(tolProd,tolDefault);
+    return tol;
+}
 bool testLunghezzaLati(vector<Vector3d>& CoordinateVertici, double tol){
     for(unsigned int i = 0;i<(CoordinateVertici.size()-1);i++){
         for(unsigned int j = i+1;j<CoordinateVertici.size();j++){

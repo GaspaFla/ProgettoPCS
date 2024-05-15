@@ -7,7 +7,7 @@ using namespace DFN;
 int main()
 {
 
-    string fileName = "./DFN/FR200_data.txt";
+    string fileName = "./DFN/FR50_data.txt";
 
     double tol1D = setTol1D();
     Progetto1(fileName, tol1D);

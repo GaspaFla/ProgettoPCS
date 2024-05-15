@@ -32,6 +32,7 @@ bool stampaTracce( vector<Traccia>& Tracce);
 
 double setTol1D();
 double setTol2D(const double tol1D);
+double SetTolProdotto(const double tol1D);
 bool testLunghezzaLati(vector<Vector3d>& CoordinatesVertices, double tol);
 
 

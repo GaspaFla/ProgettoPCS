@@ -5,6 +5,28 @@
 #include"../src/Sort.hpp"
 using namespace DFN;
 
+TEST(importoFratture,FileAggiuntivo){
+    double tol = 0.00000000000000001;
+    vector<Frattura> Fratture;
+    string fileName = "./DFN/fileTestImporto.txt";
+    bool flag = importoFratture(fileName, Fratture, tol);
+    EXPECT_TRUE(flag);
+    EXPECT_EQ(Fratture[0].IdFrattura,0);
+    EXPECT_EQ(Fratture[0].NumVertici,4);
+    Vector3d x(0,0,-1);
+    Vector3d y(0,1,0);
+    Vector3d z(0,-1,0);
+    Vector3d k(0,0,1);
+    for(unsigned int i = 0;i<3;i++){
+        EXPECT_DOUBLE_EQ(Fratture[0].CoordinateVertici[0][i],x[i]);
+        EXPECT_DOUBLE_EQ(Fratture[0].CoordinateVertici[1][i],y[i]);
+        EXPECT_DOUBLE_EQ(Fratture[0].CoordinateVertici[2][i],z[i]);
+        EXPECT_DOUBLE_EQ(Fratture[0].CoordinateVertici[3][i],k[i]);
+    }
+}
+
+
+
 TEST(LunghezzaLati,LunghezzaNonZero){
     Vector3d p1(4,0,-1);
     Vector3d p2(4,0,1);
@@ -534,21 +556,20 @@ TEST(EstremiTraccia, PuntiAllineati)
 
 
 //TEST CalcoloTracce
-TEST(CalcoloTracce,TracciaEsistente)
+TEST(CalcoloTracce,NonPassEntrambe)
 {   Vector3d p1(1,1,0);
     Vector3d p2(-1,1,0);
     Vector3d p3(-1,-1,0);
     Vector3d p4(1,-1,0);
-    Vector3d p5(0,0,-1);
-    Vector3d p6(4,0,-1);
-    Vector3d p7(4,0,1);
-    Vector3d p8(0,0,1);
+
+    Vector3d p5(10,0,-1);
+    Vector3d p6(10,0,1);
+    Vector3d p7(0,0,0);
 
     vector<Vector3d> CoordinateV1 = {p1,p2,p3,p4};
-    vector<Vector3d> CoordinateV2 = {p5,p6,p7,p8};
-    unsigned int NumVertici = 4;
-    Frattura F1(0,NumVertici,CoordinateV1);
-    Frattura F2(1,NumVertici,CoordinateV2);
+    vector<Vector3d> CoordinateV2 = {p5,p6,p7};
+    Frattura F1(0,4,CoordinateV1);
+    Frattura F2(1,3,CoordinateV2);
     unsigned int IdTraccia = 0;
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
@@ -561,6 +582,17 @@ TEST(CalcoloTracce,TracciaEsistente)
     bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
 
     EXPECT_TRUE(flag1);
+
+    Vector3d EstremoCorretto1(1,0,0);
+    Vector3d EstremoCorretto2(0,0,0);
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],EstremoCorretto1[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],EstremoCorretto2[i]);
+    }
+    EXPECT_TRUE(T.Tips[0]);
+    EXPECT_TRUE(T.Tips[1]);
 }
 
 TEST(CalcoloTracce,FintaTraccia)
@@ -621,11 +653,217 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     Traccia T;
     bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
 
+
+    Vector3d EstremoCorretto1(0,1,0);
+    Vector3d EstremoCorretto2(0,-1,0);
+
     EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],EstremoCorretto1[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],EstremoCorretto2[i]);
+    }
+
     EXPECT_FALSE(T.Tips[0]);
     EXPECT_FALSE(T.Tips[1]);
 
 }
+TEST(CalcoloTracce,TracciaSulLato)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    //QUADRATO CENTRO ZERO RAGGIO 1
+    vector<Vector3d>CoordinateV1={x,y,z,k};
+    Frattura F1=Frattura(0,4,CoordinateV1);
+    Vector3d x1(2,2,0);
+    Vector3d y1(-2,2,0);
+    Vector3d z1(-2,2,3);
+    Vector3d k1(2,2,3);
+    vector<Vector3d> CoordinateV2={x1,y1,z1,k1};
+    Frattura F2=Frattura(0,4,CoordinateV2);
+
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    double tol = 0.0000000000000001;
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],x[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],y[i]);
+    }
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_FALSE(T.Tips[0]);
+
+}
+
+TEST(CalcoloTracce,RomboAttraverso)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    //ROMBO
+    Vector3d x1(0,0,-4);
+    Vector3d y1(0,4,0);
+    Vector3d z1(0,0,4);
+    Vector3d k1(0,-4,0);
+    vector<Vector3d> Coord1={x1,y1,z1,k1};
+    Frattura F2=Frattura(0,4,Coord1);
+
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    double tol = 0.0000000000000001;
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+
+    Vector3d EstremoCorretto1(0,2,0);
+    Vector3d EstremoCorretto2(0,-2,0);
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],EstremoCorretto1[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],EstremoCorretto2[i]);
+    }
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_TRUE(T.Tips[1]);
+
+}
+
+
+TEST(CalcoloTracce,TriangoloToccante)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    //TRIANGOLO
+    Vector3d x1(2,0,0);
+    Vector3d y1(2,0,3);
+    Vector3d z1(0,2,0);
+    vector<Vector3d> Coord1={x1,y1,z1};
+    Frattura F2=Frattura(0,3,Coord1);
+
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    double tol = 0.0000000000000001;
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+
+    Vector3d EstremoCorretto1(0,2,0);
+    Vector3d EstremoCorretto2(2,0,0);
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],EstremoCorretto1[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],EstremoCorretto2[i]);
+    }
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_FALSE(T.Tips[1]);
+
+}
+
+TEST(CalcoloTracce,RettangoloAttraversoToccante)
+{
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,-0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura F1=Frattura(0,4,Coord);
+    Vector3d x1(2,2,-3);
+    Vector3d y1(-2,2,-3);
+    Vector3d z1(-2,2,3);
+    Vector3d k1(2,2,3);
+    vector<Vector3d> Coord1={x1,y1,z1,k1};
+    Frattura F2=Frattura(0,4,Coord1);
+
+
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    double tol = 0.0000000000000001;
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],x[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],y[i]);
+    }
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_FALSE(T.Tips[1]);
+
+}
+TEST(CalcoloTracce,PassantePerUno){
+    Vector3d p1(1,1,0);
+    Vector3d p2(-1,1,0);
+    Vector3d p3(-1,-1,0);
+    Vector3d p4(1,-1,0);
+
+    Vector3d p5(0,2,2);
+    Vector3d p6(0,2,-2);
+    Vector3d p7(0,-2,-2);
+    Vector3d p8(0,-2,2);
+
+    vector<Vector3d> CoordinateV1 = {p1,p2,p3,p4};
+    vector<Vector3d> CoordinateV2 = {p5,p6,p7,p8};
+    unsigned int NumVertici = 4;
+    Frattura F1(0,NumVertici,CoordinateV1);
+    Frattura F2(1,NumVertici,CoordinateV2);
+    unsigned int IdTraccia = 0;
+    array<Vector3d,4> puntiFrattura1;
+    array<Vector3d,4> puntiFrattura2;
+    double tol = 0.0000000000001;
+    bool b1=false;
+    bool b2=false;
+    SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
+    SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
+
+    Traccia T;
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
+
+    EXPECT_TRUE(flag1);
+    EXPECT_FALSE(T.Tips[0]);
+    EXPECT_TRUE(T.Tips[1]);
+    Vector3d EstremoCorretto1(0,1,0);
+    Vector3d EstremoCorretto2(0,-1,0);
+
+    EXPECT_TRUE(flag1);
+    for(unsigned int i =0;i<3;i++){
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[0][i],EstremoCorretto1[i]);
+        EXPECT_DOUBLE_EQ(T.VerticiTraccia[1][i],EstremoCorretto2[i]);
+    }
+
+}
+
+//TEST MergeSort
 TEST(MergeSort,VettoriDiversi){
     Vector3d x(0,0,1);
     Vector3d y(0,0,5);
@@ -650,6 +888,7 @@ TEST(MergeSort,VettoriDiversi){
     EXPECT_EQ(vId[1],2);
     EXPECT_EQ(vId[2],1);
 }
+
 
     //anche il mergesort funziona, evviva
 
