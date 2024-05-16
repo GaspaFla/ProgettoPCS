@@ -14,11 +14,11 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
     vector<Frattura> Figli;
     vector<Vector3d>PuntiPositivi;//vettore in cui mettere i punti a destra
     vector<Vector3d>PuntiNegativi;//vettore in cui mettere i punti a sinistra
-    int PuntiNuovi=0; //quanti nuovi vertici ho trovato
-    vector<Vector3d> VerticiTraccia={ Tracce[F.TraccePass[0]].VerticiTraccia[0],Tracce[F.TraccePass[0]].VerticiTraccia[1]};//vettore con dentro i due vertici della traccia
+    unsigned int PuntiNuovi=0; //quanti nuovi vertici ho trovato
+    array<Vector3d,2> VerticiTraccia={ Tracce[F.TraccePass[0]].VerticiTraccia[0],Tracce[F.TraccePass[0]].VerticiTraccia[1]};//vettore con dentro i due vertici della traccia
     int SegnoPrec=1;
     double segno;
-    for (int i=0; i<F.NumVertici; i++){
+    for (unsigned int i=0; i<F.NumVertici; i++){
         if(PuntiNuovi<2){
             //se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
             segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
