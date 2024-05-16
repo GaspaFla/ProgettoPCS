@@ -1,4 +1,5 @@
 #include "Utils.hpp"
+#include "Utils2.hpp"
 #include "GeometryLibrary.hpp"
 #include "Eigen/Eigen"
 #include "Sort.hpp"
@@ -6,568 +7,688 @@
 #include <sstream> // controlla se servono tutte
 #include <fstream>
 #include <string>
+#include <array>
+
 using namespace std;
 
-namespace DFN{
-bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double tol){
-    // Passo un vettore vuoto che vado a riempire con le fratture se la lettura del file va a buon fine
-    ifstream file(fileName);
-    if(file.fail()){
-        cerr << "Errore : file non trovato";
-        return false;
-    }
-    // Sto assumendo che il formato del file è corretto ==> VALUTA SE AGGIUNGERE CONTROLLI
-    string testa; // La prima riga va saltata
-    getline(file,testa);
-    string line;
-    getline(file,line);
-    unsigned int NumFratture = 0;
-    stringstream convert(line);
-    convert >> NumFratture;
-    Fratture.reserve(NumFratture); //?
-    //Ora letto tutte le righe e mi salvo le fratture
-    for(unsigned int i = 0; i< NumFratture; i++){
-        char c;
-        unsigned int FratturaId;
-        unsigned int NumVertici;
-        getline(file,line);//Una riga va saltata
-        getline(file,line);
-        stringstream convert(line);
-        convert>> FratturaId >> c >>NumVertici;
-        getline(file,line);
-        vector<Vector3d> CoordinateVertici ;
-        CoordinateVertici.resize(NumVertici);   //se metti reserve esplode
-        for(unsigned int j = 0; j<3; j++){
-            getline(file,line);
-            stringstream convert(line);
-            convert >>CoordinateVertici[0][j];
-            for(unsigned int k = 1; k<NumVertici; k++){
-                convert>>c>>CoordinateVertici[k][j];
-            }
-        }
-        if(testLunghezzaLati(CoordinateVertici,tol)){//Decidi se tenere il controllo, costo molto elevato
-            Frattura F(FratturaId,NumVertici,CoordinateVertici);
-            Fratture.push_back(F);
+namespace DFN{                                         //La traccia madre deve avere già i vertici numerati con id
 
-        }
-    }
+void Taglia(Frattura& F,Frattura & FMadre,vector<Traccia> Tracce, double tol,double tol2){//Passare un contatore che mi dice a quanto sono arrivata a numerare gli id
+    if(!F.TraccePass.empty()){
+        //Chiama calcoloPassante
+        bool TracciaSulBordo = false;
+        //in calcolo figlie quando creo le nuove fratture do già gli id ai suoi vertici, poi chiamo taglia
 
-    file.close();
-    return true;
-}
-
-
-
-bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
-
-    Vector3d vecmediaF1= Vector3d::Zero(3);
-    for (unsigned int i=0; i<F1.NumVertici; i++){
-        vecmediaF1=vecmediaF1+F1.CoordinateVertici[i];
-    }
-
-    Vector3d vecmediaF2= Vector3d::Zero(3);
-    for (unsigned int i=0; i<F2.NumVertici; i++){
-        vecmediaF2=vecmediaF2+F2.CoordinateVertici[i];
-    }
-
-    vecmediaF1 = vecmediaF1/F1.NumVertici;
-    vecmediaF2 = vecmediaF2/F2.NumVertici;
-
-    //calcolo le medie dei centri (sono vettori)--se funziona posso ottimizzare mettendoli in un ciclo for
-    double raggioquadro1=0;
-    double raggioquadro2=0;
-    for (unsigned int i=0; i<F1.NumVertici; i++){
-        raggioquadro1=max(raggioquadro1,(F1.CoordinateVertici[i]-vecmediaF1).squaredNorm());
-    }
-    for (unsigned int i=0; i<F2.NumVertici; i++){
-        raggioquadro2=max(raggioquadro2,(F2.CoordinateVertici[i]-vecmediaF2).squaredNorm());
-    }
-    //confronto le distanze dal centro e scelgo quella maggiore, in modo tale da definire una palla in cui sia contenuto il poligono
-    if ((vecmediaF1-vecmediaF2).squaredNorm()<(raggioquadro1+raggioquadro2 + 2*sqrt(raggioquadro1)*sqrt(raggioquadro2))){ //uso il quadrato della somma dei lati perchè costa meno il doppio prodotto che fare la radice
-        return true;
-    }
-    //confronto la distanza tra i centroidi con la somma dei raggi delle palle
-    //faccio tutto al quadrato
-
-    return false;
-}
-
-
-//INIZIO CODICE FLAVIO
-
-bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol, bool& LatoAppartiene){
-    bool risultato=false;//non si intersecano se non funziona
-    int cont=0; //quante volte ho avuto intersezione retta poligono
-    bool primo=true;//sgn del vertice predente
-    int i=0;//contatore
-    double segnoVerticeprec;
-    while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
-        double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
-
-        if(primo){//primo punto
-
-            segnoVerticeprec = segnoVertice;
-            primo=false;
-            if(abs(segnoVertice)<tol){//il primo punto sta sul piano
-                double segnoVerticePrec=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[F1.NumVertici-1]);
-                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i+1]);
-                risultato = true; //non so se va qua?
-                if(abs(segnoVerticePrec)<tol){//sta sul piano anche l'ultimo
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[i];
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];
-                    cont++;
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[F1.NumVertici-2];
-                    cont++;
-                    LatoAppartiene=true;
-
-                }
-                else if(abs(segnoVerticeSucc)<tol){//sta sul piano anche il secondo
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
-                    cont++;
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+2];
-                    cont++;
-                    LatoAppartiene=true;
-                }
-                else if(segnoVerticeSucc*segnoVerticePrec>0){//tocca un solo punto
-                    return false;
-                }
-                else{//Se sono discordi vuol dire che passa attraverso
-                    //Salvo il punto 0 ed 1, ma al prossimo giro non vado a controllare 1 perchè so già che è diverso da 0 e come si comporta con il precedente
-                    //incremento i di 2, una volta nell'else e una volta nell'if del primo
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1]; //Salvo 0 ed 1 come lato che interseca
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
-                    segnoVerticeprec=segnoVerticeSucc; //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
-                    cont++;
-                    i++;
-                }
-            }
-            i++;
-        }
-        else if(i!=(F1.NumVertici-1)){//Se non è il primo nè l'ultimo
-            if(abs(segnoVertice)<tol){//un punto diverso dal primo è sul piano ==> controllo il successivo perchè il precedente già l'ho controllato
-                // per non avere problemi basta iterare su tutti i vertici escluso l'ultimo in modo da poter fare i+1
-
-
-                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i+1]);
-                //sto salvando la retta con il precedente due
-                if(abs(segnoVerticeSucc)<tol){//guardo se anche il successivo sta sul piano
-                    risultato = true;
-                    if(i==F1.NumVertici-2){//se ci sta ma è l'ultimo (i ferma a quello prima) combino l'ultimo con il primo
-                        puntiFrattura[2*cont]=F1.CoordinateVertici[0];
-                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];
-                        cont++;
-                        puntiFrattura[2*cont]=F1.CoordinateVertici[i];
-                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
-                        cont++;
-                        LatoAppartiene=true;
-                    }
-                    else{//altrimenti combino il prossimo con quello dopo
-                        puntiFrattura[2*cont]=F1.CoordinateVertici[i+2];//vertice poligono che serve, uso cont che vale 0 e poi 1
-                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i+1];//vertice poligono che serve
-                        cont++;
-                        puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-                        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];
-                        cont++;
-                        LatoAppartiene=true;
-                    }
-
-                }
-                else if(segnoVerticeSucc*segnoVerticeprec>0) {//se il secondo non è nullo allora guardo come è la situazione tra quello prima e quello dopo
-                    //caso in cui abbiamo che l'intersezione è solo un punto
-                    return false;
-
-                }
-                else{
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[i+1];
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
-                    segnoVertice=segnoVerticeSucc;
-                    //ho cambiato questo perchè cambia il mio valore poi dopo
-                    //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
-                    cont++;
-                    i++;
-                }
-            }
-            else if(segnoVertice*segnoVerticeprec<0){//se non è nullo controllo con il segno del precedente==> se sono discordi ho intersezione
-                risultato=true;//ho intersezione
-                puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-                puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
-                cont++;
-
-            }
-            segnoVerticeprec=segnoVertice;
-            i++;//mando avanti il ciclo
-        }
-        else{//ultimo vertice
-
-            if(abs(segnoVertice)<tol){//Se è sul piano non devo controllare se precedente e successivo sono sul piano
-                double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[0]);
-                if(segnoVerticeSucc*segnoVerticeprec<0){
-                    risultato=true;//ho intersezione
-                    puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-                    puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
-                    cont++;
-                }
-                else{
-                    return false;
-                }
-            }
-            else if(segnoVertice*segnoVerticeprec<0){
-                risultato=true;//ho intersezione
-                puntiFrattura[2*cont]=F1.CoordinateVertici[i];//vertice poligono che serve, uso cont che vale 0 e poi 1
-                puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i-1];//vertice poligono che serve
-                cont++;
-            }
-            i++;
-        }
-
-    }
-    if (cont==1){
-        puntiFrattura[2*cont]=F1.CoordinateVertici[F1.NumVertici-1];
-        puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[0];
-
-    }
-    return risultato;
-}
-bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool LatoAppartiene1, bool LatoAppartiene2){
-
-    //ora calcolo la retta di intersezione tra i piani
-    Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
-    Matrix3d VettoriDelPiano;
-    double tol2=SetTolProdotto(tol);
-
-    //riempo le righe della matrice
-    VettoriDelPiano.row(0)=F1.vecNormale;
-    VettoriDelPiano.row(1)=F2.vecNormale;
-    VettoriDelPiano.row(2)=DirettriceDellaRettaDiIntersezione;
-    Vector3d TerminiNoti ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
-
-    //calcolo il punto della Retta di Intersezione
-    Vector3d PuntodellaRettadiIntersezione=VettoriDelPiano.partialPivLu().solve(TerminiNoti);
-
-    //calcolo il punto di intersezione per le rette del primo poligono
-    array<Vector3d,4> PuntiIntersezione;
-    for(unsigned int i=0; i<2; i++){
-        PuntiIntersezione[i]=IncontroTraRette(puntiFrattura1[2*i]-puntiFrattura1[2*i+1],puntiFrattura1[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
-        PuntiIntersezione[i+2]=IncontroTraRette(puntiFrattura2[2*i]-puntiFrattura2[2*i+1],puntiFrattura2[2*i],DirettriceDellaRettaDiIntersezione,PuntodellaRettadiIntersezione);
-        //salvo il punto della prima frattura nel posto 0, il punto della seconda frattura nel posto 2 e così via...
-
-    }
-    array<unsigned int,2> PuntiInterni;
-    array<bool,2> Tips;
-    bool fintaIntersezione = false;
-
-    //Controllo se i punti coincidono ovvero se la traccia è PASSANTE per ENTRAMBI
-
-    if(((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 || (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol2) && ((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol2 || (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol2)){
-        PuntiInterni = {0,1};
-        Tips={false, false};
-
-    }
-    else{
-        PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
-    }
-    if(LatoAppartiene1){//Allora  è passante
-        Tips[0]=false;
-    }
-    if(LatoAppartiene2){
-        Tips[1]=false;
-    }
-    if(!fintaIntersezione){
-        array<unsigned int, 2> IdFratture={F1.IdFrattura,F2.IdFrattura};
-        if(Tips[0]){
-            F1.TracceNoPass.push_back(IdTraccia);
+        vector<Frattura> figlie = calcoloSottoPoligoniPass(F,tol,tol2,TracciaSulBordo,Tracce,FMadre);
+        if(TracciaSulBordo){
+            Taglia(figlie[0],FMadre,Tracce,tol,tol2);
         }
         else{
-            F1.TraccePass.push_back(IdTraccia);
-        }
-        if(Tips[1]){
-            F2.TracceNoPass.push_back(IdTraccia);
-        }
-        else{
-            F2.TraccePass.push_back(IdTraccia);
+             Taglia(figlie[0],FMadre,Tracce,tol,tol2);
+             Taglia(figlie[1],FMadre,Tracce,tol,tol2);
         }
 
-        T =Traccia(IdTraccia,{PuntiIntersezione[PuntiInterni[0]],PuntiIntersezione[PuntiInterni[1]]},IdFratture,Tips);
+     }
+    else if(!F.TracceNoPass.empty()){
+        //Chiama calcoloNonPassante
+        //vector<Frattura> figlie = calcoloSottoPoligoniNoPass(F,tol);
+        //Taglia(figlie[0],FMadre,Tracce,tol,tol2);
+        //Taglia(figlie[1],FMadre,Tracce,tol,tol2);
+
     }
-    // Se fintaIntersezione = true non è andato a buon fine quindi CalcoloTracce deve tornare false
-    // Viceversa se l'intersezione è vera e quindi fintaIntersezione = false, trova la traccia e ritorna ture
-    return (!fintaIntersezione);
+    else{//Vuol dire che non ha più tracce e posso salvarlo come elemento della mesh
+        converteInCelle(F,FMadre);
+    }
 }
+    void converteInCelle(Frattura& F,Frattura &FMadre){
+            //Devo aggiungere solo Cell1D e la Cell2D, ovvero la frattura stessa F
+            //Le celle0D le aggiunge flavio
+            //Ogni Frattura F ha il vettore contenente gli id dei suoi vertici
 
+        //Aggiungo cell1D ==> Aggiungo Id, e gli id degli estremi, poi incremento il numero di Cell1D della mesh
+        vector<unsigned int> IdLatiCell2D;
 
+        //Prima di inserire un lato devo controllare se esiste già un lato che ha quei due vertici come id
+        //Se esiste uso l'id di quel lato, altrimenti ne creo uno nuovo
 
-Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
-    Vector3d P=puntointersezione-VerticePoligono;
-    MatrixXd M(3, 2);
-    M.col(0)=direzionedeiLati;
-    M.col(1)=direzioneretta;
-    Vector2d alfa=M.householderQr().solve(P);
-    Vector3d PuntoDiFrattura=alfa[0]*direzionedeiLati+VerticePoligono;
-    return(PuntoDiFrattura);
-}
-
-
-//TOGLIERE CalcoloRetta
-Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
-    Vector3d t= F1.vecNormale.cross(F2.vecNormale);
-    Matrix3d M;
-    M.row(0)=F1.vecNormale;
-    M.row(1)=F2.vecNormale;
-    M.row(2)=t;
-    Vector3d d ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
-    Vector3d v=M.partialPivLu().solve(d);
-
-    return v;
-}
-
-array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, double tol, array<bool,2>& Tips,bool& fintaIntersezione){//controlla che il punto sulla retta non coincide con gli altri
-    //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
-    //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
-    //Passo fintaIntersezione = false e se vedo che non si intersecano metto true
-    array<unsigned int,2> PuntiInterni;
-    unsigned int cont = 0;
-    double tol2=SetTolProdotto(tol);
-
-    //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
-    if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 ){
-        PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
-            PuntiInterni[1]= 1;
-            Tips = {false,true};
-        }
-        else {
-            PuntiInterni[1] = 3;
-            Tips = {true,false};
-
-        }
-    }
-    else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol2){
-        PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
-            PuntiInterni[1]= 1;
-            Tips = {false,true};
-        }
-        else{
-            PuntiInterni[1] = 2;
-            Tips = {true,false};
-        }
-
-    }
-    else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol2){
-        PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
-            PuntiInterni[1]= 0;
-            Tips = {false,true};
-        }
-        else{
-            PuntiInterni[1] = 3;
-            Tips = {true,false};
-        }
-    }
-    else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol2){
-        PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
-            PuntiInterni[1]= 0;
-            Tips = {false,true};
-        }
-        else {
-            PuntiInterni[1] = 2;
-            Tips = {true,false};
-        }
-
-    }
-    else{
-        Vector3d punto = PuntiIntersezione[0] + PuntiIntersezione[1] +  PuntiIntersezione[2] +  PuntiIntersezione[3];
-
-        for(unsigned int i = 0;i<3; i++){//aggiusta indici
-            Vector3d u = punto-PuntiIntersezione[i];
-            unsigned int numPositivi = 0;
-            unsigned int numNegativi = 0;
-            for(unsigned int j = 0;j<4; j++){//aggiusta indici
-                if(j!=i){
-                    Vector3d v = PuntiIntersezione[j]-PuntiIntersezione[i];
-                    if(u.dot(v)>0)
-                        numPositivi++;
-                    else numNegativi++;
-                }
-            }
-            if(numNegativi == 2 || numPositivi == 2){
-                PuntiInterni[cont] = i;
-                cont++;
-            }
-        }
-        if(cont == 1){//Risparmio di fare un ciclo del for
-            PuntiInterni[1] = 3;
-        }
-
-        if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1){
-            Tips = {false,true};
-        }
-        else if(PuntiInterni[0] == 2 && PuntiInterni[1] == 3){
-            Tips = {true,false};
-        }
-        else {
-            if((PuntiIntersezione[PuntiInterni[0]]-PuntiIntersezione[2]).dot(PuntiIntersezione[PuntiInterni[0]]-PuntiIntersezione[3])>0){
-                //Se entra nell'if vuol dire che è una finta intersezione
-                fintaIntersezione = true;
+        for(unsigned int i= 0;i<F.NumVertici;i++){
+            bool esisteLato = false;
+            array<unsigned int,2> IdVerticiCell1D;
+            if(i == F.NumVertici -1){
+                IdVerticiCell1D= {F.IdVertici[i],F.IdVertici[0]};
             }
             else{
-                Tips = {true,true};
+                IdVerticiCell1D = {F.IdVertici[i],F.IdVertici[i+1]};
+
             }
+
+            unsigned int IdCell1D ;
+            for(unsigned int j = 0;j<FMadre.SottoPoligoni.VerticesCell1Ds.size();j++){
+                 if((FMadre.SottoPoligoni.VerticesCell1Ds[j][0] == IdVerticiCell1D[0] && FMadre.SottoPoligoni.VerticesCell1Ds[j][1] == IdVerticiCell1D[1]) || (FMadre.SottoPoligoni.VerticesCell1Ds[j][0] == IdVerticiCell1D[1] && FMadre.SottoPoligoni.VerticesCell1Ds[j][1] == IdVerticiCell1D[0]) ){
+                    esisteLato = true; //Non devo aggiungerlo
+                    IdCell1D = FMadre.SottoPoligoni.IdCell1Ds[j];
+
+                }
+            }
+            if(!esisteLato){//Se non esiste, crea una nuova Cell1D
+                IdCell1D =  FMadre.SottoPoligoni.NumberofCell1Ds;
+                FMadre.SottoPoligoni.IdCell1Ds.push_back(IdCell1D);
+                FMadre.SottoPoligoni.VerticesCell1Ds.push_back (IdVerticiCell1D);
+                FMadre.SottoPoligoni.NumberofCell1Ds++;
+            }
+
+            IdLatiCell2D.push_back(IdCell1D);
+
         }
 
-    }
-    return PuntiInterni;
-}
+        //Aggiungo Cell2D ==>Aggiungo ID, vettori con gli id dei vertici e il vettore con gli id dei Lati
+        unsigned int IdCell2D = FMadre.SottoPoligoni.NumberofCell2Ds;//Ricordati di inizializzarlo a 0!!
+        FMadre.SottoPoligoni.IdCell2Ds.push_back(FMadre.SottoPoligoni.NumberofCell2Ds);
+        FMadre.SottoPoligoni.VerticesCell2Ds.push_back(F.IdVertici);
+        FMadre.SottoPoligoni.EdgesCell2Ds.push_back(IdLatiCell2D);
 
-bool stampaTracce( vector<Traccia>& Tracce){
-    ofstream file("stampaTracce.txt");
-    if(file.fail()){
-        cout << "Errore";
-        return false;
-    }
-    file<<"# Number of Traces" <<endl;
-    file<<Tracce.size()<<endl;
-    for(auto t : Tracce){
-        file<<"# TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
-        file<<t.IdTraccia<<"; "<<t.FrattureTraccia[0]<<"; "<<t.FrattureTraccia[1]<<"; "<<
-            t.VerticiTraccia[0][0]<<"; "<<t.VerticiTraccia[0][1]<<"; "<<t.VerticiTraccia[0][2]<<"; "<<
-            t.VerticiTraccia[1][0]<<"; "<<t.VerticiTraccia[1][1]<<"; "<<t.VerticiTraccia[1][2]<<endl;
+        FMadre.SottoPoligoni.NumberofCell2Ds++;
     }
 
-    file.close();
-    return true;
-}
-
-//Completare quando è pronto MergeSort
-bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
-    ofstream file("stampaTracceFatture.txt");
-    if(file.fail()){
-        cout << "Errore";
-        return false;
-    }
-    for(auto f : Fratture){
-        file<<"# FractureId; NumTraces "<<endl;
-        bool flag = true;
-        file<<f.IdFrattura<<"; "<<(f.TracceNoPass.size() + f.TraccePass.size())<<endl;
-
-        if(!f.TraccePass.empty()){
-            MergeSort(Tracce,f.TraccePass);
-            if(flag){
-                file<<"# TraceId; Tips; Length" <<endl;
-                flag = false;
-            }
-            for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
-                file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
-            }
-        }
-        if(!f.TracceNoPass.empty()){
-
-            MergeSort(Tracce,f.TracceNoPass);
-            if(flag){
-                file<<"# TraceId; Tips; Length" <<endl;
-                flag = false;
-            }
-            for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
-                file<<f.TracceNoPass[i]<<"; true; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
-            }
-        }
-
-    }
-
-    file.close();
-    return true;
-}
 
 
-void Progetto1(const string& fileName, double tol){
-    vector<Frattura> Fratture;
-    vector<Traccia> Tracce;
-    unsigned int IdTraccia=0;
-    double tol2=SetTolProdotto(tol);
+    //Inizio codice Flavio
 
 
-    if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
-        //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
-        for (int i = 0; i < Fratture.size()-1; i++) {
-            for (int j = i+1; j < Fratture.size(); j++) {
-                //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
-                if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol2){//Voglio che sia maggiore della tolleranza per non essere paralleli
-                    //Controllo se le loro sfere approssimanti si intersecano
-                    if(ControlloCentromero(Fratture[i], Fratture[j])){
-                        // a questo punto potrebbero intersecarsi
-                        array<Vector3d,4> puntiFrattura1;
-                        array<Vector3d,4> puntiFrattura2;
-                        bool LatoAppartiene1=false;
-                        bool LatoAppartiene2=false;
-                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
-                            Traccia TracciaAggiuntiva;
-                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2);
-                            //CalcoloTracce
-                            if(tracciaTrovata){
-                                IdTraccia ++;
-                                Tracce.push_back(TracciaAggiuntiva);
+    vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bool& TracciaSulBordo, vector<Traccia>& Tracce, Frattura& FMadre){
+        vector<unsigned int> NuoviIndiciPositivi;
+        vector<unsigned int> NuoviIndiciNegativi;
+        vector<Frattura> Figli;
+        vector<Vector3d>PuntiPositivi;//vettore in cui mettere i punti a destra
+        vector<Vector3d>PuntiNegativi;//vettore in cui mettere i punti a sinistra
+        unsigned int PuntiNuovi=0; //quanti nuovi vertici ho trovato
+        //Sostituisci con array dim 2 :)
+        vector<Vector3d> VerticiTraccia={ Tracce[F.TraccePass[0]].VerticiTraccia[0],Tracce[F.TraccePass[0]].VerticiTraccia[1]};//vettore con dentro i due vertici della traccia
+        int SegnoPrec=1;
+        double segno;
+        for (unsigned int i=0; i<F.NumVertici; i++){
+            if(PuntiNuovi<2){
+                //se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
+                segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
+                if(i==0){
+                    //caso 1, il vertice coincide con il vertice traccia ma il lato non è compreso
+                    if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol ){
+                        //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+
+                        SegnoPrec=(VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1]).dot(F.vecNormale);
+                    }
+                    else if ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol){
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                        SegnoPrec=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1])).dot(F.vecNormale);
+                    }
+                    // caso 2, la retta della traccia appartiene al lato
+                    else if(abs(segno)<tol){
+                        TracciaSulBordo=true;
+                        vector<Vector3d>VerticiTracciaOrdinati;
+                        SegnoPrec=1;
+                        //quale è il più vicino?
+
+                        if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm()<(VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm()){
+                            if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[0]};
+
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati={VerticiTraccia[1],VerticiTraccia[0]};
+
+                            }
+                        }
+                        else{
+                            if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[1]};
+
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati=VerticiTraccia;
+
+                            }
+                        }
+                        //sta sulla retta con il successivo?
+
+                        if((F.CoordinateVertici[i+1]-F.CoordinateVertici[i]).cross(VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm()<tol2){
+                            //salvo tutti nel positivo
+                            PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiPositivi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+                            }
+
+
+
+                        }
+                        else{
+                            //sta nel precedente allora aggiungo prima da una parte e poi dall'altra
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiPositivi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+                            }
+
+
+                            PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+
+                        }
+                    }
+                    else{
+                        //va tutto bene
+                        SegnoPrec=segno;
+                    }
+                }
+                //non siamo nel primo nè nell'ultimo
+                else if (i!=F.NumVertici-1){
+                    //il vertice della traccia lo è anche del Poligono?
+                    if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol ){
+                        //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                        SegnoPrec=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1])).dot(F.vecNormale);
+                    }
+                    else if ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol){
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                        SegnoPrec=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1])).dot(F.vecNormale);
+                    }
+                    //la traccia è nel lato?
+                    else if(abs(segno)<tol){
+                        TracciaSulBordo=true;
+                        vector<Vector3d>VerticiTracciaOrdinati;
+                        //quale è il più vicino?
+
+                        if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm()<(VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm()){
+                            if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[0]};
+
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati={VerticiTraccia[1],VerticiTraccia[0]};
+
+                            }
+                        }
+                        else{
+                            if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[1]};
+
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati=VerticiTraccia;
+
+                            }
+                        }
+                        //guardo in quale stavo già inserendo tutti i miei dati e continuo a farlo
+                        if(SegnoPrec>0){
+                            PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiPositivi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+                            }
+                        }
+                        else{
+                            PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiNegativi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+
+                            }
+                        }
+
+                    }
+
+
+
+                    //la traccia non è sul lato e non ha vertici coincidenti
+                    else {
+                        if(segno*SegnoPrec>0){
+                            //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
+                            if(segno>0){
+                                PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                            }
+                            else{
+                                PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                            }
+                        }
+                        //se invece hanno segni diversi...
+                        else {
+                            PuntiNuovi++;
+                            //essendo passanti ho già il punto di intersezione
+                            //guardo quale sta sulla retta giusta
+                            //aggiungo prima il vertice della traccia e poi se stesso
+                            if((F.CoordinateVertici[i]-F.CoordinateVertici[i+1]).cross(F.CoordinateVertici[i]-VerticiTraccia[0]).squaredNorm()<tol2){
+                                if (segno>0){
+                                    //aggiungo il punto nuovo sia a una sia all'altra
+
+                                    PuntiNegativi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+
+
+                                    PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                                }
+                                else{
+
+                                    PuntiNegativi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                                }
+
+                            }
+                            //scopro che era il punto 1 e non il punto 0, rifaccio tutto
+                            else{
+                                if (segno>0){
+                                    //aggiungo il punto nuovo sia a una sia all'altra
+                                    PuntiNegativi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+
+
+                                }
+                                else{
+                                    PuntiNegativi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+
+
+                                }
+
                             }
 
                         }
                     }
                 }
+
+                //sono all'ultimo, faccio i controlli uguali al secondo ma al posto del successivo prendo lo 0
+                //ne ho cambiati solo due forse posso fare un if solo per rendere tutto più pulito?
+                else{
+
+                    //il vertice della traccia lo è anche del Poligono?
+                    if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol ){
+                        //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+
+                    }
+                    else if ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2 && abs(segno)>tol){
+                        PuntiNuovi++;
+                        PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                        PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                        NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+
+                    }
+                    //la traccia è nel lato?
+                    else if(abs(segno)<tol){
+                        TracciaSulBordo=true;
+                        vector<Vector3d>VerticiTracciaOrdinati;
+                        //quale è il più vicino?
+
+                        if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm()<(VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm()){
+                            if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[0]};
+
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati={VerticiTraccia[1],VerticiTraccia[0]};
+
+
+
+                            }
+                        }
+                        else{
+                            if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2){
+                                //visto che i punti coincidono assegno solo l'altro
+                                VerticiTracciaOrdinati={VerticiTraccia[1]};
+                            }
+                            else{
+
+                                VerticiTracciaOrdinati=VerticiTraccia;
+                            }
+                        }
+                        //guardo in quale stavo già inserendo tutti i miei dati e continuo a farlo
+                        if(SegnoPrec>0){
+                            PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiPositivi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+                            }
+                        }
+                        else{
+                            PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                            NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                            for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
+
+                                PuntiNegativi.push_back(VerticiTracciaOrdinati[j]);
+                                NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTracciaOrdinati[j], tol2));
+                                PuntiNuovi++;
+
+                            }
+                        }
+
+                    }
+
+
+
+                    //la traccia non è sul lato e non ha vertici coincidenti
+                    else {
+                        if(segno*SegnoPrec>0){
+                            //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
+                            if(segno>0){
+                                PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                            }
+                            else{
+                                PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                            }
+                        }
+                        //se invece hanno segni diversi...
+                        else {
+                            PuntiNuovi++;
+                            //essendo passanti ho già il punto di intersezione
+                            //guardo quale sta sulla retta giusta
+                            //aggiungo prima il vertice della traccia e poi se stesso
+                            if((F.CoordinateVertici[i]-F.CoordinateVertici[0]).cross(F.CoordinateVertici[i]-VerticiTraccia[0]).squaredNorm()<tol2){
+                                if (segno>0){
+                                    //aggiungo il punto nuovo sia a una sia all'altra
+                                    PuntiNegativi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+
+                                    PuntiPositivi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                                }
+                                else{
+                                    PuntiNegativi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[0]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[0], tol2));
+                                    PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                                }
+
+                            }
+                            //scopro che era il punto 1 e non il punto 0, rifaccio tutto
+                            else{
+                                if (segno>0){
+                                    //aggiungo il punto nuovo sia a una sia all'altra
+                                    PuntiNegativi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+
+                                }
+                                else{
+                                    PuntiNegativi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciNegativi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiPositivi.push_back(VerticiTraccia[1]);
+                                    NuoviIndiciPositivi.push_back(RicercaIdVertice(FMadre, VerticiTraccia[1], tol2));
+                                    PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                                    NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+
             }
 
+            else{
+                if(SegnoPrec>0){
+                    PuntiPositivi.push_back(F.CoordinateVertici[i]);
+                    NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                }
+                else{
+                    PuntiNegativi.push_back(F.CoordinateVertici[i]);
+                    NuoviIndiciNegativi.push_back(F.IdVertici[i]);
+                }
+            }
+        }
+
+
+
+        //devo fare la funzione che mi divide le tracce e mi dice se sono di una frattura o dell'altra
+        double segnoVerticeTraccia0;
+        double segnoVerticeTraccia1;
+        vector<unsigned int>TracceNegative;
+        vector<unsigned int>TraccePositive;
+        vector<unsigned int>TracceNegativeNopass;
+        vector<unsigned int> TraccePositiveNopass;
+        Vector3d NuovoVerticeTraccia;
+        unsigned int IdPositivo;
+        unsigned int IdNegativo;
+        Vector3d DirezioneTraccia=VerticiTraccia[0]-VerticiTraccia[1];
+        if(TracciaSulBordo){
+            for (unsigned int j=1; j<F.TraccePass.size();j++){
+                TraccePositive.push_back(F.TraccePass[j]);
+
+            }
+            for (unsigned int j=0; j<F.TracceNoPass.size();j++){
+                TraccePositive.push_back(F.TracceNoPass[j]);
+
+            }
+        }
+        else{
+            if(!F.TraccePass.empty()){
+                for (unsigned int i=1; i<F.TraccePass.size(); i++){
+                    segnoVerticeTraccia0=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[0]).dot(F.vecNormale);
+                    segnoVerticeTraccia1=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1]).dot(F.vecNormale);
+
+                    if(segnoVerticeTraccia0*segnoVerticeTraccia1<0 && abs(segnoVerticeTraccia0)>tol && abs(segnoVerticeTraccia1)>tol){
+                        NuovoVerticeTraccia=IncontroTraRette(Tracce[F.TraccePass[i]].VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1], Tracce[F.TraccePass[i]].VerticiTraccia[0],DirezioneTraccia , VerticiTraccia[0]);
+                        if(segnoVerticeTraccia0>0){
+                            IdPositivo=Tracce.size();
+                            Tracce.push_back(Traccia({VerticiTraccia[0],NuovoVerticeTraccia}));
+                            IdNegativo=IdPositivo+1;
+                            Tracce.push_back(Traccia({NuovoVerticeTraccia,VerticiTraccia[1]}));
+
+                            TraccePositive.push_back(IdPositivo);
+                            TracceNegative.push_back(IdNegativo);
+
+
+                            //inserisco un vertice nelle positive, l'altro nelle negative
+                            //qua vado a inserire la traccia nuova.
+
+                        }
+                        else{
+                            IdNegativo=Tracce.size();
+                            Tracce.push_back(Traccia({VerticiTraccia[0],NuovoVerticeTraccia}));
+                            IdPositivo=IdPositivo+1;
+                            Tracce.push_back(Traccia({NuovoVerticeTraccia,VerticiTraccia[1]}));
+
+                            TraccePositive.push_back(IdPositivo);
+                            TracceNegative.push_back(IdNegativo);
+
+                            //cambio inserimento, ora una da una parte ora dall'altra
+                        }
+                    }
+                    else {
+                        if(segnoVerticeTraccia0>0){
+                            Tracce.push_back(Traccia({VerticiTraccia[0],VerticiTraccia[1]}));
+                            TraccePositive.push_back(F.TraccePass[i]);
+
+                        }
+                        else{
+                            Tracce.push_back(Traccia({VerticiTraccia[0],VerticiTraccia[1]}));
+                            TracceNegative.push_back(F.TraccePass[i]);
+                        }
+
+
+                    }
+                }
+            }
+
+            //rifaccio tutto per le non passanti (è un copia e incolla)
+            //TracceNOpass
+
+            if(!F.TracceNoPass.empty()){
+                for (unsigned int i=1; i<F.TraccePass.size(); i++){
+                    segnoVerticeTraccia0=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[0]).dot(F.vecNormale);
+                    segnoVerticeTraccia1=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1]).dot(F.vecNormale);
+
+                    if(segnoVerticeTraccia0*segnoVerticeTraccia1<0 && abs(segnoVerticeTraccia0)>tol && abs(segnoVerticeTraccia1)>tol){
+                        NuovoVerticeTraccia=IncontroTraRette(Tracce[F.TraccePass[i]].VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1], Tracce[F.TraccePass[i]].VerticiTraccia[0],DirezioneTraccia , VerticiTraccia[0]);
+                        if(segnoVerticeTraccia0>0){
+                            IdPositivo=Tracce.size();
+                            Tracce.push_back(Traccia({VerticiTraccia[0],NuovoVerticeTraccia}));
+                            IdNegativo=IdPositivo+1;
+                            Tracce.push_back(Traccia({NuovoVerticeTraccia,VerticiTraccia[1]}));
+
+                            TraccePositiveNopass.push_back(IdPositivo);
+                            TracceNegativeNopass.push_back(IdNegativo);
+
+
+                            //inserisco un vertice nelle positive, l'altro nelle negative
+                            //qua vado a inserire la traccia nuova.
+
+                        }
+                        else{
+                            IdNegativo=Tracce.size();
+                            Tracce.push_back(Traccia({VerticiTraccia[0],NuovoVerticeTraccia}));
+                            IdPositivo=IdPositivo+1;
+                            Tracce.push_back(Traccia({NuovoVerticeTraccia,VerticiTraccia[1]}));
+
+                            TraccePositiveNopass.push_back(IdPositivo);
+                            TracceNegativeNopass.push_back(IdNegativo);
+
+                            //cambio inserimento, ora una da una parte ora dall'altra
+                        }
+                    }
+                    else {
+                        if(segnoVerticeTraccia0>0){
+                            Tracce.push_back(Traccia({VerticiTraccia[0],VerticiTraccia[1]}));
+                            TraccePositiveNopass.push_back(F.TracceNoPass[i]);
+
+                        }
+                        else{
+                            Tracce.push_back(Traccia({VerticiTraccia[0],VerticiTraccia[1]}));
+                            TracceNegativeNopass.push_back(F.TracceNoPass[i]);
+                        }
+
+
+                    }
+                }
+            }
 
         }
 
-        stampaTracce(Tracce);
-        stampaTracceFratture(Fratture,Tracce);
+        //qua creo le fratture che mi servono
+        if(TracciaSulBordo){
+            //Figli.resize(1);
+            Frattura F=Frattura(PuntiPositivi.size(),PuntiPositivi);
+            F.TraccePass=TraccePositive;
+            F.TracceNoPass=TraccePositiveNopass;
+            F.IdVertici=NuoviIndiciPositivi;
+            Figli.push_back(F);
+        }
+        else{
+            Frattura F1=Frattura(PuntiPositivi.size(),PuntiPositivi);
+            F1.TraccePass=TraccePositive;
+            F1.TracceNoPass=TraccePositiveNopass;
+            F1.IdVertici=NuoviIndiciPositivi;
+            Figli.push_back(F1);
+
+            Frattura F2=Frattura(PuntiNegativi.size(),PuntiNegativi);
+            F2.TraccePass=TracceNegative;
+            F2.TracceNoPass=TracceNegativeNopass;
+            F2.IdVertici=NuoviIndiciNegativi;
+            Figli.push_back(F1);
+            Figli.push_back(F2);
+            Figli.push_back(Frattura(PuntiNegativi.size(),PuntiNegativi));
+        }
+
+
+        return Figli;
+
+    }
+
+    unsigned int RicercaIdVertice(Frattura& FMadre, Vector3d PuntodaControllare, double tol2){
+
+        for (unsigned int i=0; i<FMadre.SottoPoligoni.CoordinatesCell0Ds.size(); i++){
+            if((FMadre.SottoPoligoni.CoordinatesCell0Ds[i]-PuntodaControllare).squaredNorm()<tol2){
+                return i;
+
+            }
+        }
+        int j=FMadre.SottoPoligoni.CoordinatesCell0Ds.size();
+        FMadre.SottoPoligoni.IdCell0Ds.push_back(j);
+        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(PuntodaControllare);
+        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        return j;
 
     }
 
 
-}
 
 
 
-}
 
+    //Fine codice Flavio
 
-//Introduco delle tolleranze per poter fare i controlli e i confronti
-//Uso una funzione perchè viene chiamata una sola volta all'inizio del progremma ==> una volta settata resta quella per coerenza
-double setTol1D(){
-    double tolDefault = 10 *  numeric_limits<double>::epsilon();
-    double tolInput;
-    cout << "Inserire tolleranza 1D";
-    cin >> tolInput;
-    return max(tolDefault,tolInput);
-}
-
-double setTol2D(const double tol1D){
-    double tolDefault = 10 *  numeric_limits<double>::epsilon();
-    double tolInput;
-    cout << "Inserire tolleranza 2D";
-    cin >> tolInput;
-    double tol2D = tol1D*tol1D*sqrt(3)/4;
-    double tol = max(tol2D,tolDefault);
-    return max(tol,tolInput);
-}
-
-double SetTolProdotto(const double tol1D){
-    double tolDefault = 10 *  numeric_limits<double>::epsilon();
-    double tolProd = tol1D*tol1D;
-    double tol = max(tolProd,tolDefault);
-    return tol;
-}
-bool testLunghezzaLati(vector<Vector3d>& CoordinateVertici, double tol){
-    for(unsigned int i = 0;i<(CoordinateVertici.size()-1);i++){
-        for(unsigned int j = i+1;j<CoordinateVertici.size();j++){
-            if((CoordinateVertici[i]-CoordinateVertici[j]).norm() < tol){
-                cout<<"Errore: due vertici della frattura coincidono"<<endl;
-                return false;
-            }
-        }
-    }
-    return true;
+    vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol);
 
 }

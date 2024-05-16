@@ -231,12 +231,11 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
     }
     return risultato;
 }
-bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool LatoAppartiene1, bool LatoAppartiene2){
+bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool LatoAppartiene1, bool LatoAppartiene2,  double tol2){
 
     //ora calcolo la retta di intersezione tra i piani
     Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
     Matrix3d VettoriDelPiano;
-    double tol2=SetTolProdotto(tol);
 
     //riempo le righe della matrice
     VettoriDelPiano.row(0)=F1.vecNormale;
@@ -267,7 +266,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
 
     }
     else{
-        PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione);
+        PuntiInterni=EstremiTraccia(PuntiIntersezione, tol,Tips,fintaIntersezione, tol2);
     }
     if(LatoAppartiene1){//Allora  è passante
         Tips[0]=false;
@@ -323,13 +322,12 @@ Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
     return v;
 }
 
-array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, double tol, array<bool,2>& Tips,bool& fintaIntersezione){//controlla che il punto sulla retta non coincide con gli altri
+array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, double tol, array<bool,2>& Tips,bool& fintaIntersezione,  double tol2){//controlla che il punto sulla retta non coincide con gli altri
     //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
     //Devo cercare i due punti centrali perchè saranno gli estremi della traccia
     //Passo fintaIntersezione = false e se vedo che non si intersecano metto true
     array<unsigned int,2> PuntiInterni;
     unsigned int cont = 0;
-    double tol2=SetTolProdotto(tol);
 
     //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
     if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 ){
@@ -505,7 +503,7 @@ void Progetto1(const string& fileName, double tol){
                         bool LatoAppartiene2=false;
                         if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
                             Traccia TracciaAggiuntiva;
-                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2);
+                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2,tol2);
                             //CalcoloTracce
                             if(tracciaTrovata){
                                 IdTraccia ++;

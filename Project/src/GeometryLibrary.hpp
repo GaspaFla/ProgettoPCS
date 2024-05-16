@@ -7,9 +7,11 @@
 #pragma once
 #include <Eigen/Eigen>
 #include <vector>
+#include "PolygonalMesh.hpp"
 
 using namespace std;
 using namespace Eigen;
+using namespace MeshLibrary;
 
 namespace DFN{ //Scelgo come namespace DFN perchè così ho tutto quello che riguarda fratture/tracce sotto lo stesso namespace
 struct Traccia{
@@ -26,6 +28,9 @@ struct Traccia{
         Tips = T;
         lunghezza = (VerticiT[0]-VerticiT[1]).norm();//Salvo la lunghezza al quadrato per evitare di fare radici
     }
+    Traccia(array<Vector3d,2> VerticiT){
+         VerticiTraccia = VerticiT;
+    }
 
 };
 struct Frattura{
@@ -36,6 +41,11 @@ struct Frattura{
     vector<unsigned int> TraccePass;
     Vector3d vecNormale;
     double termineNotoPiano;
+    PolygonalMesh SottoPoligoni;
+    vector<unsigned int> IdVertici;
+
+
+
     Frattura(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinateV ){//Costruttore
         IdFrattura = IdF;
         NumVertici = NumV;
@@ -46,6 +56,27 @@ struct Frattura{
         //in questo modo devo calcolarli una volta sola
     }
 
+    Frattura( unsigned int NumV,  vector<Vector3d> CoordinateV ){//Costruttore
+        NumVertici = NumV;
+        CoordinateVertici = CoordinateV;
+        vecNormale = (CoordinateVertici[0]-CoordinateVertici[1]).cross(CoordinateVertici[1]-CoordinateVertici[2]);
+        termineNotoPiano = vecNormale.dot(CoordinateV[0]);
+    }
+
+    void aggiungiCell0DMesh(unsigned int IdCell0D,Vector3d coordinateCell0D){
+        SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        SottoPoligoni.CoordinatesCell0Ds.push_back(coordinateCell0D);
+        SottoPoligoni.NumberofCell0Ds ++;
+    }
+
+
+    //Prima di chiamare la ricorsiva sulla madre aggiungo i primi vertici alla mesh
+    //Aggiungo anche gli id dei vertici della madre
+    //Per i figli aggiungo dopo aver creato la frattura
 };
+
+
+//Crea un vettore che contiene le coordinate di tutti i vertici che andranno a creare la mesh ==> non vuoto solo per la madre
+//Per ogni figlio e anche per la madre salvo un vettore che contiene solo gli id dei figli, così trovo le coordinate tramite il vettore della madre
 
 }

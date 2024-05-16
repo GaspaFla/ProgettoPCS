@@ -1,4 +1,5 @@
-#include "TestPolygons.hpp"
+//#include "TestProgetto1.hpp"
+#include "TestProgetto2.hpp"
 
 
 int main(int argc, char ** argv)

@@ -1,4 +1,5 @@
-list (APPEND src_test_headers "${CMAKE_CURRENT_SOURCE_DIR}/TestPolygons.hpp")
+list (APPEND src_test_headers "${CMAKE_CURRENT_SOURCE_DIR}/TestProgetto1.hpp")
+list (APPEND src_test_headers "${CMAKE_CURRENT_SOURCE_DIR}/TestProgetto2.hpp")
 
 list (APPEND src_test_includes "${CMAKE_CURRENT_SOURCE_DIR}")
 
