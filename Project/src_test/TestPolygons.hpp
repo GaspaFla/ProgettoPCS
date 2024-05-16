@@ -495,6 +495,7 @@ TEST(EstremiTraccia, PuntiAllineati)
     Vector3d PuntoRetta(5,0,0) ;
     double tol = 0.000000000000001;
     array<bool,2> Tips;
+    double tol2=SetTolProdotto(tol);
 
     //Caso solo due punti coincidenti ==> tre punti distinti
     Vector3d P0(4,0,0);
@@ -503,7 +504,7 @@ TEST(EstremiTraccia, PuntiAllineati)
     Vector3d P3(2,0,0);
     array<Vector3d,4> Punti ={P0,P1,P2,P3};
     bool fintaIntersezione = false;
-    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
+    array<unsigned int,2> PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione, tol2);
     bool flag1 = false;
     if(PuntiInterni[0] == 0 && PuntiInterni[1] == 3 && Tips[0] == true && Tips[1] == false){
         flag1 = true;
@@ -517,7 +518,7 @@ TEST(EstremiTraccia, PuntiAllineati)
     P2 = {2,0,0};
     P3 = {5,0,0};
     Punti ={P0,P1,P2,P3};
-    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione, tol2);
     bool flag2 = false;
     if(PuntiInterni[0] == 1 && PuntiInterni[1] == 2 && Tips[0] == true && Tips[1] == true && fintaIntersezione == false){
         flag2 = true;
@@ -530,7 +531,7 @@ TEST(EstremiTraccia, PuntiAllineati)
     P2 = {1,0,0};
     P3 = {5,0,0};
     Punti ={P0,P1,P2,P3};
-    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione,tol2);
     bool flag3 = false;
     if(PuntiInterni[0] == 0 && PuntiInterni[1] == 1 && Tips[0] == false && Tips[1] == true && fintaIntersezione == false){
         flag3 = true;
@@ -544,7 +545,7 @@ TEST(EstremiTraccia, PuntiAllineati)
     P2 = {4,0,0};
     P3 = {5,0,0};
     Punti ={P0,P1,P2,P3};
-    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione);
+    PuntiInterni = EstremiTraccia(Punti,tol,Tips,fintaIntersezione,tol2);
     bool flag4 = false;
     if(fintaIntersezione){
         flag4 = true;
@@ -576,10 +577,11 @@ TEST(CalcoloTracce,NonPassEntrambe)
     double tol = 0.0000000000000001;
     bool b1=false;
     bool b2=false;
+    double tol2=SetTolProdotto(tol);
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2, tol2);
 
     EXPECT_TRUE(flag1);
 
@@ -614,13 +616,14 @@ TEST(CalcoloTracce,FintaTraccia)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
 
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2, tol2);
 
     EXPECT_FALSE(flag1);
 }
@@ -645,13 +648,14 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
 
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2, tol2);
 
 
     Vector3d EstremoCorretto1(0,1,0);
@@ -687,12 +691,13 @@ TEST(CalcoloTracce,TracciaSulLato)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2, tol2);
 
     EXPECT_TRUE(flag1);
     for(unsigned int i =0;i<3;i++){
@@ -724,12 +729,13 @@ TEST(CalcoloTracce,RomboAttraverso)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2, tol2);
 
     Vector3d EstremoCorretto1(0,2,0);
     Vector3d EstremoCorretto2(0,-2,0);
@@ -764,12 +770,13 @@ TEST(CalcoloTracce,TriangoloToccante)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2, tol2);
 
     Vector3d EstremoCorretto1(0,2,0);
     Vector3d EstremoCorretto2(2,0,0);
@@ -804,12 +811,13 @@ TEST(CalcoloTracce,RettangoloAttraversoToccante)
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T, b1,b2, tol2);
 
 
     EXPECT_TRUE(flag1);
@@ -841,13 +849,14 @@ TEST(CalcoloTracce,PassantePerUno){
     array<Vector3d,4> puntiFrattura1;
     array<Vector3d,4> puntiFrattura2;
     double tol = 0.0000000000001;
+    double tol2=SetTolProdotto(tol);
     bool b1=false;
     bool b2=false;
     SiIntersecano(F1,F2,puntiFrattura1,tol,b1);
     SiIntersecano(F2,F1,puntiFrattura2,tol,b2);
 
     Traccia T;
-    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2);
+    bool flag1 = CalcoloTracce(F1, F2, IdTraccia, tol, puntiFrattura1, puntiFrattura2, T,b1,b2, tol2);
 
     EXPECT_TRUE(flag1);
     EXPECT_FALSE(T.Tips[0]);

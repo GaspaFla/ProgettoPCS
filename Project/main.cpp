@@ -12,6 +12,5 @@ int main()
     double tol1D = setTol1D();
     Progetto1(fileName, tol1D);
 
-
     return 0;
 }
