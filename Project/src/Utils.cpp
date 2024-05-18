@@ -308,18 +308,6 @@ Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d &VerticePoligono,V
 }
 
 
-//TOGLIERE CalcoloRetta
-Vector3d CalcoloRetta(Frattura &F1, Frattura &F2){
-    Vector3d t= F1.vecNormale.cross(F2.vecNormale);
-    Matrix3d M;
-    M.row(0)=F1.vecNormale;
-    M.row(1)=F2.vecNormale;
-    M.row(2)=t;
-    Vector3d d ={F1.termineNotoPiano, F2.termineNotoPiano, 0};
-    Vector3d v=M.partialPivLu().solve(d);
-
-    return v;
-}
 
 array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, double tol, array<bool,2>& Tips,bool& fintaIntersezione,  double tol2){//controlla che il punto sulla retta non coincide con gli altri
     //So che i punti sono tutti allineati e che 0 1 sono del primo poligono e 2 3 del secondo poligono
@@ -553,15 +541,6 @@ double setTol1D(){
     return max(tolDefault,tolInput);
 }
 
-double setTol2D(const double tol1D){
-    double tolDefault = 10 *  numeric_limits<double>::epsilon();
-    double tolInput;
-    cout << "Inserire tolleranza 2D";
-    cin >> tolInput;
-    double tol2D = tol1D*tol1D*sqrt(3)/4;
-    double tol = max(tol2D,tolDefault);
-    return max(tol,tolInput);
-}
 
 double SetTolProdotto(const double tol1D){
     double tolDefault = 10 *  numeric_limits<double>::epsilon();

@@ -15,7 +15,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2);
 
 bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura,double tol, bool& LatoAppartiene);
 
-Vector3d CalcoloRetta(Frattura &F1, Frattura &F2);
+
 
 Vector3d IncontroTraRette(Vector3d t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 );
 
@@ -31,6 +31,5 @@ bool stampaTracce( vector<Traccia>& Tracce);
 
 
 double setTol1D();
-double setTol2D(const double tol1D);
 double SetTolProdotto(const double tol1D);
 bool testLunghezzaLati(vector<Vector3d>& CoordinatesVertices, double tol);
