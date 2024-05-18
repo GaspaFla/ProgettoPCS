@@ -8,7 +8,7 @@ using namespace Eigen;
 
 
 namespace MeshLibrary{
-struct PolygonalMesh{
+struct MeshPoligonale{
     //Cell0D
     unsigned int NumberofCell0Ds = 0; //numero di nodi
     vector<unsigned int> IdCell0Ds = {};

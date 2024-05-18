@@ -41,7 +41,7 @@ struct Frattura{
     vector<unsigned int> TraccePass;
     Vector3d vecNormale;
     double termineNotoPiano;
-    PolygonalMesh SottoPoligoni;
+    MeshPoligonale SottoPoligoni;
     vector<unsigned int> IdVertici;
 
 

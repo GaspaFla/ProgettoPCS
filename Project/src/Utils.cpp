@@ -328,10 +328,14 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
     array<unsigned int,2> PuntiInterni;
     unsigned int cont = 0;
 
+
     //Solo uno vertice coincide ==>PASSANTE per uno e NONPASSANTE per l'altro
     if((PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm() <tol2 ){
         PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
+        if((PuntiIntersezione[0]-PuntiIntersezione[1]).dot(PuntiIntersezione[0]-PuntiIntersezione[3])<0){//Sono da punti opposti quindi è una finta intersezione
+            fintaIntersezione = true;
+        }
+        else if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 1;
             Tips = {false,true};
         }
@@ -343,7 +347,10 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
     }
     else if( (PuntiIntersezione[0]-PuntiIntersezione[3]).squaredNorm()<tol2){
         PuntiInterni[0] = 0;
-        if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
+        if((PuntiIntersezione[0]-PuntiIntersezione[1]).dot(PuntiIntersezione[0]-PuntiIntersezione[2])<0){//Sono da punti opposti quindi è una finta intersezione
+            fintaIntersezione = true;
+        }
+        else if((PuntiIntersezione[0]-PuntiIntersezione[1]).squaredNorm() < (PuntiIntersezione[0]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 1;
             Tips = {false,true};
         }
@@ -355,7 +362,10 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
     }
     else if((PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm() <tol2){
         PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
+        if((PuntiIntersezione[1]-PuntiIntersezione[0]).dot(PuntiIntersezione[1]-PuntiIntersezione[3])<0){//Sono da punti opposti quindi è una finta intersezione
+            fintaIntersezione = true;
+        }
+        else if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()){
             PuntiInterni[1]= 0;
             Tips = {false,true};
         }
@@ -366,7 +376,10 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
     }
     else if( (PuntiIntersezione[1]-PuntiIntersezione[3]).squaredNorm()<tol2){
         PuntiInterni[0] = 1;
-        if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
+        if((PuntiIntersezione[1]-PuntiIntersezione[0]).dot(PuntiIntersezione[1]-PuntiIntersezione[2])<0){//Sono da punti opposti quindi è una finta intersezione
+            fintaIntersezione = true;
+        }
+        else if((PuntiIntersezione[1]-PuntiIntersezione[0]).squaredNorm() < (PuntiIntersezione[1]-PuntiIntersezione[2]).squaredNorm()){
             PuntiInterni[1]= 0;
             Tips = {false,true};
         }
@@ -376,14 +389,14 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
         }
 
     }
-    else{
+    else{//tutti distinti
         Vector3d punto = PuntiIntersezione[0] + PuntiIntersezione[1] +  PuntiIntersezione[2] +  PuntiIntersezione[3];
 
-        for(unsigned int i = 0;i<3; i++){//aggiusta indici
+        for(unsigned int i = 0;i<3; i++){
             Vector3d u = punto-PuntiIntersezione[i];
             unsigned int numPositivi = 0;
             unsigned int numNegativi = 0;
-            for(unsigned int j = 0;j<4; j++){//aggiusta indici
+            for(unsigned int j = 0;j<4; j++){
                 if(j!=i){
                     Vector3d v = PuntiIntersezione[j]-PuntiIntersezione[i];
                     if(u.dot(v)>0)
