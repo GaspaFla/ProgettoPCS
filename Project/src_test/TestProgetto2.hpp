@@ -337,7 +337,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiOppostiObliqua){
 
 }
 
-/*
+
 TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -370,33 +370,33 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
     bool TracciaSulBordo = false;
     vector<Frattura> FrattureFiglie = calcoloSottoPoligoniPass(FMadre,tol,tol2,TracciaSulBordo,Tracce,FMadre);
     //Controllo il numero dei vertici
-    EXPECT_EQ(FrattureFiglie[0].NumVertici,3);
-    EXPECT_EQ(FrattureFiglie[1].NumVertici,4);
+    EXPECT_EQ(FrattureFiglie[1].NumVertici,3);
+    EXPECT_EQ(FrattureFiglie[0].NumVertici,4);
     //Controllo se i vertici sono giusti
 
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[0][i],h[i]);
-        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[1][i],z[i]);
-        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[2][i],k[i]);
-        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[3][i],w[i]);
-
         EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[0][i],x[i]);
-        EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[1][i],y[i]);
-        EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[2][i],h[i]);
+        EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[1][i],h[i]);
+        EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[2][i],z[i]);
+        EXPECT_DOUBLE_EQ(FrattureFiglie[0].CoordinateVertici[3][i],k[i]);
+
+        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[0][i],x[i]);
+        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[1][i],y[i]);
+        EXPECT_DOUBLE_EQ(FrattureFiglie[1].CoordinateVertici[2][i],h[i]);
 
 
     }
 
 
     //Controllo se gli id dei vertici sono giusti
-    EXPECT_EQ(FrattureFiglie[1].IdVertici[0],4);
-    EXPECT_EQ(FrattureFiglie[1].IdVertici[1],2);
-    EXPECT_EQ(FrattureFiglie[1].IdVertici[2],3);
-    EXPECT_EQ(FrattureFiglie[1].IdVertici[3],0);
-
     EXPECT_EQ(FrattureFiglie[0].IdVertici[0],0);
-    EXPECT_EQ(FrattureFiglie[0].IdVertici[1],1);
-    EXPECT_EQ(FrattureFiglie[0].IdVertici[2],4);
+    EXPECT_EQ(FrattureFiglie[0].IdVertici[1],4);
+    EXPECT_EQ(FrattureFiglie[0].IdVertici[2],2);
+    EXPECT_EQ(FrattureFiglie[0].IdVertici[3],3);
+
+    EXPECT_EQ(FrattureFiglie[1].IdVertici[0],0);
+    EXPECT_EQ(FrattureFiglie[1].IdVertici[1],1);
+    EXPECT_EQ(FrattureFiglie[1].IdVertici[2],4);
 
     ;
     //Controllo che la madre ha i nuovi vertici nella mesh
@@ -407,8 +407,8 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
 
 }
 
-*/
-/*
+
+
 TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -474,7 +474,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
     EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,4);//Non devono essere state aggiunte nuove cell0D
 
 }
-*/
+
 
 
 TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiAdiacentiObliqua){
@@ -677,7 +677,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteUnVerticeCoincidente
 
 }
 
-/*
+
 TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoincidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -732,4 +732,4 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoinc
     EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,4);
 
 }
-*/
+
