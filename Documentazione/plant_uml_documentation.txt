@@ -3,23 +3,15 @@
 package DFN <<Folder>>
 {
 
-
 class Traccia{
 + IdTraccia : unsigned int
 + VerticiTraccia : array<Vector3d,2>
 + FrattureTraccia :  array<unsigned int,2> 
 + Tips : array<bool,2>
 + lunghezza : double
++ Traccia()
 + Traccia(IdT : unsigned int , VerticiT : array<Vector3d,2>, FrattureT : array<unsigned int,2>,T : array<bool,2> )
-
-..Non member function..
-
-       
-+ Merge(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, cx: const unsigned int&, dx: const unsigned int&)
-+ MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, dx: const unsigned int&)
-+ MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&)
-+ stampaTracce(Tracce: vector<Traccia>&): bool
-
++ Traccia( VerticiT : array<Vector3d,2>)
 
 }
 
@@ -27,38 +19,62 @@ class Frattura{
 + IdFrattura : unsigned int
 + NumVertici : unsigned int
 + CoordinateVertici : vector<Vector3d>   
-+ TracceNoPass: vector<unsigned int> ;
-+ TraccePass : vector<unsigned int> ;
++ TracceNoPass: vector<unsigned int> 
++ TraccePass : vector<unsigned int> 
 + vecNormale : Vector3d
 + termineNotoPiano : double
++ SottoPoligoni : PolygonalMesh 
++ IdVertici : vector<unsigned int> 
 + Frattura(IdF : unsigned int , NumV : unsigned int, CoordinateV : vector<Vector3d>)
-
-..Non member function..
-
-+ importoFratture(fileName: const string&, Fratture: vector<Frattura>&, tol: double): bool
-+ ControlloCentromero(F1: Frattura&, F2: Frattura&): bool
-+ SiIntersecano(F1: Frattura&, F2: Frattura&, puntiFrattura: array<Vector3d,4>&): bool
-+ stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&): bool 
-+ CalcoloRetta(F1: Frattura&, F2: Frattura&): Vector3d
-+ IncontroTraRette(t1: Vector3d, v1: Vector3d&, t2: Vector3d, v2: Vector3d): Vector3d
-+ CalcoloTracce(F1: Frattura&, F2: Frattura&, IdTraccia: unsigned int, tol: double, puntiFrattura1: array<Vector3d,4>&, puntiFrattura2: array<Vector3d,4>&): Traccia
-+ EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d, tol: double, Tips: array<bool,2>&): array<unsigned int,2>
-
++ Frattura( NumV : unsigned int, CoordinateV : vector<Vector3d>  )
++ void aggiungiCell0DMesh(IdCell0D : unsigned int , coordinateCell0D : Vector3d)
 }
 
 
 Traccia "many" --o "2" Frattura
 
+ class Funzioni{ 
 
-
- class FunzioniUtili{ 
-
++ importoFratture(fileName: const string&, Fratture: vector<Frattura>&, tol: double): bool
++ ControlloCentromero(F1: Frattura&, F2: Frattura&): bool
++ SiIntersecano(F1: Frattura&, F2: Frattura&, puntiFrattura: array<Vector3d,4>&): bool
++ IncontroTraRette(t1: Vector3d, v1: Vector3d&, t2: Vector3d, v2: Vector3d): Vector3d
++ CalcoloTracce(F1: Frattura&, F2: Frattura&, IdTraccia: unsigned int, tol: double, puntiFrattura1: array<Vector3d,4>&, puntiFrattura2: array<Vector3d,4>&): Traccia
++ EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d, tol: double, Tips: array<bool,2>&): array<unsigned int,2>
++ stampaTracce(Tracce: vector<Traccia>&): bool
++ stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&): bool 
 + Progetto1(fileName: const string&, tol: double): void
-+ setTol1D(): double
-+ setTol2D(tol1D: const double): double
-+ testLengthEdges(CoordinatesVertices: vector<Vector3d>&, tol: double): bool
+....
++ Merge(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, cx: const unsigned int&, dx: const unsigned int&)
++ MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, dx: const unsigned int&)
++ MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&)
+
  }       
  
 
 }
+
+package MeshLibrary <<Folder>>  {
+    class PolygonalMesh {
+        + unsigned int NumberofCell0Ds = 0
+        + vector<unsigned int> IdCell0Ds
+        + vector<Vector3d> CoordinatesCell0Ds
+        + unsigned int NumberofCell1Ds = 0
+        + vector<unsigned int> IdCell1Ds
+        + vector<array<unsigned int,2>> VerticesCell1Ds
+        + unsigned int NumberofCell2Ds = 0
+        + vector<unsigned int> IdCell2Ds
+        + vector<vector<unsigned int>> VerticesCell2Ds
+        + vector<vector<unsigned int>> EdgesCell2Ds
+    }
+}
+
+class FunzioniAusiliarie{
++ setTol1D(): double
++ setTol2D(tol1D: const double): double
++ testLunghezzaLati(CoordinateVertici: vector<Vector3d>&, tol: double): bool
+}
+
+Funzioni --right--> FunzioniAusiliarie
+
 @enduml

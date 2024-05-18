@@ -13,4 +13,5 @@ namespace DFN{
     vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol);
     void converteInCelle(Frattura& F,Frattura& FMadre);
     unsigned int RicercaIdVertice(Frattura& FMadre, Vector3d PuntodaControllare, double tol2);
+    bool stampaMesh(vector<Frattura> Fratture);
 }
