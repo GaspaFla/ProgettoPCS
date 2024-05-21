@@ -50,6 +50,12 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double t
             Fratture.push_back(F);
 
         }
+        else{
+
+            Frattura F(-1);//Va bene dato che non è unsigned)
+            Fratture.push_back(F);
+
+        }
     }
 
     file.close();
@@ -448,32 +454,33 @@ bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
         return false;
     }
     for(auto f : Fratture){
-        file<<"# FractureId; NumTraces "<<endl;
-        bool flag = true;
-        file<<f.IdFrattura<<"; "<<(f.TracceNoPass.size() + f.TraccePass.size())<<endl;
+        if(f.IdFrattura!=-1){
+            file<<"# FractureId; NumTraces "<<endl;
+            bool flag = true;
+            file<<f.IdFrattura<<"; "<<(f.TracceNoPass.size() + f.TraccePass.size())<<endl;
 
-        if(!f.TraccePass.empty()){
-            MergeSort(Tracce,f.TraccePass);
-            if(flag){
-                file<<"# TraceId; Tips; Length" <<endl;
-                flag = false;
+            if(!f.TraccePass.empty()){
+                MergeSort(Tracce,f.TraccePass);
+                if(flag){
+                    file<<"# TraceId; Tips; Length" <<endl;
+                    flag = false;
+                }
+                for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
+                    file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
+                }
             }
-            for(unsigned int i = 0; i<f.TraccePass.size();i++){//Passanti = false
-                file<<f.TraccePass[i]<<"; false; "<< Tracce[f.TraccePass[i]].lunghezza<<endl;
+            if(!f.TracceNoPass.empty()){
+
+                MergeSort(Tracce,f.TracceNoPass);
+                if(flag){
+                    file<<"# TraceId; Tips; Length" <<endl;
+                    flag = false;
+                }
+                for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
+                    file<<f.TracceNoPass[i]<<"; true; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
+                }
             }
         }
-        if(!f.TracceNoPass.empty()){
-
-            MergeSort(Tracce,f.TracceNoPass);
-            if(flag){
-                file<<"# TraceId; Tips; Length" <<endl;
-                flag = false;
-            }
-            for(unsigned int i = 0; i<f.TracceNoPass.size();i++){
-                file<<f.TracceNoPass[i]<<"; true; "<< Tracce[f.TracceNoPass[i]].lunghezza<<endl;
-            }
-        }
-
     }
 
     file.close();
@@ -481,40 +488,41 @@ bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
 }
 
 
-void Progetto1(const string& fileName, double tol){
-    vector<Frattura> Fratture;
-    vector<Traccia> Tracce;
+void Progetto1(const string& fileName,vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,double tol2){
     unsigned int IdTraccia=0;
-    double tol2=SetTolProdotto(tol);
+
 
 
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
         //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
-            for (int j = i+1; j < Fratture.size(); j++) {
-                //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
-                if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol2){//Voglio che sia maggiore della tolleranza per non essere paralleli
-                    //Controllo se le loro sfere approssimanti si intersecano
-                    if(ControlloCentromero(Fratture[i], Fratture[j])){
-                        // a questo punto potrebbero intersecarsi
-                        array<Vector3d,4> puntiFrattura1;
-                        array<Vector3d,4> puntiFrattura2;
-                        bool LatoAppartiene1=false;
-                        bool LatoAppartiene2=false;
-                        if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
-                            Traccia TracciaAggiuntiva;
-                            bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2,tol2);
-                            //CalcoloTracce
-                            if(tracciaTrovata){
-                                IdTraccia ++;
-                                Tracce.push_back(TracciaAggiuntiva);
-                            }
+            if(Fratture[i].IdFrattura!=-1){
+                for (int j = i+1; j < Fratture.size(); j++) {
+                    if(Fratture[j].IdFrattura!=-1){
+                    //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
+                        if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol2){//Voglio che sia maggiore della tolleranza per non essere paralleli
+                            //Controllo se le loro sfere approssimanti si intersecano
+                            if(ControlloCentromero(Fratture[i], Fratture[j])){
+                                // a questo punto potrebbero intersecarsi
+                                array<Vector3d,4> puntiFrattura1;
+                                array<Vector3d,4> puntiFrattura2;
+                                bool LatoAppartiene1=false;
+                                bool LatoAppartiene2=false;
+                                if(SiIntersecano(Fratture[i],Fratture[j],puntiFrattura1,tol, LatoAppartiene1) && SiIntersecano(Fratture[j],Fratture[i],puntiFrattura2,tol, LatoAppartiene2)){
+                                    Traccia TracciaAggiuntiva;
+                                    bool tracciaTrovata = CalcoloTracce(Fratture[i], Fratture[j], IdTraccia, tol, puntiFrattura1, puntiFrattura2, TracciaAggiuntiva, LatoAppartiene1, LatoAppartiene2,tol2);
+                                    //CalcoloTracce
+                                    if(tracciaTrovata){
+                                        IdTraccia ++;
+                                        Tracce.push_back(TracciaAggiuntiva);
+                                    }
 
+                                }
+                            }
                         }
                     }
                 }
             }
-
 
         }
 

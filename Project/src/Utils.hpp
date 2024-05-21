@@ -23,7 +23,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
 
 array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione,  double tol, array<bool,2>& Tips, bool& fintaIntersezione,  double tol2);
 
-void Progetto1(const string& fileName, double tol);
+void Progetto1(const string& fileName,vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,double tol2);
 
 bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce);
 bool stampaTracce( vector<Traccia>& Tracce);

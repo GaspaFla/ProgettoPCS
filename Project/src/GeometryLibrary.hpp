@@ -62,12 +62,11 @@ struct Frattura{
         vecNormale = (CoordinateVertici[0]-CoordinateVertici[1]).cross(CoordinateVertici[1]-CoordinateVertici[2]);
         termineNotoPiano = vecNormale.dot(CoordinateV[0]);
     }
-
-    void aggiungiCell0DMesh(unsigned int IdCell0D,Vector3d coordinateCell0D){
-        SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
-        SottoPoligoni.CoordinatesCell0Ds.push_back(coordinateCell0D);
-        SottoPoligoni.NumberofCell0Ds ++;
+    Frattura(unsigned int IdF){
+        IdFrattura = IdF;
     }
+
+
 
 
     //Prima di chiamare la ricorsiva sulla madre aggiungo i primi vertici alla mesh
