@@ -52,7 +52,7 @@ bool importoFratture(const string& fileName, vector<Frattura>& Fratture,double t
         }
         else{
 
-            Frattura F(-1);//Va bene dato che non è unsigned)
+            Frattura F(NumFratture+1);//Va bene dato che non è unsigned)
             Fratture.push_back(F);
 
         }
@@ -454,7 +454,7 @@ bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
         return false;
     }
     for(auto f : Fratture){
-        if(f.IdFrattura!=-1){
+        if(f.IdFrattura!=Fratture.size() +1){
             file<<"# FractureId; NumTraces "<<endl;
             bool flag = true;
             file<<f.IdFrattura<<"; "<<(f.TracceNoPass.size() + f.TraccePass.size())<<endl;
@@ -496,10 +496,10 @@ void Progetto1(const string& fileName,vector<Frattura>& Fratture,vector<Traccia>
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
         //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
-            if(Fratture[i].IdFrattura!=-1){
+            if(Fratture[i].IdFrattura!= Fratture.size()+1){
                 for (int j = i+1; j < Fratture.size(); j++) {
-                    if(Fratture[j].IdFrattura!=-1){
-                    //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
+                    if(Fratture[j].IdFrattura!=Fratture.size()+1){
+                        //Controllo se i piani sono paralleli ==> se sono // non possono intersecarsi
                         if ((Fratture[i].vecNormale.cross(Fratture[j].vecNormale)).squaredNorm()>tol2){//Voglio che sia maggiore della tolleranza per non essere paralleli
                             //Controllo se le loro sfere approssimanti si intersecano
                             if(ControlloCentromero(Fratture[i], Fratture[j])){

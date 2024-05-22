@@ -294,7 +294,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                 //la traccia non è sul lato e non ha vertici coincidenti
                 else if(segno*SegnoPrec>0){
 
-                    cout<< " concordi "<< i<<endl;
+
                     //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -308,7 +308,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                 //se invece hanno segni diversi...
                 else {
                     SegnoPrec=segno;
-                    cout<< " discordi "<< i<<endl;
+
                     PuntiNuovi++;
                     //essendo passanti ho già il punto di intersezione
                     //guardo quale sta sulla retta giusta
@@ -387,12 +387,11 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             if(SegnoPrec>0){
                 PuntiPositivi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciPositivi.push_back(F.IdVertici[i]);
-                cout<< " concordi finiti"<< i<<endl;
             }
             else{
                 PuntiNegativi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciNegativi.push_back(F.IdVertici[i]);
-                cout<< " concordi finiti "<< i<<endl;
+
             }
         }
     }
@@ -647,9 +646,7 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
     for (unsigned int i=0; i<F.NumVertici; i++){
         if(PuntiNuovi<2){
             //se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
-            cout<<"ciao"<<endl;
             segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
-            cout<<segno<<endl;
             if(i==0){
                 if(abs(segno)<tol){
 
@@ -669,12 +666,10 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                     }
                 }
                 else{
-                    cout<<"qui"<<endl;
 
                     //va tutto bene
                     SegnoPrec=segno;
-                    cout<<segno<<endl;
-                    cout<<SegnoPrec<<endl;
+
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
                         NuoviIndiciPositivi.push_back(F.IdVertici[i]);
@@ -693,7 +688,7 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                     //caso 1, il vertice coincide con il vertice traccia ma il lato non è compreso
                     //potrei togliere anche questo if;
                     if(((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2) || ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2) ){
-                        cout<<"coincide il primo vertice"<<endl;
+
 
                         //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
                         PuntiNuovi++;
@@ -709,7 +704,6 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                 //la traccia non è sul lato e non ha vertici coincidenti
                 else if(segno*SegnoPrec>0){
 
-                    cout<< " concordi "<< i<<endl;
                     //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -722,14 +716,13 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                 }
                 //se invece hanno segni diversi...
                 else {
-                    cout<< segno<<endl;
-                    cout<< SegnoPrec<<endl;
+
                     SegnoPrec=segno;
-                    cout<< " discordi "<< i<<endl;
+
                     PuntiNuovi++;
                     //essendo  non passanti calcolo il punto di intersezione che starà in mezzo
                     PuntoIntersezione=IncontroTraRette((F.CoordinateVertici[i]-F.CoordinateVertici[i-1]),F.CoordinateVertici[i],Direzione,VerticiTraccia[0]);
-                    cout<<"Trovato"<<endl;
+
                     NuovoId=RicercaIdVertice(FMadre, PuntoIntersezione, tol2);
 
                     if (segno>0){
@@ -766,12 +759,12 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
             if(SegnoPrec>0){
                 PuntiPositivi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciPositivi.push_back(F.IdVertici[i]);
-                cout<< " concordi finiti"<< i<<endl;
+
             }
             else{
                 PuntiNegativi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciNegativi.push_back(F.IdVertici[i]);
-                cout<< " concordi finiti "<< i<<endl;
+
             }
         }
     }
@@ -890,7 +883,8 @@ bool stampaMesh(vector<Frattura> Fratture){
     }
     for(auto f : Fratture){//Controla sia diversa da null!!
         if(f.IdFrattura!=-1){
-            file<<"FractureId\n"<<f.IdFrattura<< "\n" << " NumCell0Ds"<< f.SottoPoligoni.NumberofCell0Ds<<endl;
+            file<<"FractureId\n"<<f.IdFrattura<< endl;
+            file << " NumCell0Ds"<< f.SottoPoligoni.NumberofCell0Ds<<endl;
             file <<"IdCell0D; X; Y; Z"<<endl;
             for(unsigned int i = 0;i<f.SottoPoligoni.NumberofCell0Ds;i++){
                 file << f.SottoPoligoni.IdCell0Ds[i]<<"; "<< f.SottoPoligoni.CoordinatesCell0Ds[i][0]<< "; "<< f.SottoPoligoni.CoordinatesCell0Ds[i][1]<<
@@ -921,13 +915,11 @@ bool stampaMesh(vector<Frattura> Fratture){
 }
 
 void Progetto2(vector<Frattura> Fratture,vector<Traccia> Tracce, double tol,double tol2){
-    int cont=0;
     for(auto& f :Fratture){
-       //Mettere if per vedere se f è non nullo
+        //Mettere if per vedere se f è non nullo
         if(f.IdFrattura!=Fratture.size()+1){
-           //AGGIUNGO CELL0D
+            //AGGIUNGO CELL0D
             for(unsigned int i = 0;i<f.NumVertici;i++){
-
                 unsigned int IdCell0D = f.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
                 f.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
                 f.IdVertici.push_back(IdCell0D);
@@ -935,9 +927,7 @@ void Progetto2(vector<Frattura> Fratture,vector<Traccia> Tracce, double tol,doub
                 f.SottoPoligoni.NumberofCell0Ds ++;
             }
             Taglia( f,f, Tracce,tol, tol2);
-            cout<<"                                            sto trattando la traccia"<<cont<<endl;
-            cont++;
-       }
+        }
     }
     stampaMesh(Fratture);
 }
