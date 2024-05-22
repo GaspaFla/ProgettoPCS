@@ -8,7 +8,7 @@ using namespace DFN;
 int main()
 {
 
-    string fileName = "./DFN/FR200_data.txt";
+    string fileName = "./DFN/FR50_data.txt";
 
     double tol1D = setTol1D();
     double tol2=SetTolProdotto(tol1D);
@@ -16,7 +16,6 @@ int main()
     vector<Traccia> Tracce;
     Progetto1(fileName,Fratture,Tracce, tol1D,tol2);
     Progetto2(Fratture, Tracce, tol1D, tol2);
-
 
     return 0;
 }
