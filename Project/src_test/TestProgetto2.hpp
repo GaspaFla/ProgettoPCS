@@ -1222,6 +1222,7 @@ TEST(CalcoloSottoPoligono,TreFratture){
     EXPECT_EQ(FrattureFiglie[0].TraccePass[0],1);
     EXPECT_EQ(FrattureFiglie[0].TracceNoPass[0],3);
     EXPECT_EQ(FrattureFiglie[1].TracceNoPass[0],4);
+    EXPECT_EQ(Tracce.size(),5);
     Vector3d NuovoEstremo(1,-1,0);
     for (int i=0; i<3; i++){
         EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[0][i],w2[i]);
@@ -1234,8 +1235,9 @@ TEST(CalcoloSottoPoligono,TreFratture){
     //Ora calcolo i sottopoligoni della prima figlia
     vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniPass(FrattureFiglie[0],tol,tol2,TracciaSulBordo,Tracce,FMadre);
     //Controllo che nelle fratture figlie sono calcolate bene le nuove tracce
-    EXPECT_EQ(FrattureFiglie1[0].TracceNoPass[0],5);
-    EXPECT_EQ(FrattureFiglie1[1].TracceNoPass[0],6);
+    EXPECT_EQ(Tracce.size(),7);
+    EXPECT_EQ(FrattureFiglie1[0].TracceNoPass[0],6);
+    EXPECT_EQ(FrattureFiglie1[1].TracceNoPass[0],5);
     /*
     Vector3d NuovoEstremo(1,-1,0);
     for (int i=0; i<3; i++){
@@ -1292,7 +1294,7 @@ TEST(Taglia,DueTraccePassantiIncidenti){
 
 
 
-/*
+
 TEST(Taglia,TreTracce){
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -1313,8 +1315,8 @@ TEST(Taglia,TreTracce){
     Vector3d h1(2,-1,0);
     Vector3d w2(0,2,0);
     Vector3d h2(-2,0,0);
-    Vector3d w3(-1,1.5,0);
-    Vector3d h3(1,-1.5,0);
+    Vector3d w3(-1.5,1.5,0);
+    Vector3d h3(1.5,-1.5,0);
     array<Vector3d,2> VerticiT1 = {w1,h1};
     array<Vector3d,2> VerticiT2 = {w2,h2};
     array<Vector3d,2> VerticiT3 = {w3,h3};
@@ -1342,4 +1344,3 @@ TEST(Taglia,TreTracce){
     EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell2Ds,6);
 
 }
-*/
