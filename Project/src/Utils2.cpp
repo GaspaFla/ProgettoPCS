@@ -935,7 +935,7 @@ void Progetto2(vector<Frattura> Fratture,vector<Traccia> Tracce, double tol,doub
                 f.SottoPoligoni.NumberofCell0Ds ++;
             }
             Taglia( f,f, Tracce,tol, tol2);
-            cout<<"                                          sto trattando la traccia"<<cont<<endl;
+            cout<<"                                            sto trattando la traccia"<<cont<<endl;
             cont++;
        }
     }
