@@ -113,7 +113,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
             if(i==0){
 
-                if(abs(segno)<tol){
+                if(abs(segno)<tol && (VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()>tol2){
                     //caso 1,  il lato  è compreso
                     if((VerticiTraccia[0]-VerticiTraccia[1]).cross(F.CoordinateVertici[0]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm()<tol){
                         TracciaSulBordo=true;
@@ -209,7 +209,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             }
             //non siamo nel primo
             else {
-                if(abs(segno)<tol){
+                if(abs(segno)<tol && (VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()>tol2){
                     //caso 1,  il lato  è compreso
                     if((VerticiTraccia[0]-VerticiTraccia[1]).cross(F.CoordinateVertici[i]-F.CoordinateVertici[i-1]).squaredNorm()<tol){
                         TracciaSulBordo=true;
@@ -260,7 +260,9 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         PuntiNuovi++;
                         PuntiNuovi++;
                     }
+
                     //caso 2, il vertice coincide con il vertice traccia ma il lato non è compreso
+
                     else if(((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2) || ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2) ){
 
 
@@ -273,7 +275,9 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
 
                         SegnoPrec=(VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1]).dot(F.vecNormale);
                     }
+
                     else{
+                        cout<<"primo vertice"<<endl;
                         if(SegnoPrec>0){
                             PuntiPositivi.push_back(F.CoordinateVertici[i]);
                             NuoviIndiciPositivi.push_back(F.IdVertici[i]);
@@ -294,7 +298,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                 //la traccia non è sul lato e non ha vertici coincidenti
                 else if(segno*SegnoPrec>0){
 
-
+                    cout<< " concordi "<< i<<endl;
                     //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -308,7 +312,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                 //se invece hanno segni diversi...
                 else {
                     SegnoPrec=segno;
-
+                    cout<< " discordi "<< i<<endl;
                     PuntiNuovi++;
                     //essendo passanti ho già il punto di intersezione
                     //guardo quale sta sulla retta giusta
@@ -387,11 +391,12 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             if(SegnoPrec>0){
                 PuntiPositivi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciPositivi.push_back(F.IdVertici[i]);
+                cout<< " concordi finiti"<< i<<endl;
             }
             else{
                 PuntiNegativi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciNegativi.push_back(F.IdVertici[i]);
-
+                cout<< " concordi finiti "<< i<<endl;
             }
         }
     }
@@ -579,6 +584,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
     if(TracciaSulBordo){
         //Figli.resize(1);
         Frattura F=Frattura(PuntiPositivi.size(),PuntiPositivi);
+        cout<<PuntiPositivi.size()<<endl;
         F.TraccePass=TraccePositive;
         F.TracceNoPass=TraccePositiveNopass;
         F.IdVertici=NuoviIndiciPositivi;
@@ -586,12 +592,14 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
     }
     else{
         Frattura F1=Frattura(PuntiPositivi.size(),PuntiPositivi);
+        cout<<"             "            <<PuntiPositivi.size()<<endl;
         F1.TraccePass=TraccePositive;
         F1.TracceNoPass=TraccePositiveNopass;
         F1.IdVertici=NuoviIndiciPositivi;
         Figli.push_back(F1);
 
         Frattura F2=Frattura(PuntiNegativi.size(),PuntiNegativi);
+        cout<<"             " <<PuntiNegativi.size()<<endl;
         F2.TraccePass=TracceNegative;
         F2.TracceNoPass=TracceNegativeNopass;
         F2.IdVertici=NuoviIndiciNegativi;
@@ -646,15 +654,19 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
     for (unsigned int i=0; i<F.NumVertici; i++){
         if(PuntiNuovi<2){
             //se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
+            cout<<"ciao"<<endl;
             segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
+            //segno=segno*100000000000;
+            cout<<(VerticiTraccia[0]-VerticiTraccia[1])<<endl;
             if(i==0){
-                if(abs(segno)<tol){
-
+                if(abs(segno)<tol && (VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()>tol2){
+                    cout<<(VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()<<endl;
+                    cout<<"oltre tol"<<endl;
                     //caso unico, il vertice coincide con il vertice traccia ma il lato non è compreso
                     //in realtà potrei togliere anche questo if;
-                    if(((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2) || ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2) ){
 
 
+                        cout<<"fuori tol"<<endl;
                         //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
                         PuntiNuovi++;
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -663,12 +675,16 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                         NuoviIndiciNegativi.push_back(F.IdVertici[i]);
 
                         SegnoPrec=(VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1]).dot(F.vecNormale);
-                    }
+
+
+
                 }
                 else{
+                    cout<<"qui"<<endl;
 
                     //va tutto bene
                     SegnoPrec=segno;
+                    cout<<segno<<endl;
 
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -684,11 +700,12 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
             }
             //non siamo nel primo
             else {
-                if(abs(segno)<tol){
+                if(abs(segno)<tol && (VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()>tol2){
+                     cout<<"oltre tol"<<endl;
                     //caso 1, il vertice coincide con il vertice traccia ma il lato non è compreso
                     //potrei togliere anche questo if;
-                    if(((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2) || ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2) ){
 
+                        cout<<"coincide il primo vertice"<<endl;
 
                         //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
                         PuntiNuovi++;
@@ -698,12 +715,13 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                         NuoviIndiciNegativi.push_back(F.IdVertici[i]);
 
                         SegnoPrec=(VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i+1]).dot(F.vecNormale);
-                    }
 
+                    cout<<"fuori tol"<<i-F.NumVertici-1<<endl;
                 }
                 //la traccia non è sul lato e non ha vertici coincidenti
                 else if(segno*SegnoPrec>0){
 
+                    cout<< " concordi "<< i<<endl;
                     //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -716,13 +734,13 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
                 }
                 //se invece hanno segni diversi...
                 else {
-
+                    cout<< segno<<endl;
                     SegnoPrec=segno;
-
+                    cout<< " discordi "<< i<<endl;
                     PuntiNuovi++;
                     //essendo  non passanti calcolo il punto di intersezione che starà in mezzo
                     PuntoIntersezione=IncontroTraRette((F.CoordinateVertici[i]-F.CoordinateVertici[i-1]),F.CoordinateVertici[i],Direzione,VerticiTraccia[0]);
-
+                    cout<<"Trovato"<<endl;
                     NuovoId=RicercaIdVertice(FMadre, PuntoIntersezione, tol2);
 
                     if (segno>0){
@@ -759,12 +777,12 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
             if(SegnoPrec>0){
                 PuntiPositivi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciPositivi.push_back(F.IdVertici[i]);
-
+                cout<< " concordi finiti"<< i<<endl;
             }
             else{
                 PuntiNegativi.push_back(F.CoordinateVertici[i]);
                 NuoviIndiciNegativi.push_back(F.IdVertici[i]);
-
+                cout<< " concordi finiti "<< i<<endl;
             }
         }
     }
@@ -858,14 +876,17 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
         }
     }
 
-
+    cout<<"è la mia fineeeee?"<<endl;
     //qua creo le fratture che mi servono
     Frattura F1=Frattura(PuntiPositivi.size(),PuntiPositivi);
+    cout<<"             "            <<PuntiPositivi.size()<<endl;
     F1.TracceNoPass=TraccePositiveNopass;
     F1.IdVertici=NuoviIndiciPositivi;
     Figli.push_back(F1);
+    cout<<"è la mia fine?"<<endl;
 
     Frattura F2=Frattura(PuntiNegativi.size(),PuntiNegativi);
+    cout<<"             "            <<PuntiNegativi.size()<<endl;
     F2.TracceNoPass=TracceNegativeNopass;
     F2.IdVertici=NuoviIndiciNegativi;
     Figli.push_back(F2);
@@ -883,8 +904,7 @@ bool stampaMesh(vector<Frattura> Fratture){
     }
     for(auto f : Fratture){//Controla sia diversa da null!!
         if(f.IdFrattura!=-1){
-            file<<"FractureId\n"<<f.IdFrattura<< endl;
-            file << " NumCell0Ds"<< f.SottoPoligoni.NumberofCell0Ds<<endl;
+            file<<"FractureId\n"<<f.IdFrattura<< "\n" << " NumCell0Ds"<< f.SottoPoligoni.NumberofCell0Ds<<endl;
             file <<"IdCell0D; X; Y; Z"<<endl;
             for(unsigned int i = 0;i<f.SottoPoligoni.NumberofCell0Ds;i++){
                 file << f.SottoPoligoni.IdCell0Ds[i]<<"; "<< f.SottoPoligoni.CoordinatesCell0Ds[i][0]<< "; "<< f.SottoPoligoni.CoordinatesCell0Ds[i][1]<<
