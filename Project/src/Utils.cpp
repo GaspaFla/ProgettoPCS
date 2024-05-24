@@ -104,18 +104,29 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
 bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol, bool& LatoAppartiene){
     bool risultato=false;//non si intersecano se non funziona
     int cont=0; //quante volte ho avuto intersezione retta poligono
-    bool primo=true;//sgn del vertice predente
     int i=0;//contatore
     double segnoVerticeprec;
     while (i<F1.NumVertici && cont<2){ //avanzo fino a che non guardo tutti o trovo i due lati
         double segnoVertice=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i]);//sostituisco il punto nel piano e trovo il segno del vertice
-        if(primo){//primo punto
 
-            segnoVerticeprec = segnoVertice;
-            primo=false;
+        if(i == 0){//primo punto
+            if(segnoVertice>0){
+                segnoVerticeprec = 1;
+            }
+            else{
+                segnoVerticeprec = -1;
+            }
+
+
             if(abs(segnoVertice)<tol){//il primo punto sta sul piano
                 double segnoVerticePrec=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[F1.NumVertici-1]);
                 double segnoVerticeSucc=-F2.termineNotoPiano+F2.vecNormale.dot(F1.CoordinateVertici[i+1]);
+                if(segnoVerticeSucc>0){
+                    segnoVerticeprec = 1;
+                }
+                else{
+                    segnoVerticeprec = -1;
+                }
                 risultato = true; //non so se va qua?
                 if(abs(segnoVerticePrec)<tol){//sta sul piano anche l'ultimo
                     puntiFrattura[2*cont]=F1.CoordinateVertici[i];
@@ -136,7 +147,7 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                     cont++;
                     LatoAppartiene=true;
                 }
-                else if(segnoVerticeSucc*segnoVerticePrec>0){//tocca un solo punto
+                else if(segnoVerticeprec*segnoVerticePrec>0){//tocca un solo punto
                     return false;
                 }
                 else{//Se sono discordi vuol dire che passa attraverso
@@ -144,7 +155,6 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                     //incremento i di 2, una volta nell'else e una volta nell'if del primo
                     puntiFrattura[2*cont]=F1.CoordinateVertici[i+1]; //Salvo 0 ed 1 come lato che interseca
                     puntiFrattura[(2*cont)+1]=F1.CoordinateVertici[i];
-                    segnoVerticeprec=segnoVerticeSucc; //Dato che non andrò a studiare 1 ma direttamente 2 il segnoprecedente sarà quello di 1 e non di 0
                     cont++;
                     i++;
                 }
@@ -202,7 +212,12 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
                 cont++;
 
             }
-            segnoVerticeprec=segnoVertice;
+            if(segnoVertice>0){
+                segnoVerticeprec=1;
+            }
+            else{
+                segnoVerticeprec=-1;
+            }
             i++;//mando avanti il ciclo
         }
         else{//ultimo vertice

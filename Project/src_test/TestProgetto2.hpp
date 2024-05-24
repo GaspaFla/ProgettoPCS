@@ -801,6 +801,7 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteVerticale){
     }
 
 }
+
 TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteOrizzontale){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -1175,7 +1176,155 @@ TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineSeparate){
     }
 }
 
+TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidentiConVerticeSulLato){
+    //Creo la frattura madre
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura FMadre=Frattura(0,4,Coord);
+    //Setto gli id dei vertici  e aggiungo elementi alla mesh
+    for(unsigned int i = 0;i<4;i++){
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        FMadre.IdVertici.push_back(IdCell0D);
+        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+    }
+    //Faccio finta esiste un'altra frattura con id=2
+    Vector3d w(0,2,0);
+    Vector3d h(0,-1,0);
+    Vector3d wo(2,0,0);
+    Vector3d ho(-1,0,0);
+    Vector3d o(0,0,0);
+    array<Vector3d,2> VerticiT = {w,h};
+    array<Vector3d,2> VerticiTo = {wo,ho};
+    array<unsigned int,2> FrattureT = {0,1};
+    array<bool,2> Tips = {false,false};
+    Traccia T = Traccia(0,VerticiT,FrattureT,Tips);
+    Traccia To = Traccia(1,VerticiTo,FrattureT,Tips);
+    FMadre.TracceNoPass.push_back(0);
+    FMadre.TracceNoPass.push_back(1);
+    vector<Traccia> Tracce ;
+    Tracce.push_back(T);
+    Tracce.push_back(To);
+    double tol = 0.0000000000000001;
+    double tol2 = SetTolProdotto(tol);
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
+    EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
+    for (int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[0][i],wo[i]);
+        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[1][i],o[i]);
+        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[0][i],o[i]);
+        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
+    }
+}
 
+TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
+    //Creo la frattura madre
+    Vector3d x(2.5,2.5,0);
+    Vector3d y(-1.5,2.5,0);
+    Vector3d z(-1.5,-1.5,0);
+    Vector3d k(2.5,-1.5,0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura FMadre=Frattura(0,4,Coord);
+    //Setto gli id dei vertici  e aggiungo elementi alla mesh
+    for(unsigned int i = 0;i<4;i++){
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        FMadre.IdVertici.push_back(IdCell0D);
+        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+    }
+    //Faccio finta esiste un'altra frattura con id=2
+    Vector3d w(-0.5,1.5,0);
+    Vector3d h(1.5,-0.5,0);
+    Vector3d wo(1.5,1.5,0);
+    Vector3d ho(-0.5,-0.5,0);
+    Vector3d o(0.5,0.5,0);
+    array<Vector3d,2> VerticiT = {w,h};
+    array<Vector3d,2> VerticiTo = {wo,ho};
+    array<unsigned int,2> FrattureT = {0,1};
+    array<bool,2> Tips = {false,false};
+    Traccia T = Traccia(0,VerticiT,FrattureT,Tips);
+    Traccia To = Traccia(1,VerticiTo,FrattureT,Tips);
+    FMadre.TracceNoPass.push_back(0);
+    FMadre.TracceNoPass.push_back(1);
+    vector<Traccia> Tracce ;
+    Tracce.push_back(T);
+    Tracce.push_back(To);
+    double tol = 0.0000000000000001;
+    double tol2 = SetTolProdotto(tol);
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
+    EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
+
+    for (int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[0][i],wo[i]);
+        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[1][i],o[i]);
+        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[0][i],o[i]);
+        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
+    }
+}
+
+TEST(CalcoloSottoPoligoni,DueTracceConEstremoCoincidente){
+    Vector3d x(2,2,0);
+    Vector3d y(-2,2,0);
+    Vector3d z(-2,-2,0);
+    Vector3d k(2,-2,0);
+    vector<Vector3d>Coord={x,y,z,k};
+    Frattura FMadre=Frattura(0,4,Coord);
+    //Setto gli id dei vertici  e aggiungo elementi alla mesh
+    for(unsigned int i = 0;i<4;i++){
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        FMadre.IdVertici.push_back(IdCell0D);
+        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+    }
+    //Faccio finta esiste un'altra frattura con id=1
+    Vector3d w1(0,2,0);
+    Vector3d h1(0,-2,0);
+    Vector3d w2(0,-2,0);
+    Vector3d h2(-1,0,0);
+    array<Vector3d,2> VerticiT1 = {w1,h1};
+    array<Vector3d,2> VerticiT2 = {w2,h2};
+    array<unsigned int,2> FrattureT = {0,1};
+    array<bool,2> Tips = {false,false};
+    array<bool,2> Tips2 = {true,false};
+    Traccia T1 = Traccia(0,VerticiT1,FrattureT,Tips);
+    Traccia T2 = Traccia(1,VerticiT2,FrattureT,Tips2);
+    FMadre.TraccePass.push_back(0);
+    FMadre.TracceNoPass.push_back(1);
+    vector<Traccia> Tracce ;
+    Tracce.push_back(T1);
+    Tracce.push_back(T2);
+    double tol = 0.0000000000000001;
+    double tol2 = SetTolProdotto(tol);
+    bool TracciaSulBordo = false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniPass(FMadre,tol,tol2,TracciaSulBordo,Tracce,FMadre);
+
+    EXPECT_EQ(FrattureFiglie[1].TracceNoPass[0],1);
+    EXPECT_TRUE(FrattureFiglie[0].TracceNoPass.empty());
+    EXPECT_TRUE(FrattureFiglie[0].TraccePass.empty());
+
+
+
+    for (int i=0; i<3; i++){
+        EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[0][i],w2[i]);
+        EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[1][i],h2[i]);
+    }
+
+    vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniNoPass(FrattureFiglie[1],tol,tol2,Tracce,FMadre);
+    EXPECT_TRUE(FrattureFiglie1[0].TracceNoPass.empty());
+    EXPECT_TRUE(FrattureFiglie1[0].TraccePass.empty());
+    EXPECT_TRUE(FrattureFiglie1[1].TracceNoPass.empty());
+    EXPECT_TRUE(FrattureFiglie1[1].TraccePass.empty());
+
+
+}
 
 
 TEST(CalcoloSottoPoligono,TreFratture){
@@ -1354,134 +1503,4 @@ TEST(Taglia,TreTracce){
 
 }
 
-TEST(CalcoloSottoPoligoni,PassENoPass){
-    Vector3d x(0,0,0);
-    Vector3d y(1,0,0);
-    Vector3d z(1,1,0);
-    Vector3d k(0,1,0);
-    vector<Vector3d>Coord={x,y,z,k};
-    Frattura FMadre=Frattura(0,4,Coord);
-    //Setto gli id dei vertici  e aggiungo elementi alla mesh
-    for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
-        FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
-    }
-    //Faccio finta esiste un'altra frattura con id=1
-    Vector3d w1(0.8,0,0);
-    Vector3d h1(0.8,1,0);
-    Vector3d w2(0,0.5,0);
-    Vector3d h2(0.316184,0.5,0);
-    array<Vector3d,2> VerticiT1 = {w1,h1};
-    array<Vector3d,2> VerticiT2 = {w2,h2};
-    array<unsigned int,2> FrattureT = {0,1};
-    array<bool,2> Tips1 = {false,false};
-    array<bool,2> Tips2 = {true,false};
-    Traccia T1 = Traccia(0,VerticiT1,FrattureT,Tips1);
-    Traccia T2 = Traccia(1,VerticiT2,FrattureT,Tips2);
-    FMadre.TraccePass.push_back(0);
-    FMadre.TracceNoPass.push_back(1);
-    vector<Traccia> Tracce ;
-    Tracce.push_back(T1);
-    Tracce.push_back(T2);
-    double tol = 0.0000000000000001;
-    double tol2 = SetTolProdotto(tol);
-    bool TracciaSulBordo = false;
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniPass(FMadre,tol,tol2,TracciaSulBordo,Tracce,FMadre);
-    vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniNoPass(FrattureFiglie[0],tol,tol2,Tracce,FMadre);
-
-}
-TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
-    //Creo la frattura madre
-    Vector3d x(2,2,0);
-    Vector3d y(-2,2,0);
-    Vector3d z(-2,-2,0);
-    Vector3d k(2,-2,0);
-    vector<Vector3d>Coord={x,y,z,k};
-    Frattura FMadre=Frattura(0,4,Coord);
-    //Setto gli id dei vertici  e aggiungo elementi alla mesh
-    for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
-        FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
-    }
-    //Faccio finta esiste un'altra frattura con id=2
-    Vector3d w(0,2,0);
-    Vector3d h(0,-1,0);
-    Vector3d wo(2,0,0);
-    Vector3d ho(-1,0,0);
-    Vector3d o(0,0,0);
-    array<Vector3d,2> VerticiT = {w,h};
-    array<Vector3d,2> VerticiTo = {wo,ho};
-    array<unsigned int,2> FrattureT = {0,1};
-    array<bool,2> Tips = {false,false};
-    Traccia T = Traccia(0,VerticiT,FrattureT,Tips);
-    Traccia To = Traccia(1,VerticiTo,FrattureT,Tips);
-    FMadre.TracceNoPass.push_back(0);
-    FMadre.TracceNoPass.push_back(1);
-    vector<Traccia> Tracce ;
-    Tracce.push_back(T);
-    Tracce.push_back(To);
-    double tol = 0.0000000000000001;
-    double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
-    EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
-    EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
-    for (int i=0; i<3; i++){
-        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[0][i],wo[i]);
-        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[1][i],o[i]);
-        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[0][i],o[i]);
-        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
-    }
-}
-TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiSghembe){
-    //Creo la frattura madre
-    Vector3d x(2,2,0);
-    Vector3d y(-2,2,0);
-    Vector3d z(-2,-2,0);
-    Vector3d k(2,-2,0);
-    vector<Vector3d>Coord={x,y,z,k};
-    Frattura FMadre=Frattura(0,4,Coord);
-    //Setto gli id dei vertici  e aggiungo elementi alla mesh
-    for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
-        FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
-    }
-    //Faccio finta esiste un'altra frattura con id=2
-    Vector3d w(-1,1,0);
-    Vector3d h(1,-1,0);
-    Vector3d wo(1,1,0);
-    Vector3d ho(-1,-1,0);
-    Vector3d o(0.0,0.0,0.0);
-    array<Vector3d,2> VerticiT = {w,h};
-    array<Vector3d,2> VerticiTo = {wo,ho};
-    array<unsigned int,2> FrattureT = {0,1};
-    array<bool,2> Tips = {false,false};
-    Traccia T = Traccia(0,VerticiT,FrattureT,Tips);
-    Traccia To = Traccia(1,VerticiTo,FrattureT,Tips);
-    FMadre.TracceNoPass.push_back(0);
-    FMadre.TracceNoPass.push_back(1);
-    vector<Traccia> Tracce ;
-    Tracce.push_back(T);
-    Tracce.push_back(To);
-    double tol = 0.0000000000000001;
-    double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
-    EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
-    EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
-
-    for (int i=0; i<3; i++){
-        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[0][i],wo[i]);
-        EXPECT_DOUBLE_EQ(Tracce[2].VerticiTraccia[1][i],o[i]);
-        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[0][i],o[i]);
-        EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
-    }
-}
 

@@ -5,10 +5,11 @@
 #include"../src/Sort.hpp"
 using namespace DFN;
 
+
 TEST(importoFratture,FileAggiuntivo){
     double tol = 0.00000000000000001;
     vector<Frattura> Fratture;
-    string fileName = "./DFN/fileTestImporto.txt";
+    string fileName = "./DFN/FileTestImporto.txt";
     bool flag = importoFratture(fileName, Fratture, tol);
     EXPECT_TRUE(flag);
     EXPECT_EQ(Fratture[0].IdFrattura,0);
