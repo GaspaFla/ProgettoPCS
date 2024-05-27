@@ -99,8 +99,6 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2){ //AGGIUSTA
 }
 
 
-//INIZIO CODICE FLAVIO
-
 bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, double tol, bool& LatoAppartiene){
     bool risultato=false;//non si intersecano se non funziona
     int cont=0; //quante volte ho avuto intersezione retta poligono
@@ -251,7 +249,8 @@ bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura, 
     }
     return risultato;
 }
-bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool LatoAppartiene1, bool LatoAppartiene2,  double tol2){
+
+bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia& T, bool& LatoAppartiene1, bool& LatoAppartiene2,  double tol2){
 
     //ora calcolo la retta di intersezione tra i piani
     Vector3d DirettriceDellaRettaDiIntersezione= (F1.vecNormale).cross(F2.vecNormale);
@@ -318,7 +317,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
 
 
 
-Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
+Vector3d IncontroTraRette(Vector3d& direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
     Vector3d P=puntointersezione-VerticePoligono;
     MatrixXd M(3, 2);
     M.col(0)=direzionedeiLati;
@@ -461,7 +460,6 @@ bool stampaTracce( vector<Traccia>& Tracce){
     return true;
 }
 
-//Completare quando è pronto MergeSort
 bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
     ofstream file("stampaTracceFatture.txt");
     if(file.fail()){
@@ -505,11 +503,7 @@ bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
 
 void Progetto1(const string& fileName,vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,double tol2){
     unsigned int IdTraccia=0;
-
-
-
     if (importoFratture(fileName, Fratture, tol)){//Controllo che le fratture sia importate correttamente
-        //Tracce.reserve(Fratture.size()*Fratture.size());//CAMBIARE ==> sto supponendo tutti intersecano tutti
         for (int i = 0; i < Fratture.size()-1; i++) {
             if(Fratture[i].IdFrattura!= Fratture.size()+1){
                 for (int j = i+1; j < Fratture.size(); j++) {

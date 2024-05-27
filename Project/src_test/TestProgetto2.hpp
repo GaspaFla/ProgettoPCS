@@ -19,11 +19,11 @@ TEST(converteInCelle,LatiEsistenti){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Creo frattura figlia
     Vector3d w(0,2,0);
@@ -33,45 +33,45 @@ TEST(converteInCelle,LatiEsistenti){
     F1.IdVertici.push_back(0);
     //Aggiungo i nuovi e li aggiungo anche alla mesh della madre
     F1.IdVertici.push_back(4);
-    FMadre.SottoPoligoni.IdCell0Ds.push_back(4);
-    FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(w);
-    FMadre.SottoPoligoni.NumberofCell0Ds ++;
+    FMadre.SottoPoligoni.IdCell0D.push_back(4);
+    FMadre.SottoPoligoni.CoordinateCell0D.push_back(w);
+    FMadre.SottoPoligoni.NumeroCell0D ++;
 
     F1.IdVertici.push_back(5);
-    FMadre.SottoPoligoni.IdCell0Ds.push_back(5);
-    FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(h);
-    FMadre.SottoPoligoni.NumberofCell0Ds ++;
+    FMadre.SottoPoligoni.IdCell0D.push_back(5);
+    FMadre.SottoPoligoni.CoordinateCell0D.push_back(h);
+    FMadre.SottoPoligoni.NumeroCell0D ++;
     F1.IdVertici.push_back(3);
 
     converteInCelle(F1,FMadre);
     //Controllo sono state salvate correttamente
     //Cell1D
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell1Ds,4);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell1D,4);
     for(unsigned int i = 0;i<4;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.IdCell1Ds[i],i);
+        EXPECT_EQ(FMadre.SottoPoligoni.IdCell1D[i],i);
         if(i!=3){
-            EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[i][0],F1.IdVertici[i]);
-            EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[i][1],F1.IdVertici[i+1]);
+            EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[i][0],F1.IdVertici[i]);
+            EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[i][1],F1.IdVertici[i+1]);
         }
         else{
-            EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[i][0],F1.IdVertici[i]);
-            EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[i][1],F1.IdVertici[0]);
+            EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[i][0],F1.IdVertici[i]);
+            EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[i][1],F1.IdVertici[0]);
         }
     }
 
 
     //Cell2D
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell2Ds[0],0);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell2Ds,1);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[0][0],0);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[0][1],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[0][2],5);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[0][3],3);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell2D[0],0);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell2D,1);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[0][0],0);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[0][1],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[0][2],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[0][3],3);
 
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[0][0],0);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[0][1],1);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[0][2],2);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[0][3],3);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[0][0],0);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[0][1],1);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[0][2],2);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[0][3],3);
 
 
     //Creo un'altra frattura figlia
@@ -87,35 +87,35 @@ TEST(converteInCelle,LatiEsistenti){
 
     //Controllo sono state salvate correttamente per la seconda frattura
     //Cell1D
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell1Ds,7);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell1D,7);
 
 
 
     for(unsigned int i = 4;i<7;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.IdCell1Ds[i],i);
+        EXPECT_EQ(FMadre.SottoPoligoni.IdCell1D[i],i);
     }
 
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[4][0],F2.IdVertici[0]);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[4][1],F2.IdVertici[1]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[4][0],F2.IdVertici[0]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[4][1],F2.IdVertici[1]);
 
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[5][0],F2.IdVertici[1]);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[5][1],F2.IdVertici[2]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[5][0],F2.IdVertici[1]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[5][1],F2.IdVertici[2]);
 
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[6][0],F2.IdVertici[2]);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell1Ds[6][1],F2.IdVertici[3]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[6][0],F2.IdVertici[2]);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell1D[6][1],F2.IdVertici[3]);
 
     //Cell2D
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell2Ds[1],1);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell2Ds,2);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[1][0],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[1][1],1);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[1][2],2);
-    EXPECT_EQ(FMadre.SottoPoligoni.VerticesCell2Ds[1][3],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell2D[1],1);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell2D,2);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[1][0],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[1][1],1);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[1][2],2);
+    EXPECT_EQ(FMadre.SottoPoligoni.VerticiCell2D[1][3],5);
 
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[1][0],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[1][1],5);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[1][2],6);
-    EXPECT_EQ(FMadre.SottoPoligoni.EdgesCell2Ds[1][3],1);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[1][0],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[1][1],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[1][2],6);
+    EXPECT_EQ(FMadre.SottoPoligoni.LatiCell2D[1][3],1);
 
 }
 
@@ -132,11 +132,11 @@ TEST(calcoloSottoPoligoniPass,UnaTracciaPassanteVerticale){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(0,2,0);
@@ -181,11 +181,11 @@ TEST(calcoloSottoPoligoniPass,UnaTracciaPassanteVerticale){
     EXPECT_EQ(FrattureFiglie[1].IdVertici[2],2);
     EXPECT_EQ(FrattureFiglie[1].IdVertici[3],5);
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],w[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],h[i]);
     }
 
 }
@@ -203,11 +203,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteOrizzontale){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,0,0);
@@ -252,11 +252,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteOrizzontale){
     EXPECT_EQ(FrattureFiglie[0].IdVertici[2],3);
     EXPECT_EQ(FrattureFiglie[0].IdVertici[3],5);
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],w[i]);
     }
 
 }
@@ -275,11 +275,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiOppostiObliqua){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,-1,0);
@@ -328,11 +328,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiOppostiObliqua){
     EXPECT_EQ(FrattureFiglie[1].IdVertici[3],5);
 
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],w[i]);
     }
 
 }
@@ -349,11 +349,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,2,0);
@@ -400,9 +400,9 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
 
     ;
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
     }
 
 }
@@ -419,11 +419,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-2,2,0);
@@ -470,7 +470,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
 
     ;
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,4);//Non devono essere state aggiunte nuove cell0D
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell0D,4);//Non devono essere state aggiunte nuove cell0D
 
 }
 
@@ -487,11 +487,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiAdiacentiObliqua){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,1,0);
@@ -543,11 +543,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiAdiacentiObliqua){
 
 
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],w[i]);
     }
 
 }
@@ -563,11 +563,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccante){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-2,1,0);
@@ -605,11 +605,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccante){
     EXPECT_EQ(FrattureFiglie[0].IdVertici[4],2);
     EXPECT_EQ(FrattureFiglie[0].IdVertici[5],3);
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],w[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],h[i]);
     }
 
 }
@@ -625,11 +625,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteUnVerticeCoincidente
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-2,2,0);
@@ -667,10 +667,10 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteUnVerticeCoincidente
     EXPECT_EQ(FrattureFiglie[0].IdVertici[4],3);
 
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
 
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
 
     }
 
@@ -687,11 +687,11 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoinc
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-2,2,0);
@@ -727,7 +727,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoinc
     EXPECT_EQ(FrattureFiglie[0].IdVertici[3],3);
 
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,4);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell0D,4);
 
 }
 
@@ -743,11 +743,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteVerticale){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(0,1,0);
@@ -793,11 +793,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteVerticale){
     EXPECT_EQ(FrattureFiglie[1].IdVertici[2],2);
     EXPECT_EQ(FrattureFiglie[1].IdVertici[3],5);
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],w1[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],h1[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],w1[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],h1[i]);
     }
 
 }
@@ -813,11 +813,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteOrizzontale){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w1(1,0,0);
@@ -863,11 +863,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteOrizzontale){
     EXPECT_EQ(FrattureFiglie[0].IdVertici[2],3);
     EXPECT_EQ(FrattureFiglie[0].IdVertici[3],5);
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],w[i]);
     }
 
 }
@@ -883,11 +883,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaUnVerticeCoincidente){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,2,0);
@@ -934,9 +934,9 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaUnVerticeCoincidente){
 
     ;
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
     }
 
 }
@@ -952,11 +952,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaConEstesaVerticiCoincid
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-2,2,0);
@@ -1004,7 +1004,7 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaConEstesaVerticiCoincid
 
     ;
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,4);//Non devono essere state aggiunte nuove cell0D
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell0D,4);//Non devono essere state aggiunte nuove cell0D
 
 }
 
@@ -1020,11 +1020,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteLatiAdiacentiObliqua){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(2,1,0);
@@ -1076,11 +1076,11 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteLatiAdiacentiObliqua){
 
 
     //Controllo che la madre ha i nuovi vertici nella mesh
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[4],4);
-    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0Ds[5],5);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
+    EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[5],5);
     for(unsigned int i = 0;i<3;i++){
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[4][i],h[i]);
-        EXPECT_EQ(FMadre.SottoPoligoni.CoordinatesCell0Ds[5][i],w[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[4][i],h[i]);
+        EXPECT_EQ(FMadre.SottoPoligoni.CoordinateCell0D[5][i],w[i]);
     }
 
 }
@@ -1095,11 +1095,11 @@ TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineIncidenti){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(0,2,0);
@@ -1142,11 +1142,11 @@ TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineSeparate){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(0,2,0);
@@ -1186,11 +1186,11 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidentiConVerticeSul
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(0,2,0);
@@ -1232,11 +1232,11 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=2
     Vector3d w(-0.5,1.5,0);
@@ -1278,11 +1278,11 @@ TEST(CalcoloSottoPoligoni,DueTracceConEstremoCoincidente){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=1
     Vector3d w1(0,2,0);
@@ -1336,11 +1336,11 @@ TEST(CalcoloSottoPoligono,TreFratture){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=1
     Vector3d w1(-2,-1,0);
@@ -1419,11 +1419,11 @@ TEST(Taglia,DueTraccePassantiIncidenti){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=1
     Vector3d w1(0,2,0);
@@ -1445,9 +1445,9 @@ TEST(Taglia,DueTraccePassantiIncidenti){
     double tol2 = SetTolProdotto(tol);
     bool TracciaSulBordo = false;
     Taglia(FMadre,FMadre,Tracce,tol,tol2);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,9);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell1Ds,12);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell2Ds,4);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell0D,9);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell1D,12);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell2D,4);
 
 }
 
@@ -1462,11 +1462,11 @@ TEST(Taglia,TreTracce){
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
     for(unsigned int i = 0;i<4;i++){
-        unsigned int IdCell0D = FMadre.SottoPoligoni.NumberofCell0Ds;//inizializzato a 0
-        FMadre.SottoPoligoni.IdCell0Ds.push_back(IdCell0D);
+        unsigned int IdCell0D = FMadre.SottoPoligoni.NumeroCell0D;//inizializzato a 0
+        FMadre.SottoPoligoni.IdCell0D.push_back(IdCell0D);
         FMadre.IdVertici.push_back(IdCell0D);
-        FMadre.SottoPoligoni.CoordinatesCell0Ds.push_back(FMadre.CoordinateVertici[i]);
-        FMadre.SottoPoligoni.NumberofCell0Ds ++;
+        FMadre.SottoPoligoni.CoordinateCell0D.push_back(FMadre.CoordinateVertici[i]);
+        FMadre.SottoPoligoni.NumeroCell0D ++;
     }
     //Faccio finta esiste un'altra frattura con id=1
     Vector3d w1(-2,-1,0);
@@ -1497,9 +1497,9 @@ TEST(Taglia,TreTracce){
     bool TracciaSulBordo = false;
     cout<<"ARRIVA QUI"<<endl;
     Taglia(FMadre,FMadre,Tracce,tol,tol2);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell0Ds,10);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell1Ds,15);
-    EXPECT_EQ(FMadre.SottoPoligoni.NumberofCell2Ds,6);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell0D,10);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell1D,15);
+    EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell2D,6);
 
 }
 

@@ -1,9 +1,3 @@
-/* In questo file mettiamo le strutture delle fratture e delle tracce
-  Frattura -> ID NumVertici VettoredeiVertici  Tracce
-
- Traccia -> ID Vertici IdFratture Lunghezza
- */
-
 #pragma once
 #include <Eigen/Eigen>
 #include <vector>
@@ -11,7 +5,7 @@
 
 using namespace std;
 using namespace Eigen;
-using namespace MeshLibrary;
+using namespace LibreriaMesh;
 
 namespace DFN{ //Scelgo come namespace DFN perchè così ho tutto quello che riguarda fratture/tracce sotto lo stesso namespace
 struct Traccia{

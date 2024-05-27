@@ -7,29 +7,58 @@ using namespace std;
 using namespace Eigen;
 
 
-namespace MeshLibrary{
+namespace LibreriaMesh{
 struct MeshPoligonale{
     //Cell0D
-    unsigned int NumberofCell0Ds = 0; //numero di nodi
-    vector<unsigned int> IdCell0Ds = {};
-    vector<Vector3d> CoordinatesCell0Ds ;  // Uso i vettori di Eigen perchè voglio fare operazioni matematiche
+    unsigned int NumeroCell0D = 0; //numero di nodi
+    vector<unsigned int> IdCell0D = {};
+    vector<Vector3d> CoordinateCell0D ;  // Uso i vettori di Eigen perchè voglio fare operazioni matematiche
 
     //Cell1D
-    unsigned int NumberofCell1Ds = 0; //numero di lati
-    vector<unsigned int> IdCell1Ds = {};
-    vector<array<unsigned int,2>> VerticesCell1Ds = {};  // Uso gli array di STL perchè so a priori la dimensione
+    unsigned int NumeroCell1D = 0; //numero di lati
+    vector<unsigned int> IdCell1D = {};
+    vector<array<unsigned int,2>> VerticiCell1D = {};  // Uso gli array di STL perchè so a priori la dimensione
 
 
     //Cell2D
-    unsigned int NumberofCell2Ds = 0;
-    vector<unsigned int> IdCell2Ds = {};
+    unsigned int NumeroCell2D = 0;
+    vector<unsigned int> IdCell2D = {};
     // Non so a priori quanti vertici e lati ha un poligono, quindi non posso usare gli array
     // Uso vettori
     // Faccio una lista di vettori che contengono gli id dei vertici o lati
-    vector<vector<unsigned int>> VerticesCell2Ds  = {};
-    vector<vector<unsigned int>> EdgesCell2Ds = {};
+    vector<vector<unsigned int>> VerticiCell2D  = {};
+    vector<vector<unsigned int>> LatiCell2D = {};
 
+    //Triangolazione per esportare
+    vector<vector<vector<unsigned int>>> Triangolazione()
+    {
+        const unsigned int numPoligoni = NumeroCell2D;
+        vector<vector<vector<unsigned int>>> listaTriangoli(numPoligoni);
+
+        for(unsigned int p = 0; p < numPoligoni; p++)
+        {
+            const unsigned int numVerticiPoligono = VerticiCell2D[p].size();
+
+            for (unsigned int v = 0; v < numVerticiPoligono; v++)
+            {
+                const unsigned int nextVertex = VerticiCell2D[p][(v + 1) % numVerticiPoligono];
+                const unsigned int nextNextVertex = VerticiCell2D[p][(v + 2) % numVerticiPoligono];
+
+                if ((v + 2) % numVerticiPoligono == 0)
+                    break;
+
+                vector<unsigned int> verticiTriangolo = {VerticiCell2D[p][0], nextVertex, nextNextVertex};
+
+                listaTriangoli[p].push_back(verticiTriangolo);
+            }
+        }
+        return listaTriangoli;
+    }
+
+    void GedimInterface(vector<vector<unsigned int>>& triangoli,
+                                        VectorXi& materials);
 
 
 };
+
 }
