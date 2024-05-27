@@ -971,7 +971,7 @@ void Progetto2(vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,do
 }
 
 void esportaMesh(Frattura& F){
-    int numColonne = F.SottoPoligoni.CoordinateCell0D.size();
+    int numColonne = F.SottoPoligoni.NumeroCell0D;
 
     // Creo la matrice risultante di dimensioni 3xN
     MatrixXd matricePunti(3, numColonne);
@@ -981,22 +981,13 @@ void esportaMesh(Frattura& F){
         matricePunti.col(i) = F.SottoPoligoni.CoordinateCell0D[i];
     }
 
-
-
-    //VectorXi eigenVec(F.SottoPoligoni.IdCell0D.size());
-   // for (size_t i = 0; i < F.SottoPoligoni.IdCell0D.size(); ++i) {
-     //   eigenVec(i) = static_cast<int>(F.SottoPoligoni.IdCell0D[i]);  // Conversione da unsigned int a int
-    //}
-
-
     UCDUtilities U;
-    string fileName = "./DFN/EsportoMeshPunti.txt";
+    string fileName = "./DFN/EsportoMeshPunti.inp";
     U.ExportPoints( fileName, matricePunti,{},{});
 
 
-
     // Calcola il numero totale di colonne nella matrice risultante
-    int numCol2 = F.SottoPoligoni.VerticiCell1D.size();
+    int numCol2 = F.SottoPoligoni.NumeroCell1D;
 
     // Crea la matrice risultante di dimensioni 2xN
       MatrixXi matriceSegmenti(2, numCol2);

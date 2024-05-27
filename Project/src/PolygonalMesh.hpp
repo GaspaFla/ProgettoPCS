@@ -30,30 +30,7 @@ struct MeshPoligonale{
     vector<vector<unsigned int>> LatiCell2D = {};
 
     //Triangolazione per esportare
-    vector<vector<vector<unsigned int>>> Triangolazione()
-    {
-        const unsigned int numPoligoni = NumeroCell2D;
-        vector<vector<vector<unsigned int>>> listaTriangoli(numPoligoni);
-
-        for(unsigned int p = 0; p < numPoligoni; p++)
-        {
-            const unsigned int numVerticiPoligono = VerticiCell2D[p].size();
-
-            for (unsigned int v = 0; v < numVerticiPoligono; v++)
-            {
-                const unsigned int nextVertex = VerticiCell2D[p][(v + 1) % numVerticiPoligono];
-                const unsigned int nextNextVertex = VerticiCell2D[p][(v + 2) % numVerticiPoligono];
-
-                if ((v + 2) % numVerticiPoligono == 0)
-                    break;
-
-                vector<unsigned int> verticiTriangolo = {VerticiCell2D[p][0], nextVertex, nextNextVertex};
-
-                listaTriangoli[p].push_back(verticiTriangolo);
-            }
-        }
-        return listaTriangoli;
-    }
+    vector<vector<vector<unsigned int>>> Triangolazione();
 
     void GedimInterface(vector<vector<unsigned int>>& triangoli,
                                         VectorXi& materials);
