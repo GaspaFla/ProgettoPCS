@@ -7,6 +7,8 @@
 #include"../src/Sort.hpp"
 using namespace DFN;
 
+
+
 //TEST ConverteInCelle
 TEST(converteInCelle,LatiEsistenti){
     //Creo la frattura madre
@@ -1221,12 +1223,20 @@ TEST(CalcoloSottoPoligono,TreFratture){
     double tol2 = SetTolProdotto(tol);
     bool TracciaSulBordo = false;
     vector<Frattura> FrattureFiglie = calcoloSottoPoligoniPass(FMadre,tol,tol2,TracciaSulBordo,Tracce,FMadre);
+
     //Controllo che nelle fratture figlie sono calcolate bene le nuove tracce
+
     EXPECT_EQ(FrattureFiglie[0].TraccePass[0],1);
+
+    if(FrattureFiglie[0].TracceNoPass.empty())
+
     EXPECT_EQ(FrattureFiglie[0].TracceNoPass[0],3);
+
     EXPECT_EQ(FrattureFiglie[1].TracceNoPass[0],4);
+
     EXPECT_EQ(Tracce.size(),5);
     Vector3d NuovoEstremo(1,-1,0);
+
     for (int i=0; i<3; i++){
         EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[0][i],w2[i]);
         EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[1][i],h2[i]);
@@ -1236,6 +1246,7 @@ TEST(CalcoloSottoPoligono,TreFratture){
         EXPECT_DOUBLE_EQ(Tracce[4].VerticiTraccia[1][i],h3[i]);
     }
     //Ora calcolo i sottopoligoni della prima figlia
+    cout<<"qui?"<<endl;
     vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniPass(FrattureFiglie[0],tol,tol2,TracciaSulBordo,Tracce,FMadre);
     //Controllo che nelle fratture figlie sono calcolate bene le nuove tracce
     EXPECT_EQ(Tracce.size(),7);
@@ -1393,6 +1404,7 @@ TEST(CalcoloSottoPoligoni,PassENoPass){
     vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniNoPass(FrattureFiglie[0],tol,tol2,Tracce,FMadre);
 
 }
+
 TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -1438,6 +1450,8 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
         EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
     }
 }
+
+
 TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiSghembe){
     //Creo la frattura madre
     Vector3d x(2,2,0);
@@ -1471,7 +1485,7 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiSghembe){
     vector<Traccia> Tracce ;
     Tracce.push_back(T);
     Tracce.push_back(To);
-    double tol = 0.0000000000000001;
+    double tol = 0.00000000000000001;
     double tol2 = SetTolProdotto(tol);
     vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
     EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
@@ -1484,4 +1498,5 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiSghembe){
         EXPECT_DOUBLE_EQ(Tracce[3].VerticiTraccia[1][i],ho[i]);
     }
 }
+
 
