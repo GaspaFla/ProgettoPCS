@@ -95,31 +95,29 @@ void converteInCelle(Frattura& F,Frattura &FMadre){
 }
 
 vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bool& TracciaSulBordo, vector<Traccia>& Tracce, Frattura& FMadre){
-    vector<unsigned int> NuoviIndiciPositivi;
-    vector<unsigned int> NuoviIndiciNegativi;
-    vector<Frattura> Figli;
-    vector<Vector3d>PuntiPositivi;//vettore in cui mettere i punti a destra
-    vector<Vector3d>PuntiNegativi;//vettore in cui mettere i punti a sinistra
+    vector<unsigned int> NuoviIndiciPositivi;//salvataggio indici corrispondenti
+    vector<unsigned int> NuoviIndiciNegativi;//salavtaggio indici corrispondenti
+    vector<Frattura> Figli;//output
+    vector<Vector3d>PuntiPositivi;//vettore in cui mettere i punti sul semipiano positivo
+    vector<Vector3d>PuntiNegativi;//vettore in cui mettere i punti sul semipiano negativo
     unsigned int PuntiNuovi=0; //quanti nuovi vertici ho trovato
     //Sostituisci con array dim 2 :)
     vector<Vector3d> VerticiTraccia={ Tracce[F.TraccePass[0]].VerticiTraccia[0],Tracce[F.TraccePass[0]].VerticiTraccia[1]};//vettore con dentro i due vertici della traccia
     double SegnoPrec=1;
     double segno;
     unsigned int NuovoId;for (unsigned int i=0; i<F.NumVertici; i++){
-        if(PuntiNuovi<2){
-            //se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
+        if(PuntiNuovi<2){//se devo ancora trovarne faccio controlli altrimenti faccio un'assegnazione veloce
+            //calcolo dove sta rispetto alla traccia, calcolandone il segno
             segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[i])).dot(F.vecNormale);
-            if(i==0){
-
-                if(abs(segno)<tol && (VerticiTraccia[0]-VerticiTraccia[1]).squaredNorm()>tol2){
-                    //caso 1,  il lato  è compreso
+            if(i==0){//sono nel primo valore
+                //il segno ha valore sotto la tolleranza
+                if(abs(segno)<tol){
+                    //caso 1,  la traccia è compresa nel lato precedente
                     if((VerticiTraccia[0]-VerticiTraccia[1]).cross(F.CoordinateVertici[0]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm()<tol){
                         TracciaSulBordo=true;
                         vector<Vector3d>VerticiTracciaOrdinati={};
                         SegnoPrec=1;
-                        //quale è il più vicino?
-
-
+                        //guardo quale è il più vicino e controllo se ci sono dei punti che coincidono. Se non è così inserisco punti nuovi ordinati
                         if((VerticiTraccia[1]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm()<(VerticiTraccia[0]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm()){
                             if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2 || (VerticiTraccia[1]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm() <tol2){
                                 if((VerticiTraccia[0]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm() >tol2 && (VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() >tol2){
@@ -134,7 +132,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
 
                             }
                         }
-                        else {
+                        else {//non era il più vicino l'1 ma il vertice 0
                             if((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2 || (VerticiTraccia[0]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm() <tol2){
                                 if((VerticiTraccia[1]-F.CoordinateVertici[F.NumVertici-1]).squaredNorm() >tol2 && (VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() >tol2){
                                     //visto che i punti coincidono assegno solo l'altro
@@ -162,9 +160,10 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         PuntiNuovi++;
                     }
                     //caso 2, il vertice coincide con il vertice traccia ma il lato non è compreso
+                    //essendo che la traccia è passante sono sicuro che se anche il vertice 1 coincidesse con il vertice del poligono ho zero, perchè avrei uguale la differenza tra una traccia e l'altra
                     else if(((VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() <tol2) || ((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2) ){
 
-                        //dico che ci sono vertici traccia che funzionano, rimane solo più l'altro punto
+                        //il vertice del poligono sta al bordo del semipiano
                         PuntiNuovi++;
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
                         NuoviIndiciPositivi.push_back(F.IdVertici[i]);
@@ -179,6 +178,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         }
 
                     }
+                     //caso 3, la traccia stia sul lato successivo e non il precedente, metto i vertici e vado avanti
                     else{
                         if(SegnoPrec>0){
                             PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -192,10 +192,8 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         }
                     }
                 }
+                //il segno non è nullo, posso dare un semipiano al vertice
                 else{
-
-                    //va tutto bene
-                    SegnoPrec=segno;
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
                         NuoviIndiciPositivi.push_back(F.IdVertici[i]);
@@ -221,11 +219,11 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         TracciaSulBordo=true;
                         vector<Vector3d>VerticiTracciaOrdinati={};
                         SegnoPrec=1;
-                        //quale è il più vicino?
+                        //guardo quale è il più vicino e controllo se ci sono delle sovrapposizioni tra i vertici della frattura e i vertici della traccia
 
 
                         if((VerticiTraccia[1]-F.CoordinateVertici[i-1]).squaredNorm()<(VerticiTraccia[0]-F.CoordinateVertici[i-1]).squaredNorm()){
-                            //uno dei due è uguale a un vertice del poligono
+                            //controllo se uno dei due è uguale a un vertice del poligono
                             if((VerticiTraccia[1]-F.CoordinateVertici[i]).squaredNorm() <tol2 || (VerticiTraccia[1]-F.CoordinateVertici[i-1]).squaredNorm() <tol2){
                                 if((VerticiTraccia[0]-F.CoordinateVertici[i-1]).squaredNorm() >tol2 && (VerticiTraccia[0]-F.CoordinateVertici[i]).squaredNorm() >tol2){
                                     //visto che i punti coincidono assegno solo l'altro
@@ -250,11 +248,14 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                             else{
                                 VerticiTracciaOrdinati=VerticiTraccia;
 
-                                //guardo solo se sta sulla retta con il precedente sempre
                             }
 
                         }
-                        //salvo tutti nel positivo
+                        //salvo tutti nel positivo, se ci sono elementi nel negativo il trasferisco tutti nel positivo
+                        if(!PuntiNegativi.empty()){
+                            PuntiPositivi=PuntiNegativi;
+                            NuoviIndiciPositivi=NuoviIndiciNegativi;
+                        }
                         for (unsigned int j=0; j<VerticiTracciaOrdinati.size(); j++){
 
                             PuntiPositivi.push_back(VerticiTracciaOrdinati[j]);
@@ -281,6 +282,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
 
                         SegnoPrec=-SegnoPrec;
                     }
+                    //caso 3, la traccia non sta sul lato precedente ma sta sul successivo
 
                     else{
                         if(SegnoPrec>0){
@@ -300,10 +302,10 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
 
 
 
-                //la traccia non è sul lato e non ha vertici coincidenti
+                //la traccia non è sul lato e non ha vertici coincidenti, posso calcolare il semipiano
                 else if(segno*SegnoPrec>0){
 
-                    //hanno lo stesso segno, allora faccio che inserirlo nel vettore giusto
+                    //hanno lo stesso segno, allora lo inserisco nel vettore giusto
                     if(segno>0){
                         PuntiPositivi.push_back(F.CoordinateVertici[i]);
                         NuoviIndiciPositivi.push_back(F.IdVertici[i]);
@@ -313,13 +315,13 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         NuoviIndiciNegativi.push_back(F.IdVertici[i]);
                     }
                 }
-                //se invece hanno segni diversi...
+                //se invece hanno segni diversi, guardo quale vertice della traccia è nell'intersezione e lo inserisco
                 else {
                     SegnoPrec=-SegnoPrec;
                     PuntiNuovi++;
                     //essendo passanti ho già il punto di intersezione
                     //guardo quale sta sulla retta giusta
-                    //aggiungo prima il vertice della traccia e poi se stesso
+                    //aggiungo prima il vertice della traccia e poi del vertice
                     if(((F.CoordinateVertici[i]-F.CoordinateVertici[i-1]).cross(F.CoordinateVertici[i]-VerticiTraccia[0])).squaredNorm()<tol2){
                         NuovoId=RicercaIdVertice(FMadre, VerticiTraccia[0], tol2);
                         if (segno>0){
@@ -384,12 +386,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             }
 
         }
-
-
-
-
-
-
+//ho già trovato i due punti che fanno avvenire il cambio di semipiano, inserisco gli altri in base al segno precedente
         else{
             if(SegnoPrec>0){
                 PuntiPositivi.push_back(F.CoordinateVertici[i]);
@@ -401,6 +398,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             }
         }
     }
+    //sono uscito dal for, vado a controllare se c'è un punto da aggiungere tra l'ultimo e il primo vertice, che non avevo ancora analizzato
     if(PuntiNuovi<2){
         segno=((VerticiTraccia[0]-VerticiTraccia[1]).cross(VerticiTraccia[0]-F.CoordinateVertici[0])).dot(F.vecNormale);
         if(segno*SegnoPrec<0){
@@ -455,18 +453,19 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
         }
     }
 
-    //devo fare la funzione che mi divide le tracce e mi dice se sono di una frattura o dell'altra
+    //ora divido le tracce e controllo se le fratture stanno da una parte o dall'altra
     double segnoVerticeTraccia0;
     double segnoVerticeTraccia1;
-    vector<unsigned int>TracceNegative={};
-    vector<unsigned int>TraccePositive={};
-    vector<unsigned int>TracceNegativeNopass;
-    vector<unsigned int> TraccePositiveNopass;
+    vector<unsigned int>TracceNegative={};//tracce nel semipiano negativo passanti
+    vector<unsigned int>TraccePositive={};//tracce nel semipiano positivo passanti
+    vector<unsigned int>TracceNegativeNopass;//tracce nel semipiano negativo non passanti
+    vector<unsigned int> TraccePositiveNopass;//tracce nel semipiano positivo non passanti
     Vector3d NuovoVerticeTraccia;
     vector<Vector3d> VerticiTracciaNuova;
     unsigned int IdPositivo;
     unsigned int IdNegativo;
     Vector3d DirezioneTraccia=VerticiTraccia[0]-VerticiTraccia[1];
+    //se ho un solo poligono aggiungo tutte le tracce in ordine tranne la prima dei passanti
     if(TracciaSulBordo){
         for (unsigned int j=1; j<F.TraccePass.size();j++){
             TraccePositive.push_back(F.TraccePass[j]);
@@ -478,12 +477,14 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
         }
     }
     else{
+        //se non ho caso degenere vado avanti in ordine, prima con le passanti poi le non passanti
         if(!F.TraccePass.empty()){
             for (unsigned int i=1; i<F.TraccePass.size(); i++){
+                //calcolo i segni e i vertici della traccia da analizzare
                 VerticiTracciaNuova={ Tracce[F.TraccePass[i]].VerticiTraccia[0],Tracce[F.TraccePass[i]].VerticiTraccia[1]};
                 segnoVerticeTraccia0=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[0]).dot(F.vecNormale);
                 segnoVerticeTraccia1=DirezioneTraccia.cross(VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1]).dot(F.vecNormale);
-
+                //caso 1, abbiamo che la traccia è divisa dal semipiano, cerco intersezione e la aggiungo
                 if(segnoVerticeTraccia0*segnoVerticeTraccia1<0 && abs(segnoVerticeTraccia0)>tol && abs(segnoVerticeTraccia1)>tol){
                     NuovoVerticeTraccia=IncontroTraRette(Tracce[F.TraccePass[i]].VerticiTraccia[0]-Tracce[F.TraccePass[i]].VerticiTraccia[1], Tracce[F.TraccePass[i]].VerticiTraccia[0],DirezioneTraccia , VerticiTraccia[0]);
                     if(segnoVerticeTraccia0>0){
@@ -523,8 +524,9 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
                         //cambio inserimento, ora una da una parte ora dall'altra
                     }
                 }
+                //vado a vedere se sta dalla parte positiva o negativa
                 else {
-                    if(segnoVerticeTraccia0>tol || segnoVerticeTraccia1>tol){
+                    if(segnoVerticeTraccia0>0){
                         TraccePositive.push_back(F.TraccePass[i]);
 
                     }
