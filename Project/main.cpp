@@ -1,4 +1,3 @@
-#include <iostream>
 #include "./src/GeometryLibrary.hpp"
 #include "./src/Utils.hpp"
 #include "./src/Utils2.hpp"
@@ -14,8 +13,10 @@ int main()
     double tol2=SetTolProdotto(tol1D);
     vector<Frattura> Fratture;
     vector<Traccia> Tracce;
-    Progetto1(fileName,Fratture,Tracce, tol1D,tol2);
-    Progetto2(Fratture, Tracce, tol1D, tol2);
+    bool parte1 = Progetto1(fileName,Fratture,Tracce, tol1D,tol2);
+    if(parte1){
+       Progetto2(Fratture, Tracce, tol1D, tol2);
+    }
 
     return 0;
 }

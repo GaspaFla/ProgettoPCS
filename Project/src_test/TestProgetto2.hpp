@@ -4,17 +4,17 @@
 #include "../src/Utils2.hpp"
 #include"../src/PolygonalMesh.hpp"
 #include <gtest/gtest.h>
-#include"../src/Sort.hpp"
+
 using namespace DFN;
 
 //TEST ConverteInCelle
-TEST(converteInCelle,LatiEsistenti){
+TEST(TESTCONVERTEINCELLE,LatiEsistenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -121,13 +121,13 @@ TEST(converteInCelle,LatiEsistenti){
 
 
 
-TEST(calcoloSottoPoligoniPass,UnaTracciaPassanteVerticale){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,UnaTracciaPassanteVerticale){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -192,13 +192,13 @@ TEST(calcoloSottoPoligoniPass,UnaTracciaPassanteVerticale){
 
 
 
-TEST(calcoloSottoPoligoniPass,TracciaPassanteOrizzontale){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassanteOrizzontale){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -264,13 +264,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteOrizzontale){
 
 
 
-TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiOppostiObliqua){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassanteLatiOppostiObliqua){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -338,13 +338,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiOppostiObliqua){
 }
 
 
-TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassanteObliquaUnVerticeCoincidente){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -398,7 +398,7 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
     EXPECT_EQ(FrattureFiglie[1].IdVertici[1],1);
     EXPECT_EQ(FrattureFiglie[1].IdVertici[2],4);
 
-    ;
+
     //Controllo che la madre ha i nuovi vertici nella mesh
     EXPECT_EQ(FMadre.SottoPoligoni.IdCell0D[4],4);
     for(unsigned int i = 0;i<3;i++){
@@ -408,13 +408,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaUnVerticeCoincidente){
 }
 
 
-TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -476,13 +476,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteObliquaEntrambiVerticiCoincidenti){
 
 
 
-TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiAdiacentiObliqua){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassanteLatiAdiacentiObliqua){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -552,13 +552,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassanteLatiAdiacentiObliqua){
 
 }
 
-TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccante){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassantePerLatoToccante){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -614,13 +614,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccante){
 
 }
 
-TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteUnVerticeCoincidente){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassantePerLatoToccanteUnVerticeCoincidente){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -676,13 +676,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteUnVerticeCoincidente
 
 }
 
-TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoincidenti){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTI,TracciaPassantePerLatoToccanteEntrambiVerticiCoincidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -732,13 +732,13 @@ TEST(calcoloSottoPoligoniPass,TracciaPassantePerLatoToccanteEntrambiVerticiCoinc
 }
 
 
-TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteVerticale){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteVerticale){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -802,13 +802,13 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteVerticale){
 
 }
 
-TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteOrizzontale){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteOrizzontale){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -872,13 +872,13 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteOrizzontale){
 
 }
 
-TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaUnVerticeCoincidente){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteObliquaUnVerticeCoincidente){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -941,13 +941,13 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaUnVerticeCoincidente){
 
 }
 
-TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaConEstesaVerticiCoincidenti){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteObliquaConEstesaVerticiCoincidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -1009,13 +1009,13 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteObliquaConEstesaVerticiCoincid
 }
 
 
-TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteLatiAdiacentiObliqua){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteLatiAdiacentiObliqua){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura FMadre=Frattura(0,4,Coord);
     //Setto gli id dei vertici  e aggiungo elementi alla mesh
@@ -1085,7 +1085,7 @@ TEST(calcoloSottoPoligoniNoPass,TracciaNonPassanteLatiAdiacentiObliqua){
 
 }
 
-TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineIncidenti){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTITRACCE,DueTraccePassantineIncidenti){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -1132,7 +1132,7 @@ TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineIncidenti){
     }
 }
 
-TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineSeparate){
+TEST(TESTCALCOLOSOTTOPOLIGONIPASSANTITRACCE,DueTraccePassantineSeparate){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -1176,7 +1176,7 @@ TEST(calcoloSottoPoligoniPassTracce,DueTraccePassantineSeparate){
     }
 }
 
-TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidentiConVerticeSulLato){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE,DueTracceNonPassantiIncidentiConVerticeSulLato){
     //Creo la frattura madre
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -1222,7 +1222,7 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidentiConVerticeSul
     }
 }
 
-TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
+TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE,DueTracceNonPassantiIncidenti){
     //Creo la frattura madre
     Vector3d x(2.5,2.5,0);
     Vector3d y(-1.5,2.5,0);
@@ -1269,7 +1269,7 @@ TEST(calcoloSottoPoligoniNoPassTracce,DueTracceNonPassantiIncidenti){
     }
 }
 
-TEST(CalcoloSottoPoligoni,DueTracceConEstremoCoincidente){
+TEST(TESTCALCOLOSOTTOPOLIGONI,DueTracceConEstremoCoincidente){
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
@@ -1327,7 +1327,7 @@ TEST(CalcoloSottoPoligoni,DueTracceConEstremoCoincidente){
 }
 
 
-TEST(CalcoloSottoPoligono,TreFratture){
+TEST(TESTCALCOLOSOTTOPOLIGONI,TreFratture){
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
@@ -1409,8 +1409,7 @@ TEST(CalcoloSottoPoligono,TreFratture){
 
 }
 
-//TEST Taglia
-TEST(Taglia,DueTraccePassantiIncidenti){
+TEST(TESTTAGLIA,DueTraccePassantiIncidenti){
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
@@ -1451,9 +1450,7 @@ TEST(Taglia,DueTraccePassantiIncidenti){
 
 }
 
-
-
-TEST(Taglia,TreTracce){
+TEST(TESTTAGLIA,TreTracce){
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
@@ -1502,5 +1499,3 @@ TEST(Taglia,TreTracce){
     EXPECT_EQ(FMadre.SottoPoligoni.NumeroCell2D,6);
 
 }
-
-

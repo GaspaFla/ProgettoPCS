@@ -12,7 +12,7 @@ struct Traccia{
     unsigned int IdTraccia;
     array<Vector3d,2> VerticiTraccia;
     array<unsigned int,2> FrattureTraccia; //memorizzo id delle due fratture che fanno parte della traccia
-    array<bool,2> Tips; // memorizzo True se è passante e False se non è passante
+    array<bool,2> Tips; // memorizzo False se è passante e True se non è passante
     double lunghezza;
     Traccia() = default;
     Traccia(unsigned int IdT, array<Vector3d,2> VerticiT, array<unsigned int,2> FrattureT,array<bool,2> T){//Costruttore
@@ -20,7 +20,8 @@ struct Traccia{
         VerticiTraccia = VerticiT;
         FrattureTraccia = FrattureT;
         Tips = T;
-        lunghezza = (VerticiT[0]-VerticiT[1]).norm();//Salvo la lunghezza al quadrato per evitare di fare radici
+        lunghezza = (VerticiT[0]-VerticiT[1]).norm();//Non salvo la lunghezza al quadrato perchè devo stamparla
+                                                     //La memorizza come attributo per poter fare il calcolo una volta sola
     }
     Traccia(array<Vector3d,2> VerticiT){
          VerticiTraccia = VerticiT;
@@ -35,10 +36,8 @@ struct Frattura{
     vector<unsigned int> TraccePass;
     Vector3d vecNormale;
     double termineNotoPiano;
-    MeshPoligonale SottoPoligoni;
-    vector<unsigned int> IdVertici;
-
-
+    MeshPoligonale SottoPoligoni; //Ogni Frattura ha la mesh generata dalle tracce
+    vector<unsigned int> IdVertici;//Associo ai vertici degli id che andranno poi a far parte della mesh ==> sono inizializzati prima di effettuare i tagli
 
     Frattura(unsigned int IdF, unsigned int NumV,  vector<Vector3d> CoordinateV ){//Costruttore
         IdFrattura = IdF;
@@ -61,15 +60,6 @@ struct Frattura{
     }
 
 
-
-
-    //Prima di chiamare la ricorsiva sulla madre aggiungo i primi vertici alla mesh
-    //Aggiungo anche gli id dei vertici della madre
-    //Per i figli aggiungo dopo aver creato la frattura
 };
-
-
-//Crea un vettore che contiene le coordinate di tutti i vertici che andranno a creare la mesh ==> non vuoto solo per la madre
-//Per ogni figlio e anche per la madre salvo un vettore che contiene solo gli id dei figli, così trovo le coordinate tramite il vettore della madre
 
 }

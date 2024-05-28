@@ -104,12 +104,11 @@ TEST(TESTCENTROMERO, Quadratimoltovicini)
 
 TEST(TESTINTERSEZIONE, QuadratiPerpendicolariPerOrigine)
 {
-    //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,1,-1);
     Vector3d y(0,1,1);
     Vector3d z(0,-1,1);
     Vector3d k(0,-1,-1);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(1,0,-1);
@@ -147,12 +146,12 @@ TEST(TESTINTERSEZIONE, QuadratiPerpendicolariPerOrigine)
 
 TEST(TESTINTERSEZIONE, QuadratiPerpendicolariNonPerOrigine)
 {
-    //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
+
     Vector3d x(0,6,-1);
     Vector3d y(0,6,1);
     Vector3d z(0,4,1);
     Vector3d k(0,4,-1);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(1,5,-1);
@@ -192,12 +191,11 @@ TEST(TESTINTERSEZIONE, QuadratiPerpendicolariNonPerOrigine)
 
 TEST(TESTINTERSEZIONE, QuadratiViciniCheNonSiIntersecano)
 {
-    //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,1,-1);
     Vector3d y(0,1,1);
     Vector3d z(0,-1,1);
     Vector3d k(0,-1,-1);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(1,1,-1);
@@ -226,12 +224,12 @@ TEST(TESTINTERSEZIONE, QuadratiViciniCheNonSiIntersecano)
 
 TEST(TESTINTERSEZIONE, QuadratiPerpendicolariPerOrigineNonPassante)
 {
-    //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
+
     Vector3d x(0,1,-1);
     Vector3d y(0,1,1);
     Vector3d z(0,-1,1);
     Vector3d k(0,-1,-1);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(2,0,-3);
@@ -273,7 +271,6 @@ TEST(TESTINTERSEZIONE,TriangoloSuPiano )
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,-0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(1,0,0);
@@ -306,7 +303,7 @@ TEST(TESTINTERSEZIONE,ToccantePerEntrambi )
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,-0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(2,2,0);
@@ -411,7 +408,7 @@ TEST(TESTINTERSEZIONE,TriangoloAttraverso)
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,-0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(0,1,-1);
@@ -444,7 +441,7 @@ TEST(TESTINTERSEZIONE,RomboAttraverso)
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,-0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
+
     vector<Vector3d>Coord={x,y,z,k};
     Frattura F1=Frattura(0,4,Coord);
     Vector3d x1(0,0,-4);
@@ -676,7 +673,6 @@ TEST(TESTCALCOLOTRACCE,TracciaSulLato)
     Vector3d y(-2,2,0);
     Vector3d z(-2,-2,0);
     Vector3d k(2,-2,-0);
-    //QUADRATO CENTRO ZERO RAGGIO 1
     vector<Vector3d>CoordinateV1={x,y,z,k};
     Frattura F1=Frattura(0,4,CoordinateV1);
     Vector3d x1(2,2,0);

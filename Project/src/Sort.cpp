@@ -1,11 +1,7 @@
-#include "Utils.hpp"
 #include "GeometryLibrary.hpp"
-#include "Utils.hpp"
 #include "GeometryLibrary.hpp"
 #include "Eigen/Eigen"
-#include <iostream>
-#include <sstream> // controlla se servono tutte
-#include <fstream>
+
 using namespace std;
 
 namespace DFN{
@@ -18,7 +14,6 @@ void Merge(vector<Traccia>& v,vector<unsigned int>& vId,
     unsigned int i = sx;
     unsigned int j = cx + 1;
 
-    //vector<Traccia> b;
     vector<unsigned int> b;
     b.reserve(dx - sx + 1);
 

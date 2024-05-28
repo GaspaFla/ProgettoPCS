@@ -1,6 +1,5 @@
 #pragma once
 #include <Eigen/Eigen>
-#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -23,17 +22,16 @@ struct MeshPoligonale{
     //Cell2D
     unsigned int NumeroCell2D = 0;
     vector<unsigned int> IdCell2D = {};
-    // Non so a priori quanti vertici e lati ha un poligono, quindi non posso usare gli array
-    // Uso vettori
+    // Non so a priori quanti vertici e lati ha un poligono, quindi non posso usare gli array ==> uso i vettori
     // Faccio una lista di vettori che contengono gli id dei vertici o lati
     vector<vector<unsigned int>> VerticiCell2D  = {};
     vector<vector<unsigned int>> LatiCell2D = {};
 
-    //Triangolazione per esportare
+    //Triangolazione per esportare su Paraview
     vector<vector<vector<unsigned int>>> Triangolazione();
 
     void GedimInterface(vector<vector<unsigned int>>& triangoli,
-                                        VectorXi& materials);
+                                        VectorXi& materiali);
 
 
 };
