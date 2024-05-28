@@ -252,7 +252,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
 
                         }
                         //salvo tutti nel positivo, se ci sono elementi nel negativo il trasferisco tutti nel positivo
-                        if(!PuntiNegativi.empty()){
+                        if(!PuntiNegativi.size()>1){
                             PuntiPositivi=PuntiNegativi;
                             NuoviIndiciPositivi=NuoviIndiciNegativi;
                         }
@@ -539,8 +539,7 @@ vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bo
             }
         }
 
-        //rifaccio tutto per le non passanti (è un copia e incolla)
-        //TracceNOpass
+        //rifaccio tutto per le non passanti
 
         if(!F.TracceNoPass.empty()){
             for (unsigned int i=0; i<F.TracceNoPass.size(); i++){
