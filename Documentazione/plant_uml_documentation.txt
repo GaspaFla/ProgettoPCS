@@ -1,0 +1,234 @@
+@startuml
+' Create package with folder style
+package DFN <<Folder>>
+{
+
+class Traccia{
++ IdTraccia : unsigned int
++ VerticiTraccia : array<Vector3d,2>
++ FrattureTraccia :  array<unsigned int,2> 
++ Tips : array<bool,2>
++ lunghezza : double
++ Traccia()
++ Traccia(IdT : unsigned int , VerticiT : array<Vector3d,2>, FrattureT : array<unsigned int,2>,T : array<bool,2> )
++ Traccia(VerticiT : array<Vector3d,2>)
+
+}
+
+class Frattura{
++ IdFrattura : unsigned int
++ NumVertici : unsigned int
++ CoordinateVertici : vector<Vector3d>   
++ TracceNoPass: vector<unsigned int> 
++ TraccePass : vector<unsigned int> 
++ vecNormale : Vector3d
++ termineNotoPiano : double
++ SottoPoligoni : PolygonalMesh 
++ IdVertici : vector<unsigned int> 
++ Frattura(IdF : unsigned int , NumV : unsigned int, CoordinateV : vector<Vector3d>)
++ Frattura( NumV : unsigned int, CoordinateV : vector<Vector3d>  )
++ Frattura( IdF : unsigned int)
+}
+
+
+
+
+
+ class Funzioni{ 
+
++ bool importoFratture(fileName : const string&, Fratture : vector<Frattura>&, tol: double)
++ bool ControlloCentroide(F1 : Frattura&, F2: Frattura&)
++ bool SiIntersecano(F1 : Frattura&, F2: Frattura&, puntiFrattura: array<Vector3d,4>&)
++ Vector3d IncontroTraRette(t1: Vector3d, v1 : Vector3d, t2 : Vector3d&, v2 : Vector3d&)
++ bool CalcoloTracce(F1: Frattura&, F2: Frattura&, IdTraccia: unsigned int, tol: double, puntiFrattura1: array<Vector3d,4>&, puntiFrattura2: array<Vector3d,4>&, T: Traccia&,LatoAppartiene1: bool& , LatoAppartiene2: bool& , tol2 double )) 
++ array<unsigned int,2> EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d&, tol: double, Tips: array<bool,2>&)
++ bool stampaTracce(Tracce: vector<Traccia>&)
++ bool stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&)
++ void Progetto1(fileName: const string&, tol: double)
+....
++ void Taglia(F: Frattura& ,FMadre : Frattura& ,Tracce : vector<Traccia>& ,tol: double ,tol2 : double )
++ vector<Frattura> calcoloSottoPoligoniPass(F : Frattura& ,tol : double ,tol2 : double ,TracciaSulBordo : bool& ,Tracce: vector<Traccia>& , FMadre : Frattura& )
++ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura& )
++ void converteInCelle(F : Frattura& ,FMadre : Frattura&)
++ unsigned int RicercaIdVertice(FMadre : Frattura& , PuntodaControllare : Vector3d& ,tol2: double )
++ bool stampaMesh(Fratture : vector<Frattura>& )
++ void Progetto2(Fratture : vector<Frattura>& ,Tracce : vector<Traccia>& , tol : double ,tol2 : double )
++ void esportaMesh(F : Frattura& )
+....
++ void Merge(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, cx: const unsigned int&, dx: const unsigned int&)
++ void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, dx: const unsigned int&)
++ void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&)
+
+.. TEST FUNZIONI ..
+TESTIMPORTOFRATTURE
+TESTCENTROIDE
+TESTINTERSEZIONE
+TESTINCONTRORETTE
+TESTESTREMITRACCIA
+TESTCALCOLOTRACCE
+TESTMERGESORT
+TESTCONVERTEINCELLE
+TESTCALCOLOSOTTOPOLIGONIPASSANTI
+TESTCALCOLOSOTTOPOLIGONINONPASSANTI
+TESTCALCOLOSOTTOPOLIGONIPASSANTITRACCE
+TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE
+TESTCALCOLOSOTTOPOLIGONI
+TESTTAGLIA
+
+}       
+
+}
+Traccia "many" --o "2" Frattura
+
+package LibreriaMesh <<Folder>>  {
+    class MeshPoligonale {
+        + NumeroCell0D  : unsigned int 
+        + IdCell0D : vector<unsigned int> 
+        + CoordinateCell0D : vector<Vector3d> 
+        + NumeroCell1D : unsigned int 
+        + IdCell1D : vector<unsigned int>
+        + VerticiCell1D : vector<array<unsigned int,2>> 
+        + NumeroCell2D : unsigned int  
+        + IdCell2D : vector<unsigned int> 
+        + VerticiCell2D : vector<vector<unsigned int>> 
+        + LatiCell2D : vector<vector<unsigned int>> 
+	+ vector<vector<vector<unsigned int>>> Triangolazione() 
+	+ void GedimInterface(triangoli: vector<vector<unsigned int>>& ,materiali: VectorXi& )  
+    }
+}
+
+class FunzioniAusiliarie{
++ double setTol1D()
++ double setTolProdotto(tol1D :  double)
++ bool testLunghezzaLati(CoordinateVertici: vector<Vector3d>&, tol: double)
+..TEST FUNZIONIAUSILIARIE..
+TESTLUNGHEZZALATI
+}@startuml
+' Create package with folder style
+package DFN <<Folder>>
+{
+
+class Traccia{
++ IdTraccia : unsigned int
++ VerticiTraccia : array<Vector3d,2>
++ FrattureTraccia :  array<unsigned int,2> 
++ Tips : array<bool,2>
++ lunghezza : double
++ Traccia()
++ Traccia(IdT : unsigned int , VerticiT : array<Vector3d,2>, FrattureT : array<unsigned int,2>,T : array<bool,2> )
++ Traccia(VerticiT : array<Vector3d,2>)
+
+}
+
+class Frattura{
++ IdFrattura : unsigned int
++ NumVertici : unsigned int
++ CoordinateVertici : vector<Vector3d>   
++ TracceNoPass: vector<unsigned int> 
++ TraccePass : vector<unsigned int> 
++ vecNormale : Vector3d
++ termineNotoPiano : double
++ SottoPoligoni : PolygonalMesh 
++ IdVertici : vector<unsigned int> 
++ Frattura(IdF : unsigned int , NumV : unsigned int, CoordinateV : vector<Vector3d>)
++ Frattura( NumV : unsigned int, CoordinateV : vector<Vector3d>  )
++ Frattura( IdF : unsigned int)
+}
+
+
+
+
+
+ class Funzioni{ 
+
++ bool importoFratture(fileName : const string&, Fratture : vector<Frattura>&, tol: double)
++ bool ControlloCentroide(F1 : Frattura&, F2: Frattura&)
++ bool SiIntersecano(F1 : Frattura&, F2: Frattura&, puntiFrattura: array<Vector3d,4>&)
++ Vector3d IncontroTraRette(t1: Vector3d, v1 : Vector3d, t2 : Vector3d&, v2 : Vector3d&)
++ bool CalcoloTracce(F1: Frattura&, F2: Frattura&, IdTraccia: unsigned int, tol: double, puntiFrattura1: array<Vector3d,4>&, puntiFrattura2: array<Vector3d,4>&, T: Traccia&,LatoAppartiene1: bool& , LatoAppartiene2: bool& , tol2 double )) 
++ array<unsigned int,2> EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d&, tol: double, Tips: array<bool,2>&)
++ bool stampaTracce(Tracce: vector<Traccia>&)
++ bool stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&)
++ void Progetto1(fileName: const string&, tol: double)
+....
++ void Taglia(F: Frattura& ,FMadre : Frattura& ,Tracce : vector<Traccia>& ,tol: double ,tol2 : double )
++ vector<Frattura> calcoloSottoPoligoniPass(F : Frattura& ,tol : double ,tol2 : double ,TracciaSulBordo : bool& ,Tracce: vector<Traccia>& , FMadre : Frattura& )
++ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura& )
++ void converteInCelle(F : Frattura& ,FMadre : Frattura&)
++ unsigned int RicercaIdVertice(FMadre : Frattura& , PuntodaControllare : Vector3d& ,tol2: double )
++ bool stampaMesh(Fratture : vector<Frattura>& )
++ void Progetto2(Fratture : vector<Frattura>& ,Tracce : vector<Traccia>& , tol : double ,tol2 : double )
++ void esportaMesh(F : Frattura& )
+....
++ void Merge(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, cx: const unsigned int&, dx: const unsigned int&)
++ void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, dx: const unsigned int&)
++ void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&)
+
+.. TEST FUNZIONI ..
+TESTIMPORTOFRATTURE
+TESTCENTROIDE
+TESTINTERSEZIONE
+TESTINCONTRORETTE
+TESTESTREMITRACCIA
+TESTCALCOLOTRACCE
+TESTMERGESORT
+TESTCONVERTEINCELLE
+TESTCALCOLOSOTTOPOLIGONIPASSANTI
+TESTCALCOLOSOTTOPOLIGONINONPASSANTI
+TESTCALCOLOSOTTOPOLIGONIPASSANTITRACCE
+TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE
+TESTCALCOLOSOTTOPOLIGONI
+TESTTAGLIA
+
+}       
+
+}
+Traccia "many" --o "2" Frattura
+
+package LibreriaMesh <<Folder>>  {
+    class MeshPoligonale {
+        + NumeroCell0D  : unsigned int 
+        + IdCell0D : vector<unsigned int> 
+        + CoordinateCell0D : vector<Vector3d> 
+        + NumeroCell1D : unsigned int 
+        + IdCell1D : vector<unsigned int>
+        + VerticiCell1D : vector<array<unsigned int,2>> 
+        + NumeroCell2D : unsigned int  
+        + IdCell2D : vector<unsigned int> 
+        + VerticiCell2D : vector<vector<unsigned int>> 
+        + LatiCell2D : vector<vector<unsigned int>> 
+	+ vector<vector<vector<unsigned int>>> Triangolazione() 
+	+ void GedimInterface(triangoli: vector<vector<unsigned int>>& ,materiali: VectorXi& )  
+    }
+}
+
+class FunzioniAusiliarie{
++ double setTol1D()
++ double setTolProdotto(tol1D :  double)
++ bool testLunghezzaLati(CoordinateVertici: vector<Vector3d>&, tol: double)
+..TEST FUNZIONIAUSILIARIE..
+TESTLUNGHEZZALATI
+}
+
+Funzioni ..> FunzioniAusiliarie
+
+MeshPoligonale ..> Funzioni
+Frattura ..> Funzioni
+Traccia ..> Funzioni
+
+package Gedim <<Frame>>
+{
+
+}
+
+
+MeshPoligonale::GedimInterface ..> Gedim
+
+MeshPoligonale "1" --o "1" Frattura
+
+note right of Gedim : Package esterno
+
+
+
+@enduml
+
