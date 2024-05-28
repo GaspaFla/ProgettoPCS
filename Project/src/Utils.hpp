@@ -14,7 +14,7 @@ bool ControlloCentromero(Frattura &F1, Frattura &F2);
 
 bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>&puntiFrattura,double tol, bool& LatoAppartiene);
 
-Vector3d IncontroTraRette(Vector3d& t1, Vector3d &v1,Vector3d &t2 , Vector3d &v2 );
+Vector3d IncontroTraRette(Vector3d t1, Vector3d v1,Vector3d &t2 , Vector3d &v2 );
 
 bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double tol, array<Vector3d,4>&puntiFrattura1, array<Vector3d,4>&puntiFrattura2,Traccia&T, bool& LatoAppartiene1, bool& LatoAppartiene2,  double tol2);
 

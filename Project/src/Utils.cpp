@@ -317,7 +317,7 @@ bool CalcoloTracce(Frattura &F1, Frattura &F2, unsigned int IdTraccia, double to
 
 
 
-Vector3d IncontroTraRette(Vector3d& direzionedeiLati, Vector3d &VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
+Vector3d IncontroTraRette(Vector3d direzionedeiLati, Vector3d VerticePoligono,Vector3d &direzioneretta , Vector3d &puntointersezione ){
     Vector3d P=puntointersezione-VerticePoligono;
     MatrixXd M(3, 2);
     M.col(0)=direzionedeiLati;

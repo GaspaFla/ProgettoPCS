@@ -39,28 +39,35 @@ class Frattura{
 + bool importoFratture(fileName : const string&, Fratture : vector<Frattura>&, tol: double)
 + bool ControlloCentromero(F1 : Frattura&, F2: Frattura&)
 + bool SiIntersecano(F1 : Frattura&, F2: Frattura&, puntiFrattura: array<Vector3d,4>&)
-+ Vector3d IncontroTraRette(t1: Vector3d&, v1 : Vector3d&, t2 : Vector3d&, v2 : Vector3d&)
++ Vector3d IncontroTraRette(t1: Vector3d, v1 : Vector3d, t2 : Vector3d&, v2 : Vector3d&)
 + bool CalcoloTracce(F1: Frattura&, F2: Frattura&, IdTraccia: unsigned int, tol: double, puntiFrattura1: array<Vector3d,4>&, puntiFrattura2: array<Vector3d,4>&, T: Traccia&,LatoAppartiene1: bool& , LatoAppartiene2: bool& , tol2 double )) 
 
-+  array<unsigned int,2> EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d&, tol: double, Tips: array<bool,2>&)
-+  bool stampaTracce(Tracce: vector<Traccia>&)
-+  bool stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&)
++ array<unsigned int,2> EstremiTraccia(PuntiIntersezione: array<Vector3d,4>&, PuntoRetta: Vector3d&, tol: double, Tips: array<bool,2>&)
++ bool stampaTracce(Tracce: vector<Traccia>&)
++ bool stampaTracceFatture(Fratture: vector<Frattura>&, Tracce: vector<Traccia>&)
 + void Progetto1(fileName: const string&, tol: double)
 ....
-+ void Taglia(F: Frattura& ,FMadre : Frattura& ,Tracce : vector<Traccia>& ,tol: double ,tol2 : double );
-+ vector<Frattura> calcoloSottoPoligoniPass(F : Frattura& ,tol : double ,tol2 : double ,TracciaSulBordo : bool& ,Tracce: vector<Traccia>& , FMadre : Frattura& );
-+ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura& );
-+ void converteInCelle(F : Frattura& ,FMadre : Frattura&);
-+ unsigned int RicercaIdVertice(FMadre : Frattura& , PuntodaControllare : Vector3d& ,tol2: double );
-+ bool stampaMesh(Fratture : vector<Frattura>& );
-+ void Progetto2(Fratture : vector<Frattura>& ,Tracce : vector<Traccia>& , tol : double ,tol2 : double );
-+ void esportaMesh(F : Frattura& );
++ void Taglia(F: Frattura& ,FMadre : Frattura& ,Tracce : vector<Traccia>& ,tol: double ,tol2 : double )
++ vector<Frattura> calcoloSottoPoligoniPass(F : Frattura& ,tol : double ,tol2 : double ,TracciaSulBordo : bool& ,Tracce: vector<Traccia>& , FMadre : Frattura& )
++ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura& )
++ void converteInCelle(F : Frattura& ,FMadre : Frattura&)
++ unsigned int RicercaIdVertice(FMadre : Frattura& , PuntodaControllare : Vector3d& ,tol2: double )
++ bool stampaMesh(Fratture : vector<Frattura>& )
++ void Progetto2(Fratture : vector<Frattura>& ,Tracce : vector<Traccia>& , tol : double ,tol2 : double )
++ void esportaMesh(F : Frattura& )
 ....
 + void Merge(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, cx: const unsigned int&, dx: const unsigned int&)
 + void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&, sx: const unsigned int&, dx: const unsigned int&)
 + void MergeSort(v: vector<Traccia>&, vId: vector<unsigned int>&)
 
-.. TESTFUNZIONI ..
+.. TEST FUNZIONI ..
+TESTIMPORTOFRATTURE
+TESTCENTROMERO
+TESTINTERSEZIONE
+TESTINCONTRORETTE
+TESTESTREMITRACCIA
+TESTCALCOLOTRACCE
+TESTMERGESORT
 
 }       
 
@@ -88,9 +95,11 @@ class FunzioniAusiliarie{
 + double setTol1D()
 + double setTolProdotto(tol1D :  double)
 + bool testLunghezzaLati(CoordinateVertici: vector<Vector3d>&, tol: double)
+..TEST FUNZIONIAUSILIARIE..
+TESTLUNGHEZZALATI
 }
 
-Funzioni --right--> FunzioniAusiliarie
+Funzioni ..> FunzioniAusiliarie
 
 
 
@@ -100,12 +109,12 @@ package Gedim <<Frame>>
 }
 
 
-MeshPoligonale::GedimInterface --right--> Gedim
+MeshPoligonale::GedimInterface ..> Gedim
 
 MeshPoligonale "1" --o "1" Frattura
 
-note "Package esterno" as GedimNote
-GedimNote .. Gedim
+note right of Gedim : Package esterno
+
 
 
 @enduml

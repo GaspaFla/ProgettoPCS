@@ -6,7 +6,7 @@
 using namespace DFN;
 
 
-TEST(importoFratture,FileAggiuntivo){
+TEST(TESTIMPORTOFRATTURE,FileAggiuntivo){
     double tol = 0.00000000000000001;
     vector<Frattura> Fratture;
     string fileName = "./DFN/FileTestImporto.txt";
@@ -27,8 +27,7 @@ TEST(importoFratture,FileAggiuntivo){
 }
 
 
-
-TEST(LunghezzaLati,LunghezzaNonZero){
+TEST(TESTLUNGHEZZALATI,LunghezzaNonZero){
     Vector3d p1(4,0,-1);
     Vector3d p2(4,0,1);
     Vector3d p3(2,0,5);
@@ -37,7 +36,7 @@ TEST(LunghezzaLati,LunghezzaNonZero){
     bool flag =  testLunghezzaLati( CoordinateVertici,  tol);
     EXPECT_TRUE(flag);
 }
-TEST(LunghezzaLati,LunghezzaZero){
+TEST(TESTLUNGHEZZALATI,LunghezzaZero){
     Vector3d p1(4,0,1);
     Vector3d p2(4,0,1);
     Vector3d p3(2,0,5);
@@ -50,7 +49,7 @@ TEST(LunghezzaLati,LunghezzaZero){
 
 //TEST Centromero
 
-TEST(ControlloCentromero, DueTriangoliDistanti)
+TEST(TESTCENTROMERO, DueTriangoliDistanti)
 {
     Vector3d x(0,1,0);
     Vector3d y(-1,0,0);
@@ -72,7 +71,7 @@ TEST(ControlloCentromero, DueTriangoliDistanti)
     EXPECT_EQ(1, control);
 }
 
-TEST(ControlloCentromero, Quadratimoltovicini)
+TEST(TESTCENTROMERO, Quadratimoltovicini)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,0,-1);
@@ -103,7 +102,7 @@ TEST(ControlloCentromero, Quadratimoltovicini)
 
 //TEST SiIntersecano
 
-TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
+TEST(TESTINTERSEZIONE, QuadratiPerpendicolariPerOrigine)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,1,-1);
@@ -146,7 +145,7 @@ TEST(ControlloIntersezionePiano, QuadratiPerpendicolariPerOrigine)
 
 }
 
-TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
+TEST(TESTINTERSEZIONE, QuadratiPerpendicolariNonPerOrigine)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,6,-1);
@@ -191,7 +190,7 @@ TEST(ControlloIntersezionePiano2, QuadratiPerpendicolariNonPerOrigine)
     }
 }
 
-TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
+TEST(TESTINTERSEZIONE, QuadratiViciniCheNonSiIntersecano)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,1,-1);
@@ -225,8 +224,7 @@ TEST(ControlloIntersezionePiano3, QuadratiViciniCheNonSiIntersecano)
 
 }
 
-
-TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
+TEST(TESTINTERSEZIONE, QuadratiPerpendicolariPerOrigineNonPassante)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,1,-1);
@@ -269,7 +267,7 @@ TEST(ControlloIntersezionePiano4, QuadratiPerpendicolariPerOrigineNonPassante)
 
 }
 
-TEST(ControlloIntersezionePiano5,TriangoloSuPiano )
+TEST(TESTINTERSEZIONE,TriangoloSuPiano )
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -302,8 +300,7 @@ TEST(ControlloIntersezionePiano5,TriangoloSuPiano )
 
 }
 
-
-TEST(ControlloIntersezionePiano6,ToccantePerEntrambi )
+TEST(TESTINTERSEZIONE,ToccantePerEntrambi )
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -337,7 +334,7 @@ TEST(ControlloIntersezionePiano6,ToccantePerEntrambi )
 
 }
 
-TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
+TEST(TESTINTERSEZIONE,ToccaSoloUnPunto )
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -408,7 +405,7 @@ TEST(ControlloIntersezionePiano6,ToccaSoloUnPunto )
 
 }
 
-TEST(ControlloIntersezionePiano6,TriangoloAttraverso)
+TEST(TESTINTERSEZIONE,TriangoloAttraverso)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -440,7 +437,8 @@ TEST(ControlloIntersezionePiano6,TriangoloAttraverso)
     }
 
 }
-TEST(ControlloIntersezionePiano6,RomboAttraverso)
+
+TEST(TESTINTERSEZIONE,RomboAttraverso)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -476,7 +474,7 @@ TEST(ControlloIntersezionePiano6,RomboAttraverso)
 
 
 //TEST IncontroTraRette
-TEST(IncontroTraRette,TracciaPoligono)
+TEST(TESTINCONTRORETTE,TracciaPoligono)
 {
     Vector3d direzionedeiLati(2,-1,0);
     Vector3d VerticePoligono(1,2,3);
@@ -489,9 +487,8 @@ TEST(IncontroTraRette,TracciaPoligono)
 }
 
 
-
 //TEST EstremiTraccia
-TEST(EstremiTraccia, PuntiAllineati)
+TEST(TESTESTREMITRACCIA, PuntiAllineati)
 {
     Vector3d PuntoRetta(5,0,0) ;
     double tol = 0.000000000000001;
@@ -558,7 +555,7 @@ TEST(EstremiTraccia, PuntiAllineati)
 
 
 //TEST CalcoloTracce
-TEST(CalcoloTracce,NonPassEntrambe)
+TEST(TESTCALCOLOTRACCE,NonPassEntrambe)
 {   Vector3d p1(1,1,0);
     Vector3d p2(-1,1,0);
     Vector3d p3(-1,-1,0);
@@ -598,7 +595,7 @@ TEST(CalcoloTracce,NonPassEntrambe)
     EXPECT_TRUE(T.Tips[1]);
 }
 
-TEST(CalcoloTracce,FintaTraccia)
+TEST(TESTCALCOLOTRACCE,FintaTraccia)
 {   Vector3d p1(1,1,0);
     Vector3d p2(-1,1,0);
     Vector3d p3(-1,-1,0);
@@ -629,7 +626,7 @@ TEST(CalcoloTracce,FintaTraccia)
     EXPECT_FALSE(flag1);
 }
 
-TEST(CalcoloTracce,PassantePerEntrambe){
+TEST(TESTCALCOLOTRACCE,PassantePerEntrambe){
     Vector3d p1(1,1,0);
     Vector3d p2(-1,1,0);
     Vector3d p3(-1,-1,0);
@@ -672,7 +669,8 @@ TEST(CalcoloTracce,PassantePerEntrambe){
     EXPECT_FALSE(T.Tips[1]);
 
 }
-TEST(CalcoloTracce,TracciaSulLato)
+
+TEST(TESTCALCOLOTRACCE,TracciaSulLato)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -710,7 +708,7 @@ TEST(CalcoloTracce,TracciaSulLato)
 
 }
 
-TEST(CalcoloTracce,RomboAttraverso)
+TEST(TESTCALCOLOTRACCE,RomboAttraverso)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -751,8 +749,7 @@ TEST(CalcoloTracce,RomboAttraverso)
 
 }
 
-
-TEST(CalcoloTracce,TriangoloToccante)
+TEST(TESTCALCOLOTRACCE,TriangoloToccante)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -792,7 +789,7 @@ TEST(CalcoloTracce,TriangoloToccante)
 
 }
 
-TEST(CalcoloTracce,RettangoloAttraversoToccante)
+TEST(TESTCALCOLOTRACCE,RettangoloAttraversoToccante)
 {
     Vector3d x(2,2,0);
     Vector3d y(-2,2,0);
@@ -830,7 +827,8 @@ TEST(CalcoloTracce,RettangoloAttraversoToccante)
     EXPECT_FALSE(T.Tips[1]);
 
 }
-TEST(CalcoloTracce,PassantePerUno){
+
+TEST(TESTCALCOLOTRACCE,PassantePerUno){
     Vector3d p1(1,1,0);
     Vector3d p2(-1,1,0);
     Vector3d p3(-1,-1,0);
@@ -874,7 +872,7 @@ TEST(CalcoloTracce,PassantePerUno){
 }
 
 //TEST MergeSort
-TEST(MergeSort,VettoriDiversi){
+TEST(TESTMERGESORT,VettoriDiversi){
     Vector3d x(0,0,1);
     Vector3d y(0,0,5);
     Vector3d x1(3,0,0);
@@ -899,10 +897,7 @@ TEST(MergeSort,VettoriDiversi){
     EXPECT_EQ(vId[2],1);
 }
 
-
-//anche il mergesort funziona, evviva
-
-TEST(MergeSort,VettoriConUgualLunghezza){
+TEST(TESTMERGESORT,VettoriConUgualLunghezza){
     Vector3d x(0,0,1);
     Vector3d y(0,0,5);
     Vector3d x1(3,0,0);
