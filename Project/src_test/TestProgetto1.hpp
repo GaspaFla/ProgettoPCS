@@ -47,9 +47,9 @@ TEST(TESTLUNGHEZZALATI,LunghezzaZero){
 }
 
 
-//TEST Centromero
+//TEST Centroide
 
-TEST(TESTCENTROMERO, DueTriangoliDistanti)
+TEST(TESTCENTROIDE, DueTriangoliDistanti)
 {
     Vector3d x(0,1,0);
     Vector3d y(-1,0,0);
@@ -62,7 +62,7 @@ TEST(TESTCENTROMERO, DueTriangoliDistanti)
     vector<Vector3d> Coord1={x1,y1,z1};
     Frattura F2=Frattura(0,3,Coord1);
     double tol=0.000000001;
-    bool flag =ControlloCentromero(F1,F2);
+    bool flag =ControlloCentroide(F1,F2);
     int control=1;
     if(flag){
         control=0;
@@ -71,7 +71,7 @@ TEST(TESTCENTROMERO, DueTriangoliDistanti)
     EXPECT_EQ(1, control);
 }
 
-TEST(TESTCENTROMERO, Quadratimoltovicini)
+TEST(TESTCENTROIDE, Quadratimoltovicini)
 {
     //TERZO TEST, DUE QUADRATI CHE SI INTERSECANO POCO (ANCHE SE SONO COMPLANARI)
     Vector3d x(0,0,-1);
@@ -90,7 +90,7 @@ TEST(TESTCENTROMERO, Quadratimoltovicini)
     Frattura F2=Frattura(0,4,Coord1);
 
     double tol = 0.000000001;
-    bool flag=ControlloCentromero(F1,F2);
+    bool flag=ControlloCentroide(F1,F2);
     int control=1;
     if(flag){
         control=0;
