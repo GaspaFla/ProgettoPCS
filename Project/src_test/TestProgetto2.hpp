@@ -763,7 +763,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteVerticale){
     Tracce.push_back(T);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TracciasulBordo=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TracciasulBordo);
     //Controllo il numero dei vertici
     EXPECT_EQ(FrattureFiglie[0].NumVertici,4);
     EXPECT_EQ(FrattureFiglie[1].NumVertici,4);
@@ -833,7 +834,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteOrizzontale){
     Tracce.push_back(T);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     //Controllo il numero dei vertici
     EXPECT_EQ(FrattureFiglie[0].NumVertici,4);
     EXPECT_EQ(FrattureFiglie[1].NumVertici,4);
@@ -902,7 +904,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteObliquaUnVerticeCoinc
     Tracce.push_back(T);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     //Controllo il numero dei vertici
     EXPECT_EQ(FrattureFiglie[1].NumVertici,3);
     EXPECT_EQ(FrattureFiglie[0].NumVertici,4);
@@ -972,7 +975,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteObliquaConEstesaVerti
     Tracce.push_back(T);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     //Controllo il numero dei vertici
     EXPECT_EQ(FrattureFiglie[0].NumVertici,3);
     EXPECT_EQ(FrattureFiglie[1].NumVertici,3);
@@ -1039,7 +1043,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTI,TracciaNonPassanteLatiAdiacentiObliqua)
     Tracce.push_back(T);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     //Controllo il numero dei vertici
     EXPECT_EQ(FrattureFiglie[1].NumVertici,5);
     EXPECT_EQ(FrattureFiglie[0].NumVertici,3);
@@ -1211,7 +1216,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE,DueTracceNonPassantiIncidentiConV
     Tracce.push_back(To);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
     EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
     for (int i=0; i<3; i++){
@@ -1257,7 +1263,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONINONPASSANTITRACCE,DueTracceNonPassantiIncidenti){
     Tracce.push_back(To);
     double tol = 0.0000000000000001;
     double tol2 = SetTolProdotto(tol);
-    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre);
+    bool TB=false;
+    vector<Frattura> FrattureFiglie = calcoloSottoPoligoniNoPass(FMadre,tol,tol2,Tracce,FMadre,TB);
     EXPECT_DOUBLE_EQ(FrattureFiglie[0].TracceNoPass[0],2);
     EXPECT_DOUBLE_EQ(FrattureFiglie[1].TracceNoPass[0],3);
 
@@ -1316,8 +1323,9 @@ TEST(TESTCALCOLOSOTTOPOLIGONI,DueTracceConEstremoCoincidente){
         EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[0][i],w2[i]);
         EXPECT_DOUBLE_EQ(Tracce[1].VerticiTraccia[1][i],h2[i]);
     }
+    bool T=false;
 
-    vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniNoPass(FrattureFiglie[1],tol,tol2,Tracce,FMadre);
+    vector<Frattura> FrattureFiglie1 = calcoloSottoPoligoniNoPass(FrattureFiglie[1],tol,tol2,Tracce,FMadre,T);
     EXPECT_TRUE(FrattureFiglie1[0].TracceNoPass.empty());
     EXPECT_TRUE(FrattureFiglie1[0].TraccePass.empty());
     EXPECT_TRUE(FrattureFiglie1[1].TracceNoPass.empty());
@@ -1399,7 +1407,8 @@ TEST(TESTCALCOLOSOTTOPOLIGONI,TreFratture){
         EXPECT_DOUBLE_EQ(Tracce[5].VerticiTraccia[1][i],NuovoEstremo2[i]);
     }
     //Divido ancora
-    vector<Frattura> FrattureFiglie2 = calcoloSottoPoligoniNoPass(FrattureFiglie1[0],tol,tol2,Tracce,FMadre);
+    bool T=false;
+    vector<Frattura> FrattureFiglie2 = calcoloSottoPoligoniNoPass(FrattureFiglie1[0],tol,tol2,Tracce,FMadre,T);
     EXPECT_EQ(Tracce.size(),7);//non deve cambiare
     //Le nuove figlie non devono avere più tracce
     EXPECT_TRUE(FrattureFiglie2[0].TracceNoPass.empty());
