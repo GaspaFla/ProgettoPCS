@@ -952,6 +952,7 @@ bool stampaMesh(vector<Frattura>& Fratture){
 }
 
 void Progetto2(vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,double tol2){
+    unsigned int LunghezzaTraccia=Tracce.size();
     for(auto& f :Fratture){
         if(f.IdFrattura!=Fratture.size()+1){
             //AGGIUNGO CELL0D
@@ -964,6 +965,8 @@ void Progetto2(vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,do
                 f.SottoPoligoni.NumeroCell0D ++;
             }
             Taglia( f,f, Tracce,tol, tol2);
+            Tracce.resize(LunghezzaTraccia);
+            Tracce.reserve(LunghezzaTraccia);
         }
     }
     stampaMesh(Fratture);

@@ -9,9 +9,9 @@ using namespace DFN;
 int main()
 {
 
-    string fileName = "./DFN/FR50_data.txt";
+    string fileName = "./DFN/FR200_data.txt";
 
-    double tol1D = setTol1D();
+    double tol1D = 0.0000000000000000000000001;
     double tol2=SetTolProdotto(tol1D);
     vector<Frattura> Fratture;
     vector<Traccia> Tracce;
