@@ -59,7 +59,7 @@ TESTMERGESORT
 class FunzioniCreazioneMesh{
 + void Taglia(F: Frattura& ,FMadre : Frattura& ,Tracce : vector<Traccia>& ,tol: double ,tol2 : double )
 + vector<Frattura> calcoloSottoPoligoniPass(F : Frattura& ,tol : double ,tol2 : double ,TracciaSulBordo : bool& ,Tracce: vector<Traccia>& , FMadre : Frattura& )
-+ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura& )
++ vector<Frattura> calcoloSottoPoligoniNoPass(F: Frattura& ,tol : double ,tol2 : double ,Tracce : vector<Traccia>&, FMadre : Frattura&, BassaTolleranza : bool& )
 + void converteInCelle(F : Frattura& ,FMadre : Frattura&)
 + unsigned int RicercaIdVertice(FMadre : Frattura& , PuntodaControllare : Vector3d& ,tol2: double )
 + bool stampaMesh(Fratture : vector<Frattura>& )
