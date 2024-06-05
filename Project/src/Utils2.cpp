@@ -956,7 +956,6 @@ void Progetto2(vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,do
     for(auto& f :Fratture){
         if(f.IdFrattura!=Fratture.size()+1){
             //AGGIUNGO CELL0D
-            f.vecNormale=f.vecNormale*100000000000000000000000;
             for(unsigned int i = 0;i<f.NumVertici;i++){
                 unsigned int IdCell0D = f.SottoPoligoni.NumeroCell0D;//inizializzato a 0
                 f.SottoPoligoni.IdCell0D.push_back(IdCell0D);
