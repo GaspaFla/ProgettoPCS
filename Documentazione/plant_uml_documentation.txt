@@ -23,7 +23,7 @@ class Frattura{
 + TraccePass : vector<unsigned int> 
 + vecNormale : Vector3d
 + termineNotoPiano : double
-+ SottoPoligoni : PolygonalMesh 
++ SottoPoligoni : MeshPoligonale 
 + IdVertici : vector<unsigned int> 
 + Frattura(IdF : unsigned int , NumV : unsigned int, CoordinateV : vector<Vector3d>)
 + Frattura( NumV : unsigned int, CoordinateV : vector<Vector3d>  )
