@@ -528,6 +528,11 @@ bool Progetto1(const string& fileName,vector<Frattura>& Fratture,vector<Traccia>
                 MergeSort(Tracce,Fratture[i].TracceNoPass);
 
         }
+        if(!Fratture[Fratture.size()-1].TraccePass.empty())
+            MergeSort(Tracce,Fratture[Fratture.size()-1].TraccePass);
+        if(!Fratture[Fratture.size()-1].TracceNoPass.empty())
+            MergeSort(Tracce,Fratture[Fratture.size()-1].TracceNoPass);
+
 
         stampaTracce(Tracce);
         stampaTracceFratture(Fratture,Tracce);

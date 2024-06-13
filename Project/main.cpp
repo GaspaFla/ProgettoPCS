@@ -9,7 +9,7 @@ using namespace DFN;
 int main()
 {
 
-    string fileName = "./DFN/FR200_data.txt";
+    string fileName = "./DFN/FR10_data.txt";
 
     double tol1D = 0.0000000000000000000000001;
     double tol2=SetTolProdotto(tol1D);
