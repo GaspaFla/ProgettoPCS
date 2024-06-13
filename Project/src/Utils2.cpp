@@ -916,10 +916,10 @@ vector<Frattura> calcoloSottoPoligoniNoPass(Frattura& F,double tol, double tol2,
 bool stampaMesh(vector<Frattura>& Fratture){
     ofstream file("stampaMesh.txt");
     if(file.fail()){
-        cout << "Errore";
+        cerr << "Errore";
         return false;
     }
-    for(auto f : Fratture){
+    for(const auto& f : Fratture){
         if(f.IdFrattura!=Fratture.size()+1){
             file<<"FractureId "<<f.IdFrattura<< endl << "NumCell0Ds "<< f.SottoPoligoni.NumeroCell0D<<endl;
             file <<"IdCell0D; X; Y; Z"<<endl;

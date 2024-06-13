@@ -5,10 +5,8 @@ using namespace std;
 
 
 namespace DFN{
-//Creo una funzione che legge tutto il file e salva le fratture in un vettore
 bool importoFratture(const string& fileName, vector<Frattura>& Fratture, double tol2);
 
-// controllo che i due poligoni non siano vicini
 bool ControlloCentroide(Frattura &F1, Frattura &F2);
 
 bool SiIntersecano(Frattura &F1, Frattura &F2, array<Vector3d,4>& puntiFrattura,double tol, bool& LatoAppartiene);

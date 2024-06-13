@@ -435,12 +435,12 @@ array<unsigned int,2> EstremiTraccia(array<Vector3d,4>& PuntiIntersezione, doubl
 bool stampaTracce( vector<Traccia>& Tracce){
     ofstream file("stampaTracce.txt");
     if(file.fail()){
-        cout << "Errore";
+        cerr << "Errore";
         return false;
     }
     file<<"# Number of Traces" <<endl;
     file<<Tracce.size()<<endl;
-    for(auto t : Tracce){
+    for(const auto& t : Tracce){
         file<<"# TraceId; FractureId1; FractureId2; X1; Y1; Z1; X2; Y2; Z2"<<endl;
         file<<t.IdTraccia<<"; "<<t.FrattureTraccia[0]<<"; "<<t.FrattureTraccia[1]<<"; "<<
             t.VerticiTraccia[0][0]<<"; "<<t.VerticiTraccia[0][1]<<"; "<<t.VerticiTraccia[0][2]<<"; "<<
@@ -454,10 +454,10 @@ bool stampaTracce( vector<Traccia>& Tracce){
 bool stampaTracceFratture( vector<Frattura>& Fratture, vector<Traccia>& Tracce){
     ofstream file("stampaTracceFatture.txt");
     if(file.fail()){
-        cout << "Errore";
+        cerr << "Errore";
         return false;
     }
-    for(auto f : Fratture){
+    for(const auto& f : Fratture){
         if(f.IdFrattura!=Fratture.size() +1){
             file<<"# FractureId; NumTraces "<<endl;
             bool flag = true;
@@ -569,7 +569,7 @@ bool testLunghezzaLati(vector<Vector3d>& CoordinateVertici, double tol2){
     for(unsigned int i = 0;i<(CoordinateVertici.size()-1);i++){
         for(unsigned int j = i+1;j<CoordinateVertici.size();j++){
             if((CoordinateVertici[i]-CoordinateVertici[j]).squaredNorm() < tol2){
-                cout<<"Errore: due vertici della frattura coincidono"<<endl;
+                cerr<<"Errore: due vertici della frattura coincidono"<<endl;
                 return false;
             }
         }
