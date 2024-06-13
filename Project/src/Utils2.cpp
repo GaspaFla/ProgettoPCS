@@ -969,7 +969,7 @@ void Progetto2(vector<Frattura>& Fratture,vector<Traccia>& Tracce, double tol,do
         }
     }
     stampaMesh(Fratture);
-    esportaMesh(Fratture[4]);
+    esportaMesh(Fratture[0]);
 }
 
 void esportaMesh(Frattura& F){
