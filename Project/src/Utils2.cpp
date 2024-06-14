@@ -97,12 +97,11 @@ void converteInCelle(Frattura& F,Frattura &FMadre){
 
 vector<Frattura> calcoloSottoPoligoniPass(Frattura& F,double tol, double tol2,bool& TracciaSulBordo, vector<Traccia>& Tracce, Frattura& FMadre){
     vector<unsigned int> NuoviIndiciPositivi;//salvataggio indici corrispondenti
-    vector<unsigned int> NuoviIndiciNegativi;//salavtaggio indici corrispondenti
+    vector<unsigned int> NuoviIndiciNegativi;//salvataggio indici corrispondenti
     vector<Frattura> Figli;//output
     vector<Vector3d>PuntiPositivi;//vettore in cui mettere i punti sul semipiano positivo
     vector<Vector3d>PuntiNegativi;//vettore in cui mettere i punti sul semipiano negativo
     unsigned int PuntiNuovi=0; //quanti nuovi vertici ho trovato
-    //Sostituisci con array dim 2 :)
     array<Vector3d,2> VerticiTraccia={ Tracce[F.TraccePass[0]].VerticiTraccia[0],Tracce[F.TraccePass[0]].VerticiTraccia[1]};//vettore con dentro i due vertici della traccia
     int SegnoPrec=1;
     double segno;
